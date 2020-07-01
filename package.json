@@ -1,0 +1,19 @@
+{
+   "name": "2020-mern-scouting-app",
+   "version": "1.0.0",
+   "description": "Refactored 2020 Alt-F4 Scouting App using the MERN Stack",
+   "main": "server.js",
+   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/jnarayanbvg/2020-mern-scouting-app.git"
+   },
+   "author": "",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/jnarayanbvg/2020-mern-scouting-app/issues"
+   },
+   "homepage": "https://github.com/jnarayanbvg/2020-mern-scouting-app#readme"
+}

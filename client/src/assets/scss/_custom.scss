@@ -1,0 +1,11 @@
+$theme-colors: (
+   "login-back": #2b2f36,
+   "login-form": #1b1d22,
+   "login-light": #8994a7,
+);
+
+:export {
+   loginBack: map-get($theme-colors, "login-back");
+   loginForm: map-get($theme-colors, "login-form");
+   loginLight: map-get($theme-colors, "login-light");
+}

@@ -1,0 +1,8 @@
+@import "custom";
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
+@import "config";
+@import "utils";
+
+* {
+   background-color: map-get($theme-colors, "login-back");
+}

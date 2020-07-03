@@ -4,13 +4,18 @@ const bodyParser = require("body-parser");
 const path = require("path");
 
 // Connect to the database
-const keys = require("./config/keys");
+let keys;
+try {
+   keys = require("./config/keys");
+} catch (err) {
+   // Module does not exist
+}
 const mysql = require("mysql");
 const db = mysql.createConnection({
-   host: keys.host,
-   user: keys.user,
-   password: keys.pass,
-   database: keys.database,
+   host: process.env.SQL_HOST || keys.host,
+   user: process.env.SQL_USER || keys.user,
+   password: process.env.SQL_PASS || keys.pass,
+   database: process.env.SQL_DATABASE || keys.database,
 });
 db.connect((err) => {
    if (err) throw err;

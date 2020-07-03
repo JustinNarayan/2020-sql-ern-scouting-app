@@ -1,6 +1,12 @@
 /// Middleware function to verify a JSON Web Token
 const jwt = require("jsonwebtoken");
-const jsonKey = require("../../config/keys").jsonKey;
+let keys;
+try {
+   keys = require("../../config/keys");
+} catch (err) {
+   // Module does not exist
+}
+const jsonKey = process.env.JSONKEY || keys.jsonKey;
 
 module.exports = (req, res, next) => {
    // Get token from bearer header

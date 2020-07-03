@@ -4,8 +4,12 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const keys = require("../../config/keys");
-const { salt, jsonKey, authExpiry, email } = keys;
+let keys;
+try {
+   keys = require("../../config/keys");
+} catch (err) {
+   // Module does not exist
+}
 const uuid = require("uuid");
 const validator = require("email-validator");
 
@@ -15,19 +19,19 @@ const smtpTransport = require("nodemailer-smtp-transport");
 const transport = nodemailer.createTransport(
    smtpTransport({
       name: "hostgator",
-      host: email.host,
-      port: email.port,
+      host: process.env.EMAIL_HOST || keys.email.host,
+      port: process.env.EMAIL_HOST || keys.email.port,
       ignoreTLS: true,
       tls: { rejectUnauthorized: false },
       secure: true,
       auth: {
-         user: email.user,
-         pass: email.pass,
+         user: process.env.EMAIL_HOST || keys.email.user,
+         pass: process.env.EMAIL_HOST || keys.email.pass,
       },
    })
 );
 const mailOptions = {
-   from: email.user,
+   from: process.env.EMAIL_HOST || keys.email.user,
    to: "",
    subject: "",
    text: "",
@@ -85,8 +89,11 @@ module.exports = (db) => {
                         // Generate authentication token
                         jwt.sign(
                            { user },
-                           jsonKey,
-                           { expiresIn: authExpiry },
+                           process.env.JSONKEY || keys.jsonKey,
+                           {
+                              expiresIn:
+                                 process.env.AUTHEXPIRY || keys.authExpiry,
+                           },
                            (err, token) => {
                               if (err)
                                  res.status(404).send({
@@ -176,52 +183,58 @@ module.exports = (db) => {
       const plainKey = req.body.adminKey;
 
       // Generate hashed passwords
-      bcrypt.hash(plainPass, salt, (passErr, passHash) => {
-         if (passErr)
-            res.status(404).send({
-               message: "Failed to hash password",
-               err: passErr,
-            });
-
-         bcrypt.hash(plainKey, salt, (keyErr, keyHash) => {
-            if (keyErr)
+      bcrypt.hash(
+         plainPass,
+         process.env.SALT || keys.salt,
+         (passErr, passHash) => {
+            if (passErr)
                res.status(404).send({
-                  message: "Failed to hash admin key",
-                  err: keyErr,
+                  message: "Failed to hash password",
+                  err: passErr,
                });
 
-            // Check if username exists
-            let sql = `SELECT Username FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
-            db.query(sql, (err, result) => {
-               if (err) {
-                  res.status(404).send(err);
-               }
+            bcrypt.hash(
+               plainKey,
+               process.env.SALT || keys.salt,
+               (keyErr, keyHash) => {
+                  if (keyErr)
+                     res.status(404).send({
+                        message: "Failed to hash admin key",
+                        err: keyErr,
+                     });
 
-               // Check for valid email
-               if (!validator.validate(req.body.email)) {
-                  res.status(400).send({ message: "Invalid email" });
-               }
-               // Check for duplicate username
-               else if (result.length) {
-                  res.status(409).send({
-                     message: "A user with that username already exists",
-                  });
-               }
-               // Send database insertion query
-               else {
-                  const verifyID = uuid.v4();
-                  let sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES ('${req.body.username}', '${passHash}', '${keyHash}', '${req.body.email}', '${req.body.teamNumber}', '${verifyID}', 0)`;
-                  db.query(sql, (err) => {
+                  // Check if username exists
+                  let sql = `SELECT Username FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
+                  db.query(sql, (err, result) => {
                      if (err) {
                         res.status(404).send(err);
                      }
 
-                     const verifyLink = `https://www.testing.team7558.com?verifyID=${verifyID}`;
-                     const sendOptions = mailOptions;
-                     sendOptions.to = req.body.email;
-                     sendOptions.subject =
-                        "Account Registered at scouting.team7558.com!";
-                     sendOptions.text = `Hello ${req.body.username} from Team ${req.body.teamNumber}!\n
+                     // Check for valid email
+                     if (!validator.validate(req.body.email)) {
+                        res.status(400).send({ message: "Invalid email" });
+                     }
+                     // Check for duplicate username
+                     else if (result.length) {
+                        res.status(409).send({
+                           message: "A user with that username already exists",
+                        });
+                     }
+                     // Send database insertion query
+                     else {
+                        const verifyID = uuid.v4();
+                        let sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES ('${req.body.username}', '${passHash}', '${keyHash}', '${req.body.email}', '${req.body.teamNumber}', '${verifyID}', 0)`;
+                        db.query(sql, (err) => {
+                           if (err) {
+                              res.status(404).send(err);
+                           }
+
+                           const verifyLink = `https://www.testing.team7558.com?verifyID=${verifyID}`;
+                           const sendOptions = mailOptions;
+                           sendOptions.to = req.body.email;
+                           sendOptions.subject =
+                              "Account Registered at scouting.team7558.com!";
+                           sendOptions.text = `Hello ${req.body.username} from Team ${req.body.teamNumber}!\n
                      Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n
                      Please take note of your account information, as it cannot be changed later:
                      Username: ${req.body.username}
@@ -232,24 +245,27 @@ module.exports = (db) => {
                      Thank you again for registering and we hope you'll be scouting soon!
                      - Alt-F4's Scouting and Strategy Department`;
 
-                     transport.sendMail(sendOptions, (err, info) => {
-                        if (err)
-                           res.status(404).send({
-                              message: "Failed to send email",
-                              err,
-                              info,
+                           transport.sendMail(sendOptions, (err, info) => {
+                              if (err)
+                                 res.status(404).send({
+                                    message: "Failed to send email",
+                                    err,
+                                    info,
+                                 });
+                              else {
+                                 res.status(201).send({
+                                    message:
+                                       "Verification email successfully sent",
+                                 });
+                              }
                            });
-                        else {
-                           res.status(201).send({
-                              message: "Verification email successfully sent",
-                           });
-                        }
-                     });
+                        });
+                     }
                   });
                }
-            });
-         });
-      });
+            );
+         }
+      );
    });
 
    return router;

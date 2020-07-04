@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { useStoreActions, useStore } from "easy-peasy";
 import {
    Card,
    Label,
    CardBody,
-   CardImg,
    Form,
    FormGroup,
    Button,
@@ -14,6 +14,21 @@ import PropTypes from "prop-types";
 
 const Login = ({ location: { search } }) => {
    const query = QueryString.parse(search);
+
+   // Set state variable
+   const [username, setUsername] = useState("");
+   const [password, setPassword] = useState("");
+
+   // Bring in commands
+   const login = useStoreActions((actions) => actions.login);
+
+   // Define methods
+   const onSubmit = async (e) => {
+      e.preventDefault();
+      const auth = await login({ username, password });
+      console.log(auth);
+   };
+
    return (
       <Card className={classes.card} style={styles.card}>
          <Label
@@ -22,16 +37,17 @@ const Login = ({ location: { search } }) => {
             for='formUsername'>
             TEAM 7558 SCOUTING APP
          </Label>
-         <img src='../../assets/photos/infiniterechargelogo.png' />
-         <Form className={classes.form}>
+         <Form className={classes.form} onSubmit={onSubmit}>
             <CardBody className={classes.cardBody} style={styles.cardBody}>
                <FormGroup className={classes.formGroup}>
                   <Input
                      type='text'
                      name='username'
                      id='formUsername'
+                     style={styles.input}
                      className={classes.input}
                      placeholder='Username'
+                     onChange={(e) => setUsername(e.target.value)}
                   />
                </FormGroup>
                <FormGroup className={classes.formGroup}>
@@ -39,8 +55,10 @@ const Login = ({ location: { search } }) => {
                      type='password'
                      name='password'
                      id='formPassword'
+                     style={styles.input}
                      className={classes.input}
                      placeholder='Password'
+                     onChange={(e) => setPassword(e.target.value)}
                   />
                </FormGroup>
                <Button
@@ -49,8 +67,7 @@ const Login = ({ location: { search } }) => {
                   color='login-light'
                   block
                   size='lg'
-                  outline
-                  onClick={() => console.log()}>
+                  outline>
                   Login
                </Button>
             </CardBody>
@@ -60,30 +77,33 @@ const Login = ({ location: { search } }) => {
 };
 
 const classes = {
-   card: "bg-login-form text-center my-4 mx-auto ",
+   card: "bg-login-form text-center my-4 mx-auto shadow",
    labelTitle: "bg-login-form text-login-light",
    cardBody: "bg-login-form p-0",
-   formGroup: "bg-login-form",
+   formGroup: "bg-login-form mb-4",
    input: "text-login-form",
-   label: "mb-0",
 };
 
 const styles = {
    card: {
       borderRadius: "12px",
       padding: "24px",
-      width: "480px",
+      width: "440px",
    },
    cardBody: {
       borderRadius: "12px",
    },
    labelTitle: {
+      fontWeight: "300",
+      fontSize: "30px",
+      marginBottom: "20px",
+   },
+   input: {
       fontWeight: "400",
-      fontSize: "32px",
-      marginBottom: "32px",
    },
    button: {
       marginTop: "32px",
+      fontWeight: "400",
    },
 };
 

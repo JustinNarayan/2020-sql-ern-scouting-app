@@ -1,8 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@200;400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600&display=swap");
 :export {
-  loginBack: #2b2f36;
-  loginForm: #1b1d22;
-  loginLight: #8994a7;
+  loginBack: #24272e;
+  loginForm: #14161a;
+  loginLight: #8895aa;
 }
 
 /*!
@@ -33,9 +33,9 @@
   --danger: #dc3545;
   --light: #f8f9fa;
   --dark: #343a40;
-  --login-back: #2b2f36;
-  --login-form: #1b1d22;
-  --login-light: #8994a7;
+  --login-back: #24272e;
+  --login-form: #14161a;
+  --login-light: #8895aa;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -2114,67 +2114,67 @@ pre code {
 .table-login-back,
 .table-login-back > th,
 .table-login-back > td {
-  background-color: #c4c5c7;
+  background-color: #c2c3c4;
 }
 
 .table-login-back th,
 .table-login-back td,
 .table-login-back thead th,
 .table-login-back tbody + tbody {
-  border-color: #919396;
+  border-color: #8d8f92;
 }
 
 .table-hover .table-login-back:hover {
-  background-color: #b7b8bb;
+  background-color: #b5b6b7;
 }
 
 .table-hover .table-login-back:hover > td,
 .table-hover .table-login-back:hover > th {
-  background-color: #b7b8bb;
+  background-color: #b5b6b7;
 }
 
 .table-login-form,
 .table-login-form > th,
 .table-login-form > td {
-  background-color: #bfc0c1;
+  background-color: #bdbebf;
 }
 
 .table-login-form th,
 .table-login-form td,
 .table-login-form thead th,
 .table-login-form tbody + tbody {
-  border-color: #88898c;
+  border-color: #858688;
 }
 
 .table-hover .table-login-form:hover {
-  background-color: #b2b3b4;
+  background-color: #b0b1b2;
 }
 
 .table-hover .table-login-form:hover > td,
 .table-hover .table-login-form:hover > th {
-  background-color: #b2b3b4;
+  background-color: #b0b1b2;
 }
 
 .table-login-light,
 .table-login-light > th,
 .table-login-light > td {
-  background-color: #dee1e6;
+  background-color: #dee1e7;
 }
 
 .table-login-light th,
 .table-login-light td,
 .table-login-light thead th,
 .table-login-light tbody + tbody {
-  border-color: #c2c7d1;
+  border-color: #c1c8d3;
 }
 
 .table-hover .table-login-light:hover {
-  background-color: #cfd4db;
+  background-color: #cfd4dc;
 }
 
 .table-hover .table-login-light:hover > td,
 .table-hover .table-login-light:hover > th {
-  background-color: #cfd4db;
+  background-color: #cfd4dc;
 }
 
 .table-active,
@@ -3172,119 +3172,119 @@ fieldset:disabled a.btn {
 
 .btn-login-back {
   color: #fff;
-  background-color: #2b2f36;
-  border-color: #2b2f36;
+  background-color: #24272e;
+  border-color: #24272e;
 }
 
 .btn-login-back:hover {
   color: #fff;
-  background-color: #1a1c21;
-  border-color: #14161a;
+  background-color: #131519;
+  border-color: #0e0f11;
 }
 
 .btn-login-back:focus, .btn-login-back.focus {
   color: #fff;
-  background-color: #1a1c21;
-  border-color: #14161a;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(75, 78, 84, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(75, 78, 84, 0.5);
+  background-color: #131519;
+  border-color: #0e0f11;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(69, 71, 77, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(69, 71, 77, 0.5);
 }
 
 .btn-login-back.disabled, .btn-login-back:disabled {
   color: #fff;
-  background-color: #2b2f36;
-  border-color: #2b2f36;
+  background-color: #24272e;
+  border-color: #24272e;
 }
 
 .btn-login-back:not(:disabled):not(.disabled):active, .btn-login-back:not(:disabled):not(.disabled).active,
 .show > .btn-login-back.dropdown-toggle {
   color: #fff;
-  background-color: #14161a;
-  border-color: #0f1013;
+  background-color: #0e0f11;
+  border-color: #08090a;
 }
 
 .btn-login-back:not(:disabled):not(.disabled):active:focus, .btn-login-back:not(:disabled):not(.disabled).active:focus,
 .show > .btn-login-back.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(75, 78, 84, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(75, 78, 84, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(69, 71, 77, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(69, 71, 77, 0.5);
 }
 
 .btn-login-form {
   color: #fff;
-  background-color: #1b1d22;
-  border-color: #1b1d22;
+  background-color: #14161a;
+  border-color: #14161a;
 }
 
 .btn-login-form:hover {
   color: #fff;
-  background-color: #0a0b0d;
-  border-color: #040506;
+  background-color: #030404;
+  border-color: black;
 }
 
 .btn-login-form:focus, .btn-login-form.focus {
   color: #fff;
-  background-color: #0a0b0d;
-  border-color: #040506;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(61, 63, 67, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(61, 63, 67, 0.5);
+  background-color: #030404;
+  border-color: black;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(55, 57, 60, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(55, 57, 60, 0.5);
 }
 
 .btn-login-form.disabled, .btn-login-form:disabled {
   color: #fff;
-  background-color: #1b1d22;
-  border-color: #1b1d22;
+  background-color: #14161a;
+  border-color: #14161a;
 }
 
 .btn-login-form:not(:disabled):not(.disabled):active, .btn-login-form:not(:disabled):not(.disabled).active,
 .show > .btn-login-form.dropdown-toggle {
   color: #fff;
-  background-color: #040506;
+  background-color: black;
   border-color: black;
 }
 
 .btn-login-form:not(:disabled):not(.disabled):active:focus, .btn-login-form:not(:disabled):not(.disabled).active:focus,
 .show > .btn-login-form.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(61, 63, 67, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(61, 63, 67, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(55, 57, 60, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(55, 57, 60, 0.5);
 }
 
 .btn-login-light {
   color: #fff;
-  background-color: #8994a7;
-  border-color: #8994a7;
+  background-color: #8895aa;
+  border-color: #8895aa;
 }
 
 .btn-login-light:hover {
   color: #fff;
-  background-color: #738097;
-  border-color: #6c7a91;
+  background-color: #72819a;
+  border-color: #6a7b95;
 }
 
 .btn-login-light:focus, .btn-login-light.focus {
   color: #fff;
-  background-color: #738097;
-  border-color: #6c7a91;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(155, 164, 180, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(155, 164, 180, 0.5);
+  background-color: #72819a;
+  border-color: #6a7b95;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(154, 165, 183, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(154, 165, 183, 0.5);
 }
 
 .btn-login-light.disabled, .btn-login-light:disabled {
   color: #fff;
-  background-color: #8994a7;
-  border-color: #8994a7;
+  background-color: #8895aa;
+  border-color: #8895aa;
 }
 
 .btn-login-light:not(:disabled):not(.disabled):active, .btn-login-light:not(:disabled):not(.disabled).active,
 .show > .btn-login-light.dropdown-toggle {
   color: #fff;
-  background-color: #6c7a91;
-  border-color: #67738a;
+  background-color: #6a7b95;
+  border-color: #65748d;
 }
 
 .btn-login-light:not(:disabled):not(.disabled):active:focus, .btn-login-light:not(:disabled):not(.disabled).active:focus,
 .show > .btn-login-light.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(155, 164, 180, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(155, 164, 180, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(154, 165, 183, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(154, 165, 183, 0.5);
 }
 
 .btn-outline-primary {
@@ -3560,105 +3560,105 @@ fieldset:disabled a.btn {
 }
 
 .btn-outline-login-back {
-  color: #2b2f36;
-  border-color: #2b2f36;
+  color: #24272e;
+  border-color: #24272e;
 }
 
 .btn-outline-login-back:hover {
   color: #fff;
-  background-color: #2b2f36;
-  border-color: #2b2f36;
+  background-color: #24272e;
+  border-color: #24272e;
 }
 
 .btn-outline-login-back:focus, .btn-outline-login-back.focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 47, 54, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(43, 47, 54, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(36, 39, 46, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(36, 39, 46, 0.5);
 }
 
 .btn-outline-login-back.disabled, .btn-outline-login-back:disabled {
-  color: #2b2f36;
+  color: #24272e;
   background-color: transparent;
 }
 
 .btn-outline-login-back:not(:disabled):not(.disabled):active, .btn-outline-login-back:not(:disabled):not(.disabled).active,
 .show > .btn-outline-login-back.dropdown-toggle {
   color: #fff;
-  background-color: #2b2f36;
-  border-color: #2b2f36;
+  background-color: #24272e;
+  border-color: #24272e;
 }
 
 .btn-outline-login-back:not(:disabled):not(.disabled):active:focus, .btn-outline-login-back:not(:disabled):not(.disabled).active:focus,
 .show > .btn-outline-login-back.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 47, 54, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(43, 47, 54, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(36, 39, 46, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(36, 39, 46, 0.5);
 }
 
 .btn-outline-login-form {
-  color: #1b1d22;
-  border-color: #1b1d22;
+  color: #14161a;
+  border-color: #14161a;
 }
 
 .btn-outline-login-form:hover {
   color: #fff;
-  background-color: #1b1d22;
-  border-color: #1b1d22;
+  background-color: #14161a;
+  border-color: #14161a;
 }
 
 .btn-outline-login-form:focus, .btn-outline-login-form.focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(27, 29, 34, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(27, 29, 34, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(20, 22, 26, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(20, 22, 26, 0.5);
 }
 
 .btn-outline-login-form.disabled, .btn-outline-login-form:disabled {
-  color: #1b1d22;
+  color: #14161a;
   background-color: transparent;
 }
 
 .btn-outline-login-form:not(:disabled):not(.disabled):active, .btn-outline-login-form:not(:disabled):not(.disabled).active,
 .show > .btn-outline-login-form.dropdown-toggle {
   color: #fff;
-  background-color: #1b1d22;
-  border-color: #1b1d22;
+  background-color: #14161a;
+  border-color: #14161a;
 }
 
 .btn-outline-login-form:not(:disabled):not(.disabled):active:focus, .btn-outline-login-form:not(:disabled):not(.disabled).active:focus,
 .show > .btn-outline-login-form.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(27, 29, 34, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(27, 29, 34, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(20, 22, 26, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(20, 22, 26, 0.5);
 }
 
 .btn-outline-login-light {
-  color: #8994a7;
-  border-color: #8994a7;
+  color: #8895aa;
+  border-color: #8895aa;
 }
 
 .btn-outline-login-light:hover {
   color: #fff;
-  background-color: #8994a7;
-  border-color: #8994a7;
+  background-color: #8895aa;
+  border-color: #8895aa;
 }
 
 .btn-outline-login-light:focus, .btn-outline-login-light.focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(137, 148, 167, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(137, 148, 167, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(136, 149, 170, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(136, 149, 170, 0.5);
 }
 
 .btn-outline-login-light.disabled, .btn-outline-login-light:disabled {
-  color: #8994a7;
+  color: #8895aa;
   background-color: transparent;
 }
 
 .btn-outline-login-light:not(:disabled):not(.disabled):active, .btn-outline-login-light:not(:disabled):not(.disabled).active,
 .show > .btn-outline-login-light.dropdown-toggle {
   color: #fff;
-  background-color: #8994a7;
-  border-color: #8994a7;
+  background-color: #8895aa;
+  border-color: #8895aa;
 }
 
 .btn-outline-login-light:not(:disabled):not(.disabled):active:focus, .btn-outline-login-light:not(:disabled):not(.disabled).active:focus,
 .show > .btn-outline-login-light.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(137, 148, 167, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(137, 148, 167, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(136, 149, 170, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(136, 149, 170, 0.5);
 }
 
 .btn-link {
@@ -5914,50 +5914,50 @@ a.badge-dark:focus, a.badge-dark.focus {
 
 .badge-login-back {
   color: #fff;
-  background-color: #2b2f36;
+  background-color: #24272e;
 }
 
 a.badge-login-back:hover, a.badge-login-back:focus {
   color: #fff;
-  background-color: #14161a;
+  background-color: #0e0f11;
 }
 
 a.badge-login-back:focus, a.badge-login-back.focus {
   outline: 0;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(43, 47, 54, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(43, 47, 54, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(36, 39, 46, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(36, 39, 46, 0.5);
 }
 
 .badge-login-form {
   color: #fff;
-  background-color: #1b1d22;
+  background-color: #14161a;
 }
 
 a.badge-login-form:hover, a.badge-login-form:focus {
   color: #fff;
-  background-color: #040506;
+  background-color: black;
 }
 
 a.badge-login-form:focus, a.badge-login-form.focus {
   outline: 0;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(27, 29, 34, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(27, 29, 34, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(20, 22, 26, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(20, 22, 26, 0.5);
 }
 
 .badge-login-light {
   color: #fff;
-  background-color: #8994a7;
+  background-color: #8895aa;
 }
 
 a.badge-login-light:hover, a.badge-login-light:focus {
   color: #fff;
-  background-color: #6c7a91;
+  background-color: #6a7b95;
 }
 
 a.badge-login-light:focus, a.badge-login-light.focus {
   outline: 0;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(137, 148, 167, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(137, 148, 167, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(136, 149, 170, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(136, 149, 170, 0.5);
 }
 
 .jumbotron {
@@ -6120,13 +6120,13 @@ a.badge-login-light:focus, a.badge-login-light.focus {
 }
 
 .alert-login-back {
-  color: #16181c;
-  background-color: #d5d5d7;
-  border-color: #c4c5c7;
+  color: #131418;
+  background-color: #d3d4d5;
+  border-color: #c2c3c4;
 }
 
 .alert-login-back hr {
-  border-top-color: #b7b8bb;
+  border-top-color: #b5b6b7;
 }
 
 .alert-login-back .alert-link {
@@ -6134,13 +6134,13 @@ a.badge-login-light:focus, a.badge-login-light.focus {
 }
 
 .alert-login-form {
-  color: #0e0f12;
-  background-color: #d1d2d3;
-  border-color: #bfc0c1;
+  color: #0a0b0e;
+  background-color: #d0d0d1;
+  border-color: #bdbebf;
 }
 
 .alert-login-form hr {
-  border-top-color: #b2b3b4;
+  border-top-color: #b0b1b2;
 }
 
 .alert-login-form .alert-link {
@@ -6148,17 +6148,17 @@ a.badge-login-light:focus, a.badge-login-light.focus {
 }
 
 .alert-login-light {
-  color: #474d57;
-  background-color: #e7eaed;
-  border-color: #dee1e6;
+  color: #474d58;
+  background-color: #e7eaee;
+  border-color: #dee1e7;
 }
 
 .alert-login-light hr {
-  border-top-color: #cfd4db;
+  border-top-color: #cfd4dc;
 }
 
 .alert-login-light .alert-link {
-  color: #30343b;
+  color: #30343c;
 }
 
 @-webkit-keyframes progress-bar-stripes {
@@ -6605,51 +6605,51 @@ a.badge-login-light:focus, a.badge-login-light.focus {
 }
 
 .list-group-item-login-back {
-  color: #16181c;
-  background-color: #c4c5c7;
+  color: #131418;
+  background-color: #c2c3c4;
 }
 
 .list-group-item-login-back.list-group-item-action:hover, .list-group-item-login-back.list-group-item-action:focus {
-  color: #16181c;
-  background-color: #b7b8bb;
+  color: #131418;
+  background-color: #b5b6b7;
 }
 
 .list-group-item-login-back.list-group-item-action.active {
   color: #fff;
-  background-color: #16181c;
-  border-color: #16181c;
+  background-color: #131418;
+  border-color: #131418;
 }
 
 .list-group-item-login-form {
-  color: #0e0f12;
-  background-color: #bfc0c1;
+  color: #0a0b0e;
+  background-color: #bdbebf;
 }
 
 .list-group-item-login-form.list-group-item-action:hover, .list-group-item-login-form.list-group-item-action:focus {
-  color: #0e0f12;
-  background-color: #b2b3b4;
+  color: #0a0b0e;
+  background-color: #b0b1b2;
 }
 
 .list-group-item-login-form.list-group-item-action.active {
   color: #fff;
-  background-color: #0e0f12;
-  border-color: #0e0f12;
+  background-color: #0a0b0e;
+  border-color: #0a0b0e;
 }
 
 .list-group-item-login-light {
-  color: #474d57;
-  background-color: #dee1e6;
+  color: #474d58;
+  background-color: #dee1e7;
 }
 
 .list-group-item-login-light.list-group-item-action:hover, .list-group-item-login-light.list-group-item-action:focus {
-  color: #474d57;
-  background-color: #cfd4db;
+  color: #474d58;
+  background-color: #cfd4dc;
 }
 
 .list-group-item-login-light.list-group-item-action.active {
   color: #fff;
-  background-color: #474d57;
-  border-color: #474d57;
+  background-color: #474d58;
+  border-color: #474d58;
 }
 
 .close {
@@ -7650,33 +7650,33 @@ button.bg-dark:focus {
 }
 
 .bg-login-back {
-  background-color: #2b2f36 !important;
+  background-color: #24272e !important;
 }
 
 a.bg-login-back:hover, a.bg-login-back:focus,
 button.bg-login-back:hover,
 button.bg-login-back:focus {
-  background-color: #14161a !important;
+  background-color: #0e0f11 !important;
 }
 
 .bg-login-form {
-  background-color: #1b1d22 !important;
+  background-color: #14161a !important;
 }
 
 a.bg-login-form:hover, a.bg-login-form:focus,
 button.bg-login-form:hover,
 button.bg-login-form:focus {
-  background-color: #040506 !important;
+  background-color: black !important;
 }
 
 .bg-login-light {
-  background-color: #8994a7 !important;
+  background-color: #8895aa !important;
 }
 
 a.bg-login-light:hover, a.bg-login-light:focus,
 button.bg-login-light:hover,
 button.bg-login-light:focus {
-  background-color: #6c7a91 !important;
+  background-color: #6a7b95 !important;
 }
 
 .bg-white {
@@ -7760,15 +7760,15 @@ button.bg-login-light:focus {
 }
 
 .border-login-back {
-  border-color: #2b2f36 !important;
+  border-color: #24272e !important;
 }
 
 .border-login-form {
-  border-color: #1b1d22 !important;
+  border-color: #14161a !important;
 }
 
 .border-login-light {
-  border-color: #8994a7 !important;
+  border-color: #8895aa !important;
 }
 
 .border-white {
@@ -11170,15 +11170,15 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-login-back {
-  color: #2b2f36 !important;
+  color: #24272e !important;
 }
 
 a.text-login-back:hover, a.text-login-back:focus {
-  color: #090a0b !important;
+  color: #020303 !important;
 }
 
 .text-login-form {
-  color: #1b1d22 !important;
+  color: #14161a !important;
 }
 
 a.text-login-form:hover, a.text-login-form:focus {
@@ -11186,11 +11186,11 @@ a.text-login-form:hover, a.text-login-form:focus {
 }
 
 .text-login-light {
-  color: #8994a7 !important;
+  color: #8895aa !important;
 }
 
 a.text-login-light:hover, a.text-login-light:focus {
-  color: #616d82 !important;
+  color: #606e86 !important;
 }
 
 .text-body {
@@ -11326,5 +11326,5 @@ a.text-login-light:hover, a.text-login-light:focus {
 }
 
 * {
-  background-color: #2b2f36;
+  background-color: #24272e;
 }

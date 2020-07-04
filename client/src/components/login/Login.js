@@ -23,7 +23,15 @@ const Login = () => {
    const onSubmit = async (e) => {
       e.preventDefault();
       const auth = await login({ username, password });
-      console.log(auth);
+
+      // Check for token
+      if (auth.token) {
+         /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
+         sessionStorage.setItem("token", auth.token);
+      } else {
+         // Handle failed token
+         console.log("Failed to get token in component");
+      }
    };
 
    return (

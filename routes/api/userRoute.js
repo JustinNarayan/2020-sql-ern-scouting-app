@@ -50,7 +50,7 @@ module.exports = (db) => {
 
          // Check if username exists
          if (!result.length) {
-            res.status(404).send({
+            res.send({
                message: "That username is not registered",
             });
          } else {
@@ -70,13 +70,13 @@ module.exports = (db) => {
 
                   // Check if password authenticated
                   if (!result) {
-                     res.status(404).send({
+                     res.send({
                         message: "Incorrect password",
                      });
                   } else {
                      // Check if verified
                      if (!sqlUser.Verified) {
-                        res.status(403).send({
+                        res.send({
                            message:
                               "User not verified, please see email in associated inbox to verify account",
                         });
@@ -101,7 +101,7 @@ module.exports = (db) => {
                                        "Failed to generate authentication token",
                                     err,
                                  });
-                              res.status(200).send({
+                              res.send({
                                  message: "Token successfully generated",
                                  token,
                               });
@@ -126,7 +126,7 @@ module.exports = (db) => {
 
          // Check if username exists
          if (!result.length) {
-            res.status(404).send({
+            res.send({
                message: "Invalid username and/or verification ID",
             });
          } else {
@@ -146,7 +146,7 @@ module.exports = (db) => {
 
                   // Check if password authenticated
                   if (!result) {
-                     res.status(404).send({
+                     res.send({
                         message: "Incorrect password",
                      });
                   } else {
@@ -161,12 +161,12 @@ module.exports = (db) => {
                                  err,
                               });
                            }
-                           res.status(200).send({
+                           res.send({
                               message: "Successfully verified account",
                            });
                         });
                      } else {
-                        res.status(200).send({
+                        res.send({
                            message: "Account already verified",
                         });
                      }

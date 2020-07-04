@@ -12,7 +12,7 @@ module.exports = (db) => {
          if (err) {
             res.status(404).send(err);
          }
-         res.status(200).send(rows);
+         res.send(rows);
       });
    });
 
@@ -34,7 +34,7 @@ module.exports = (db) => {
          if (err) {
             res.status(404).send(err);
          }
-         res.status(200).send();
+         res.send();
       });
    });
 
@@ -45,7 +45,7 @@ module.exports = (db) => {
          if (err) {
             res.status(404).send(err);
          }
-         if (result.affectedRows) res.status(200).send();
+         if (result.affectedRows) res.send();
          else res.status(204).send();
       });
    });

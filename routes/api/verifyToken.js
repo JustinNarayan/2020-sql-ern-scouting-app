@@ -11,10 +11,8 @@ const jsonKey = process.env.JSONKEY || keys.jsonKey;
 module.exports = (req, res, next) => {
    // Get token from bearer header
    const bearerHeader = req.headers["authorization"];
-
    if (typeof bearerHeader !== "undefined") {
       const token = bearerHeader.split(" ")[1];
-
       jwt.verify(token, jsonKey, (err, auth) => {
          if (err)
             res.status(403).send({

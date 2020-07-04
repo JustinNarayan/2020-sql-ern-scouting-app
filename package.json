@@ -1,7 +1,7 @@
 {
    "name": "2020-mern-scouting-app",
    "version": "1.0.0",
-   "description": "Refactored 2020 Alt-F4 Scouting App using the MERN Stack",
+   "description": "Refactored 2020 Alt-F4 Scouting App using MySQL, Express, React, and Node.js",
    "main": "server.js",
    "scripts": {
       "client-install": "npm install --prefix client",

@@ -10,7 +10,7 @@ export default {
    // Thunks
    login: thunk(async (actions, user) => {
       // Handle WS Call
-      const res = await axios.post(`${url}/login`, user);
+      const res = await axios.post(url, user);
 
       return res;
    }),

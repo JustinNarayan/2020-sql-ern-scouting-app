@@ -1,5 +1,6 @@
 /// Enable the server
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 
@@ -26,6 +27,7 @@ db.connect((err) => {
 const app = express();
 
 // Use middleware
+app.use(cors());
 app.use(bodyParser.json());
 
 // Define and use routes

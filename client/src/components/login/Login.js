@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useStoreActions, useStore } from "easy-peasy";
+import { useStoreActions } from "easy-peasy";
 import {
    Card,
    Label,
@@ -9,12 +9,9 @@ import {
    Button,
    Input,
 } from "reactstrap";
-import QueryString from "query-string";
 import PropTypes from "prop-types";
 
-const Login = ({ location: { search } }) => {
-   const query = QueryString.parse(search);
-
+const Login = () => {
    // Set state variable
    const [username, setUsername] = useState("");
    const [password, setPassword] = useState("");

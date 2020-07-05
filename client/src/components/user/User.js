@@ -343,8 +343,8 @@ const styles = {
 };
 
 User.propTypes = {
-   location: PropTypes.object, // URL details
    mode: PropTypes.string, //Type of user page
+   query: PropTypes.object, // URL search details
 };
 
 export default User;

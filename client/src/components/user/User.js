@@ -123,7 +123,7 @@ const User = ({ mode, query }) => {
             email,
             teamNumber,
          });
-         if (res.err) console.log(res.err);
+         if (res.err) console.log(res.err.response);
          setMessages([{ text: res.message, type: res.type }]);
       }
    };

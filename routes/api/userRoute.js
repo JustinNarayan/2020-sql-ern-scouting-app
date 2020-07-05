@@ -19,13 +19,13 @@ const transport = nodemailer.createTransport(
    smtpTransport({
       name: "hostgator",
       host: process.env.EMAIL_HOST || keys.email.host,
-      port: process.env.EMAIL_HOST || keys.email.port,
+      port: parseInt(process.env.EMAIL_PORT, 10) || keys.email.port,
       ignoreTLS: true,
       tls: { rejectUnauthorized: false },
       secure: true,
       auth: {
-         user: process.env.EMAIL_HOST || keys.email.user,
-         pass: process.env.EMAIL_HOST || keys.email.pass,
+         user: process.env.EMAIL_USER || keys.email.user,
+         pass: process.env.EMAIL_PASS || keys.email.pass,
       },
    })
 );

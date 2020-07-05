@@ -70,17 +70,7 @@ const User = ({ mode, query }) => {
       if (!username || !password) {
          setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else {
-         const auth = await login({ username, password });
-
-         // Check for token
-         if (auth.token) {
-            /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
-            localStorage.setItem("token", auth.token);
-            setMessages([{ text: auth.message, type: auth.type }]);
-         } else {
-            // Send error message
-            setMessages([{ text: auth.message, type: auth.type }]);
-         }
+         setMessages([await authenticate({ username, password })]);
       }
    };
 
@@ -128,29 +118,29 @@ const User = ({ mode, query }) => {
    };
 
    const onVerify = async (e) => {
-      const alerts = [];
       if (!username || !password) {
-         alerts.push({ text: "Please fill out all fields", type: "bad" });
+         setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else {
+         const alerts = [];
          const res = await verify({ username, password, verifyID });
          alerts.push({ text: res.message, type: res.type });
 
          // Login
          if (res.type === "good") {
-            const auth = await login({ username, password });
-
-            // Check for token
-            if (auth.token) {
-               /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
-               localStorage.setItem("token", auth.token);
-               alerts.push({ text: auth.message, type: auth.type });
-            } else {
-               // Send error message
-               alerts.push({ text: auth.message, type: auth.type });
-            }
+            alerts.push(await authenticate({ username, password }));
          }
+         setMessages(alerts);
       }
-      setMessages(alerts);
+   };
+
+   /// Handle authentication
+   const authenticate = async (user) => {
+      const auth = await login(user);
+      /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
+      if (auth.token) {
+         localStorage.setItem("token", auth.token);
+      }
+      return { text: auth.message, type: auth.type };
    };
 
    return (
@@ -354,7 +344,7 @@ const styles = {
 
 User.propTypes = {
    mode: PropTypes.string, //Type of user page
-   query: PropTypes.object, // URL search details
+   query: PropTypes.string, // URL search details
 };
 
 export default User;

@@ -9,8 +9,9 @@ import {
    Form,
    FormGroup,
    FormText,
-   Button,
    Input,
+   Button,
+   Spinner,
 } from "reactstrap";
 import QueryString from "query-string";
 import PropTypes from "prop-types";
@@ -29,6 +30,7 @@ const User = ({ mode, query }) => {
    const [adminKeyConfirm, setAdminKeyConfirm] = useState("");
    const [email, setEmail] = useState("");
    const [verifyID] = useState(QueryString.parse(query).verifyID);
+   const [loading, setLoading] = useState(false);
 
    // Bring in commands
    const login = useStoreActions((actions) => actions.login);
@@ -53,6 +55,7 @@ const User = ({ mode, query }) => {
 
    const onSubmit = (e) => {
       e.preventDefault();
+      if (loading) return;
       switch (mode) {
          case "Register":
             onRegister();
@@ -70,7 +73,9 @@ const User = ({ mode, query }) => {
       if (!username || !password) {
          setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else {
+         setLoading(true);
          setMessages([await authenticate({ username, password })]);
+         setLoading(false);
       }
    };
 
@@ -106,6 +111,7 @@ const User = ({ mode, query }) => {
          setMessages(errors);
          return;
       } else {
+         setLoading(true);
          const res = await register({
             username,
             password,
@@ -113,6 +119,7 @@ const User = ({ mode, query }) => {
             email,
             teamNumber,
          });
+         setLoading(false);
          setMessages([{ text: res.message, type: res.type }]);
       }
    };
@@ -122,6 +129,7 @@ const User = ({ mode, query }) => {
          setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else {
          const alerts = [];
+         setLoading(true);
          const res = await verify({ username, password, verifyID });
          alerts.push({ text: res.message, type: res.type });
 
@@ -129,6 +137,7 @@ const User = ({ mode, query }) => {
          if (res.type === "good") {
             alerts.push(await authenticate({ username, password }));
          }
+         setLoading(false);
          setMessages(alerts);
       }
    };
@@ -248,13 +257,16 @@ const User = ({ mode, query }) => {
                   </Fragment>
                ) : null}
                <Button
-                  className={classes.button}
                   style={styles.button}
                   color='login-light'
                   block
                   size='lg'
                   outline>
-                  {mode}
+                  {loading ? (
+                     <Spinner className={classes.spinner} color='login-form' />
+                  ) : (
+                     mode
+                  )}
                </Button>
                <FormText className={classes.formText} style={styles.formText}>
                   {mode === "Register" ? (
@@ -287,6 +299,7 @@ const classes = {
    formGroup: "bg-login-form mb-4",
    formText: "bg-login-form text-login-light",
    input: "text-login-form",
+   spinner: "bg-login-light",
 };
 
 const styles = {

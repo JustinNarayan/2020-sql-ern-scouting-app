@@ -11,7 +11,6 @@ try {
    // Module does not exist
 }
 const uuid = require("uuid");
-const validator = require("email-validator");
 
 // Set up mail client
 const nodemailer = require("nodemailer");
@@ -41,6 +40,11 @@ const mailOptions = {
 module.exports = (db) => {
    // Attempt Login
    router.post("/login", (req, res) => {
+      if (!req.body.username || !req.body.password) {
+         res.send({ message: "Please fill out all fields", type: "bad" });
+         return;
+      }
+
       let sql = `SELECT Username, Password, TeamNumber, Verified FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
 
       db.query(sql, (err, result) => {
@@ -52,6 +56,7 @@ module.exports = (db) => {
          if (!result.length) {
             res.send({
                message: "That username is not registered",
+               type: "bad",
             });
          } else {
             // Get user object
@@ -65,6 +70,7 @@ module.exports = (db) => {
                   if (err)
                      res.status(404).send({
                         message: "Failed to check against password",
+                        type: "bad",
                         err,
                      });
 
@@ -72,6 +78,7 @@ module.exports = (db) => {
                   if (!result) {
                      res.send({
                         message: "Incorrect password",
+                        type: "bad",
                      });
                   } else {
                      // Check if verified
@@ -79,6 +86,7 @@ module.exports = (db) => {
                         res.send({
                            message:
                               "User not verified, please see email in associated inbox to verify account",
+                           type: "bad",
                         });
                      } else {
                         /* Handle Token Authentication */
@@ -99,10 +107,12 @@ module.exports = (db) => {
                                  res.status(404).send({
                                     message:
                                        "Failed to generate authentication token",
+                                    type: "bad",
                                     err,
                                  });
                               res.send({
                                  message: "Token successfully generated",
+                                 type: "good",
                                  token,
                               });
                            }
@@ -128,6 +138,7 @@ module.exports = (db) => {
          if (!result.length) {
             res.send({
                message: "Invalid username and/or verification ID",
+               type: "bad",
             });
          } else {
             // Get user object
@@ -141,6 +152,7 @@ module.exports = (db) => {
                   if (err)
                      res.status(404).send({
                         message: "Failed to check against password",
+                        type: "bad",
                         err,
                      });
 
@@ -148,6 +160,7 @@ module.exports = (db) => {
                   if (!result) {
                      res.send({
                         message: "Incorrect password",
+                        type: "bad",
                      });
                   } else {
                      // Check if verified
@@ -158,16 +171,19 @@ module.exports = (db) => {
                               res.status(400).send({
                                  message:
                                     "Failed to update verification status",
+                                 type: "bad",
                                  err,
                               });
                            }
                            res.send({
                               message: "Successfully verified account",
+                              type: "good",
                            });
                         });
                      } else {
                         res.send({
                            message: "Account already verified",
+                           type: "good",
                         });
                      }
                   }
@@ -190,6 +206,7 @@ module.exports = (db) => {
             if (passErr)
                res.status(404).send({
                   message: "Failed to hash password",
+                  type: "bad",
                   err: passErr,
                });
 
@@ -200,6 +217,7 @@ module.exports = (db) => {
                   if (keyErr)
                      res.status(404).send({
                         message: "Failed to hash admin key",
+                        type: "bad",
                         err: keyErr,
                      });
 
@@ -209,15 +227,11 @@ module.exports = (db) => {
                      if (err) {
                         res.status(404).send(err);
                      }
-
-                     // Check for valid email
-                     if (!validator.validate(req.body.email)) {
-                        res.status(400).send({ message: "Invalid email" });
-                     }
                      // Check for duplicate username
                      else if (result.length) {
-                        res.status(409).send({
+                        res.send({
                            message: "A user with that username already exists",
+                           type: "bad",
                         });
                      }
                      // Send database insertion query
@@ -235,20 +249,21 @@ module.exports = (db) => {
                            sendOptions.subject =
                               "Account Registered at scouting.team7558.com!";
                            sendOptions.text = `Hello ${req.body.username} from Team ${req.body.teamNumber}!\n
-                     Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n
-                     Please take note of your account information, as it cannot be changed later:
-                     Username: ${req.body.username}
-                     Password: ${req.body.password}
-                     Admin Key: ${req.body.adminKey}
-                     Email: ${req.body.email}
-                     Team Number: ${req.body.teamNumber}\n
-                     Thank you again for registering and we hope you'll be scouting soon!
-                     - Alt-F4's Scouting and Strategy Department`;
+                              Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n
+                              Please take note of your account information, as it cannot be changed later:
+                              Username: ${req.body.username}
+                              Password: ${req.body.password}
+                              Admin Key: ${req.body.adminKey}
+                              Email: ${req.body.email}
+                              Team Number: ${req.body.teamNumber}\n
+                              Thank you again for registering and we hope you'll be scouting soon!
+                              - Alt-F4's Scouting and Strategy Department`;
 
                            transport.sendMail(sendOptions, (err, info) => {
                               if (err)
-                                 res.status(404).send({
+                                 res.send({
                                     message: "Failed to send email",
+                                    type: "bad",
                                     err,
                                     info,
                                  });
@@ -256,6 +271,7 @@ module.exports = (db) => {
                                  res.status(201).send({
                                     message:
                                        "Verification email successfully sent",
+                                    type: "good",
                                  });
                               }
                            });

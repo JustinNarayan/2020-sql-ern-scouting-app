@@ -1,11 +1,17 @@
 /// Model for all state actions
 import userModel from "./userModel";
-const { auth, login } = userModel;
+import compModel from "./compModel";
+const { login } = userModel;
+const { comps, getComps, setComps } = compModel;
 
 export default {
    // State
-   auth,
+   comps,
 
    // Thunks
    login,
+   getComps,
+
+   // Actions
+   setComps,
 };

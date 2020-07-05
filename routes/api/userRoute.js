@@ -139,7 +139,7 @@ module.exports = (db) => {
                res.status(404).send({
                   message: "Failed to hash password",
                   type: "bad",
-                  err: passErr,
+                  err: passErr.response,
                });
                return;
             }

@@ -47,6 +47,10 @@ const User = ({ mode, query }) => {
       //eslint-disable-next-line
    }, []);
 
+   const handleRedirect = () => {
+      setMessages([]);
+   };
+
    const onSubmit = (e) => {
       e.preventDefault();
       switch (mode) {
@@ -265,11 +269,17 @@ const User = ({ mode, query }) => {
                <FormText className={classes.formText} style={styles.formText}>
                   {mode === "Register" ? (
                      <Fragment>
-                        Have an account? <Link to='/'>Login</Link>
+                        Have an account?{" "}
+                        <Link to='/' onClick={handleRedirect}>
+                           Login
+                        </Link>
                      </Fragment>
                   ) : (
                      <Fragment>
-                        No account? <Link to='/register'>Register</Link>
+                        No account?{" "}
+                        <Link to='/register' onClick={handleRedirect}>
+                           Register
+                        </Link>
                      </Fragment>
                   )}
                </FormText>

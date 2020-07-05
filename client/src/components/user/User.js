@@ -92,9 +92,14 @@ const User = ({ mode, query }) => {
          setMessages(errors);
          return;
       } else {
-         const newUser = { username, password, adminKey, email, teamNumber };
-         console.log(newUser);
-         // Still may be more errors with database, like a repeated username
+         const res = await register({
+            username,
+            password,
+            adminKey,
+            email,
+            teamNumber,
+         });
+         setMessages([{ text: res.message, type: res.type }]);
       }
    };
 

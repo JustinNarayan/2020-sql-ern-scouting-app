@@ -50,6 +50,7 @@ module.exports = (db) => {
       db.query(sql, (err, result) => {
          if (err) {
             res.status(404).send(err);
+            return;
          }
 
          // Check if username exists
@@ -67,12 +68,14 @@ module.exports = (db) => {
                req.body.password,
                sqlUser.Password,
                (err, result) => {
-                  if (err)
+                  if (err) {
                      res.status(404).send({
                         message: "Failed to check against password",
                         type: "bad",
                         err,
                      });
+                     return;
+                  }
 
                   // Check if password authenticated
                   if (!result) {
@@ -103,13 +106,15 @@ module.exports = (db) => {
                                  process.env.AUTHEXPIRY || keys.authExpiry,
                            },
                            (err, token) => {
-                              if (err)
+                              if (err) {
                                  res.status(404).send({
                                     message:
                                        "Failed to generate authentication token",
                                     type: "bad",
                                     err,
                                  });
+                                 return;
+                              }
                               res.send({
                                  message: "Token successfully generated",
                                  type: "good",
@@ -132,6 +137,7 @@ module.exports = (db) => {
       db.query(sql, (err, result) => {
          if (err) {
             res.status(404).send(err);
+            return;
          }
 
          // Check if username exists
@@ -149,12 +155,14 @@ module.exports = (db) => {
                req.body.password,
                sqlUser.Password,
                (err, result) => {
-                  if (err)
+                  if (err) {
                      res.status(404).send({
                         message: "Failed to check against password",
                         type: "bad",
                         err,
                      });
+                     return;
+                  }
 
                   // Check if password authenticated
                   if (!result) {
@@ -174,6 +182,7 @@ module.exports = (db) => {
                                  type: "bad",
                                  err,
                               });
+                              return;
                            }
                            res.send({
                               message: "Successfully verified account",
@@ -203,29 +212,34 @@ module.exports = (db) => {
          plainPass,
          process.env.SALT || keys.salt,
          (passErr, passHash) => {
-            if (passErr)
+            if (passErr) {
                res.status(404).send({
                   message: "Failed to hash password",
                   type: "bad",
                   err: passErr,
                });
+               return;
+            }
 
             bcrypt.hash(
                plainKey,
                process.env.SALT || keys.salt,
                (keyErr, keyHash) => {
-                  if (keyErr)
+                  if (keyErr) {
                      res.status(404).send({
                         message: "Failed to hash admin key",
                         type: "bad",
                         err: keyErr,
                      });
+                     return;
+                  }
 
                   // Check if username exists
                   let sql = `SELECT Username FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
                   db.query(sql, (err, result) => {
                      if (err) {
                         res.status(404).send(err);
+                        return;
                      }
                      // Check for duplicate username
                      else if (result.length) {
@@ -241,6 +255,7 @@ module.exports = (db) => {
                         db.query(sql, (err) => {
                            if (err) {
                               res.status(404).send(err);
+                              return;
                            }
 
                            const verifyLink = `https://www.testing.team7558.com?verifyID=${verifyID}`;
@@ -248,16 +263,17 @@ module.exports = (db) => {
                            sendOptions.to = req.body.email;
                            sendOptions.subject =
                               "Account Registered at scouting.team7558.com!";
-                           sendOptions.text = `Hello ${req.body.username} from Team ${req.body.teamNumber}!\n
-                              Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n
-                              Please take note of your account information, as it cannot be changed later:
-                              Username: ${req.body.username}
-                              Password: ${req.body.password}
-                              Admin Key: ${req.body.adminKey}
-                              Email: ${req.body.email}
-                              Team Number: ${req.body.teamNumber}\n
-                              Thank you again for registering and we hope you'll be scouting soon!
-                              - Alt-F4's Scouting and Strategy Department`;
+                           sendOptions.text =
+                              `Hello ${req.body.username} from Team ${req.body.teamNumber}!\n\n` +
+                              `Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n\n` +
+                              `Please take note of your account information, as it cannot be changed later:\n\n` +
+                              `Username: ${req.body.username}\n` +
+                              `Password: ${req.body.password}\n` +
+                              `Admin Key: ${req.body.adminKey}\n` +
+                              `Email: ${req.body.email}\n` +
+                              `Team Number: ${req.body.teamNumber}\n\n` +
+                              `Thank you again for registering and we hope you'll be scouting soon!\n\n` +
+                              `- Alt-F4's Scouting and Strategy Department`;
 
                            transport.sendMail(sendOptions, (err, info) => {
                               if (err)

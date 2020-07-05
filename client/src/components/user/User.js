@@ -1,4 +1,5 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
+import { useHistory, Link } from "react-router-dom";
 import { useStoreActions } from "easy-peasy";
 import {
    Card,
@@ -7,14 +8,17 @@ import {
    CardBody,
    Form,
    FormGroup,
+   FormText,
    Button,
    Input,
 } from "reactstrap";
+import QueryString from "query-string";
 import PropTypes from "prop-types";
 import validator from "email-validator";
 
 const User = ({ mode, query }) => {
    // Set state variable
+   const history = useHistory();
    const [messages, setMessages] = useState([]);
    const [username, setUsername] = useState("");
    const [teamNumber, setTeamNumber] = useState();
@@ -24,6 +28,7 @@ const User = ({ mode, query }) => {
    const [adminKey, setAdminKey] = useState("");
    const [adminKeyConfirm, setAdminKeyConfirm] = useState("");
    const [email, setEmail] = useState("");
+   const [verifyID] = useState(QueryString.parse(query).verifyID);
 
    // Bring in commands
    const login = useStoreActions((actions) => actions.login);
@@ -31,6 +36,17 @@ const User = ({ mode, query }) => {
    const verify = useStoreActions((actions) => actions.verify);
 
    // Define methods
+   useEffect(() => {
+      // Check if verify
+      if (mode === "Verify") {
+         if (!verifyID) {
+            history.push("/");
+            setMessages([{ text: "Invalid verification link", type: "bad" }]);
+         }
+      }
+      //eslint-disable-next-line
+   }, []);
+
    const onSubmit = (e) => {
       e.preventDefault();
       switch (mode) {
@@ -47,16 +63,20 @@ const User = ({ mode, query }) => {
    };
 
    const onLogin = async (e) => {
-      const auth = await login({ username, password });
-
-      // Check for token
-      if (auth.token) {
-         /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
-         localStorage.setItem("token", auth.token);
-         console.log(localStorage.getItem("token"));
+      if (!username || !password) {
+         setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else {
-         // Send error message
-         setMessages([{ text: auth.message, type: auth.type }]);
+         const auth = await login({ username, password });
+
+         // Check for token
+         if (auth.token) {
+            /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
+            localStorage.setItem("token", auth.token);
+            setMessages([{ text: auth.message, type: auth.type }]);
+         } else {
+            // Send error message
+            setMessages([{ text: auth.message, type: auth.type }]);
+         }
       }
    };
 
@@ -104,7 +124,29 @@ const User = ({ mode, query }) => {
    };
 
    const onVerify = async (e) => {
-      console.log("Verify");
+      const alerts = [];
+      if (!username || !password) {
+         alerts.push({ text: "Please fill out all fields", type: "bad" });
+      } else {
+         const res = await verify({ username, password, verifyID });
+         alerts.push({ text: res.message, type: res.type });
+
+         // Login
+         if (res.type === "good") {
+            const auth = await login({ username, password });
+
+            // Check for token
+            if (auth.token) {
+               /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
+               localStorage.setItem("token", auth.token);
+               alerts.push({ text: auth.message, type: auth.type });
+            } else {
+               // Send error message
+               alerts.push({ text: auth.message, type: auth.type });
+            }
+         }
+      }
+      setMessages(alerts);
    };
 
    return (
@@ -220,6 +262,17 @@ const User = ({ mode, query }) => {
                   outline>
                   {mode}
                </Button>
+               <FormText className={classes.formText} style={styles.formText}>
+                  {mode === "Register" ? (
+                     <Fragment>
+                        Have an account? <Link to='/'>Login</Link>
+                     </Fragment>
+                  ) : (
+                     <Fragment>
+                        No account? <Link to='/register'>Register</Link>
+                     </Fragment>
+                  )}
+               </FormText>
             </CardBody>
          </Form>
       </Card>
@@ -232,6 +285,7 @@ const classes = {
    alert: "mb-4",
    cardBody: "bg-login-form p-0",
    formGroup: "bg-login-form mb-4",
+   formText: "bg-login-form text-login-light",
    input: "text-login-form",
 };
 
@@ -248,6 +302,10 @@ const styles = {
       fontWeight: "300",
       fontSize: "30px",
       marginBottom: "20px",
+   },
+   formText: {
+      marginTop: "16px",
+      fontSize: "14px",
    },
    input: {
       left: {

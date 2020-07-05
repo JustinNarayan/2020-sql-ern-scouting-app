@@ -133,20 +133,20 @@ module.exports = (db) => {
       // Generate hashed passwords
       bcrypt.hash(
          plainPass,
-         process.env.SALT || keys.salt,
+         parseInt(process.env.SALT, 10) || keys.salt,
          (passErr, passHash) => {
             if (passErr) {
                res.status(404).send({
                   message: "Failed to hash password",
                   type: "bad",
-                  err: passErr.response,
+                  err: passErr,
                });
                return;
             }
 
             bcrypt.hash(
                plainKey,
-               process.env.SALT || keys.salt,
+               parseInt(process.env.SALT, 10) || keys.salt,
                (keyErr, keyHash) => {
                   if (keyErr) {
                      res.status(404).send({

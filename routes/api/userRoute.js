@@ -30,7 +30,10 @@ const transport = nodemailer.createTransport(
    })
 );
 const mailOptions = {
-   from: process.env.EMAIL_HOST || keys.email.user,
+   from: {
+      name: "Alt-F4's Scouting and Strategy Department",
+      address: process.env.EMAIL_USER || keys.email.user,
+   },
    to: "",
    subject: "",
    text: "",

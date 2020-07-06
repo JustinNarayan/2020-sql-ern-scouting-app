@@ -1,14 +1,22 @@
 $theme-colors: (
-   "login-back": #f4f6fc,
-   "login-form": #a8acb4,
-   "login-text": #3b3d41,
+   "back": #eff6ff,
+   "login-form": #6d8a9c,
+   "login-text": #20313a,
    "login-good": #0aac53,
    "login-error": #e45151,
+   "comp-table-head": #4ba8ff,
+   "comp-table-row-light": #c7e5ff,
+   "comp-table-row-dark": #aed8ff,
+   "comp-table-text": #09141f,
 );
 
 :export {
-   loginBack: map-get($theme-colors, "login-back");
+   back: map-get($theme-colors, "back");
    loginForm: map-get($theme-colors, "login-form");
    loginLight: map-get($theme-colors, "login-light");
    loginError: map-get($theme-colors, "login-error");
+   compTableHead: map-get($theme-colors, "comp-table-head");
+   compTableRowLight: map-get($theme-colors, "comp-table-row-light");
+   compTableRowDark: map-get($theme-colors, "comp-table-row-dark");
+   compTableText: map-get($theme-colors, "comp-table-text");
 }

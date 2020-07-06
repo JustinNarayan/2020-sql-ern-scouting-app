@@ -22,11 +22,16 @@ const Home = () => {
 
    // Render Component
    return (
-      <Fragment>
-         <Button onClick={() => console.log(comps)}>Hello</Button>
+      <div className={classes.container} style={styles.container}>
          <Comps comps={authing ? [] : comps} />
-      </Fragment>
+      </div>
    );
 };
+
+const classes = {
+   container: "p-0 mx-3",
+};
+
+const styles = {};
 
 export default Home;

@@ -309,13 +309,13 @@ const User = ({ mode, query }) => {
 
 const classes = {
    card: "bg-login-form text-center mx-auto shadow",
-   labelTitle: "bg-login-form text-login-text",
+   labelTitle: "text-login-text",
    alert: "mb-4",
-   cardBody: "bg-login-form p-0",
-   formGroup: "bg-login-form mb-4",
-   formText: "bg-login-form text-login-text mb-0",
-   link: "text-login-back",
-   input: "text-login-text bg-login-back",
+   cardBody: "p-0",
+   formGroup: " mb-4",
+   formText: "text-login-text mb-0",
+   link: "text-back",
+   input: "text-login-text bg-back",
    spinner: "bg-login-text",
 };
 

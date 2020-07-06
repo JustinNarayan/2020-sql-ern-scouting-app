@@ -1,5 +1,6 @@
 import { action, thunk } from "easy-peasy";
 import axios from "axios";
+import auth from "./auth";
 
 const url = "/api/comps/";
 
@@ -10,12 +11,7 @@ export default {
    // Thunks
    getComps: thunk(async (actions) => {
       // Handle WS Call
-      const token = localStorage.getItem("token");
-      const res = await axios.get(url, {
-         headers: {
-            Authorization: "Bearer " + token,
-         },
-      });
+      const res = await axios.get(url, auth);
       const comps = res.data;
 
       // Handle state control

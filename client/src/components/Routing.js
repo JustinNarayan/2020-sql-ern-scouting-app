@@ -1,6 +1,9 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
+
 import User from "./user/User";
+
+import Home from "./data/Home";
 
 const Routing = () => {
    return (
@@ -19,6 +22,8 @@ const Routing = () => {
                   <User mode='Verify' query={search} />
                )}
             />
+
+            <Route exact path='/home' render={() => <Home />} />
          </Switch>
       </main>
    );

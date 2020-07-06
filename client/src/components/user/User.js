@@ -19,6 +19,7 @@ import validator from "email-validator";
 const User = ({ mode, query }) => {
    // Set state variables
    const history = useHistory();
+   const [redirect, setRedirect] = useState("");
    const [messages, setMessages] = useState([]);
    const [username, setUsername] = useState("");
    const [teamNumber, setTeamNumber] = useState();
@@ -41,7 +42,6 @@ const User = ({ mode, query }) => {
       // Check if verify
       if (mode === "Verify") {
          if (!verifyID) {
-            history.push("/");
             setMessages([{ text: "Invalid verification link", type: "bad" }]);
          }
       }
@@ -73,8 +73,13 @@ const User = ({ mode, query }) => {
          setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else {
          setLoading(true);
-         setMessages([await authenticate({ username, password })]);
-         setLoading(false);
+         const res = await authenticate({ username, password });
+
+         // If it was a good message, the component would unmount upon redirect
+         if (res.type === "bad") {
+            setMessages([res]);
+            setLoading(false);
+         }
       }
    };
 
@@ -133,11 +138,17 @@ const User = ({ mode, query }) => {
          alerts.push({ text: res.message, type: res.type });
 
          // Login
+         let nextRes;
          if (res.type === "good") {
-            alerts.push(await authenticate({ username, password }));
+            nextRes = await authenticate({ username, password });
+            alerts.push(nextRes);
          }
-         setLoading(false);
-         setMessages(alerts);
+
+         // If either was a good message, the component would unmount upon redirect
+         if (res.type === "bad" || (nextRes.type && nextRes.type === "bad")) {
+            setMessages(alerts);
+            setLoading(false);
+         }
       }
    };
 
@@ -146,8 +157,8 @@ const User = ({ mode, query }) => {
       const auth = await login(user);
       /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
       if (auth.token) {
-         localStorage.setItem("token", auth.token);
-         window.location.href = "/home";
+         sessionStorage.setItem("token", auth.token);
+         history.push("/home");
       }
       return { text: auth.message, type: auth.type };
    };

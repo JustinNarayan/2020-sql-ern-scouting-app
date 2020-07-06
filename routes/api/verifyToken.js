@@ -15,7 +15,7 @@ module.exports = (req, res, next) => {
       const token = bearerHeader.split(" ")[1];
       jwt.verify(token, jsonKey, (err, auth) => {
          if (err)
-            res.status(403).send({
+            res.send({
                status: "Forbidden",
                message: "Invalid authorization key - please sign in",
             });
@@ -25,7 +25,7 @@ module.exports = (req, res, next) => {
          }
       });
    } else {
-      res.status(403).send({
+      res.send({
          status: "Forbidden",
          message: "Missing authorization key - please sign in",
       });

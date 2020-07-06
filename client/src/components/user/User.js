@@ -8,7 +8,6 @@ import {
    CardBody,
    Form,
    FormGroup,
-   FormText,
    Input,
    Button,
    Spinner,
@@ -18,7 +17,7 @@ import PropTypes from "prop-types";
 import validator from "email-validator";
 
 const User = ({ mode, query }) => {
-   // Set state variable
+   // Set state variables
    const history = useHistory();
    const [messages, setMessages] = useState([]);
    const [username, setUsername] = useState("");
@@ -148,10 +147,12 @@ const User = ({ mode, query }) => {
       /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
       if (auth.token) {
          localStorage.setItem("token", auth.token);
+         window.location.href = "/home";
       }
       return { text: auth.message, type: auth.type };
    };
 
+   // Render Component
    return (
       <Card className={classes.card} style={styles.card}>
          <Label
@@ -258,7 +259,7 @@ const User = ({ mode, query }) => {
                ) : null}
                <Button
                   style={styles.button}
-                  color='login-light'
+                  color='login-text'
                   block
                   size='lg'
                   outline>
@@ -268,23 +269,29 @@ const User = ({ mode, query }) => {
                      mode
                   )}
                </Button>
-               <FormText className={classes.formText} style={styles.formText}>
+               <p className={classes.formText} style={styles.formText}>
                   {mode === "Register" ? (
                      <Fragment>
                         Have an account?{" "}
-                        <Link to='/' onClick={handleRedirect}>
+                        <Link
+                           to='/'
+                           onClick={handleRedirect}
+                           className={classes.link}>
                            Login
                         </Link>
                      </Fragment>
                   ) : (
                      <Fragment>
                         No account?{" "}
-                        <Link to='/register' onClick={handleRedirect}>
+                        <Link
+                           to='/register'
+                           onClick={handleRedirect}
+                           className={classes.link}>
                            Register
                         </Link>
                      </Fragment>
                   )}
-               </FormText>
+               </p>
             </CardBody>
          </Form>
       </Card>
@@ -292,14 +299,15 @@ const User = ({ mode, query }) => {
 };
 
 const classes = {
-   card: "bg-login-form text-center my-4 mx-auto shadow",
-   labelTitle: "bg-login-form text-login-light",
+   card: "bg-login-form text-center mx-auto shadow",
+   labelTitle: "bg-login-form text-login-text",
    alert: "mb-4",
    cardBody: "bg-login-form p-0",
    formGroup: "bg-login-form mb-4",
-   formText: "bg-login-form text-login-light",
-   input: "text-login-form",
-   spinner: "bg-login-light",
+   formText: "bg-login-form text-login-text mb-0",
+   link: "text-login-back",
+   input: "text-login-text bg-login-back",
+   spinner: "bg-login-text",
 };
 
 const styles = {
@@ -307,6 +315,7 @@ const styles = {
       borderRadius: "12px",
       padding: "24px",
       width: "440px",
+      marginTop: "64px",
    },
    cardBody: {
       borderRadius: "12px",

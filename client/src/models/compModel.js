@@ -1,6 +1,7 @@
 import { action, thunk } from "easy-peasy";
 import axios from "axios";
-import auth from "./auth";
+import authHeader from "./authHeader";
+import { authStateChange } from "../checkAuth";
 
 const url = "/api/comps/";
 
@@ -11,11 +12,14 @@ export default {
    // Thunks
    getComps: thunk(async (actions) => {
       // Handle WS Call
-      const res = await axios.get(url, auth);
+      actions.setAuth("Checking");
+      const res = await axios.get(url, authHeader);
       const comps = res.data;
 
       // Handle state control
-      actions.setComps(comps);
+      authStateChange(actions, comps, () => {
+         actions.setComps(comps);
+      });
    }),
 
    // actions

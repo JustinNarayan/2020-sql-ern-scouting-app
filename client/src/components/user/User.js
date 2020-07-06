@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { useHistory, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useStoreActions } from "easy-peasy";
 import {
    Card,
@@ -18,8 +18,6 @@ import validator from "email-validator";
 
 const User = ({ mode, query }) => {
    // Set state variables
-   const history = useHistory();
-   const [redirect, setRedirect] = useState("");
    const [messages, setMessages] = useState([]);
    const [username, setUsername] = useState("");
    const [teamNumber, setTeamNumber] = useState();
@@ -158,7 +156,7 @@ const User = ({ mode, query }) => {
       /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
       if (auth.token) {
          sessionStorage.setItem("token", auth.token);
-         history.push("/home");
+         window.location.href = "/home";
       }
       return { text: auth.message, type: auth.type };
    };

@@ -1,9 +1,12 @@
-import { thunk } from "easy-peasy";
+import { thunk, action } from "easy-peasy";
 import axios from "axios";
 
 const url = "/api/users/";
 
 export default {
+   // State
+   auth: { status: "Checking" },
+
    // Thunks
    login: thunk(async (actions, user) => {
       // Handle WS Call
@@ -36,5 +39,10 @@ export default {
          let res = err.response;
          return res.data;
       }
+   }),
+
+   // Actions
+   setAuth: action((state, status) => {
+      state.auth.status = status;
    }),
 };

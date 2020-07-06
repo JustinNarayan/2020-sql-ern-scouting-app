@@ -1,23 +1,13 @@
-import React, { useEffect, Fragment } from "react";
-import { useHistory } from "react-router-dom";
+import React, { useState, useEffect, Fragment } from "react";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import { Button } from "reactstrap";
+import { authPageCheck } from "../../checkAuth";
 import Comps from "./Comps";
 
 const Home = () => {
-   // Define checkAuth
-   const checkAuth = (data, defaultType) => {
-      if (data.status && data.status === "Forbidden") {
-         alert("Invalid sessionn!");
-         history.push("/");
-         return defaultType;
-      } else {
-         return data;
-      }
-   };
-
    // Set state variables
-   const history = useHistory();
+   const [authing, setAuthing] = useState(true);
+   const auth = useStoreState((state) => state.auth);
    const comps = useStoreState((state) => state.comps);
 
    // Bring in commands
@@ -25,14 +15,16 @@ const Home = () => {
 
    // Define methods
    useEffect(() => {
+      authPageCheck(auth, setAuthing);
+
       getComps();
-   });
+   }, [auth, getComps]);
 
    // Render Component
    return (
       <Fragment>
          <Button onClick={() => console.log(comps)}>Hello</Button>
-         <Comps comps={checkAuth(comps, [])} />
+         <Comps comps={authing ? [] : comps} />
       </Fragment>
    );
 };

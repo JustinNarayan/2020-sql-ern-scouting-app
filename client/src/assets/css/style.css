@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;500;600&display=swap");
 :export {
-  back: #eff6ff;
+  back: #f9fcff;
   loginForm: #6d8a9c;
   loginError: #e45151;
   compTableHead: #4ba8ff;
@@ -37,7 +37,7 @@
   --danger: #dc3545;
   --light: #f8f9fa;
   --dark: #343a40;
-  --back: #eff6ff;
+  --back: #f9fcff;
   --login-form: #6d8a9c;
   --login-text: #20313a;
   --login-good: #0aac53;
@@ -2124,23 +2124,23 @@ pre code {
 .table-back,
 .table-back > th,
 .table-back > td {
-  background-color: #fbfcff;
+  background-color: #fdfeff;
 }
 
 .table-back th,
 .table-back td,
 .table-back thead th,
 .table-back tbody + tbody {
-  border-color: #f7faff;
+  border-color: #fcfdff;
 }
 
 .table-hover .table-back:hover {
-  background-color: #e2e9ff;
+  background-color: #e4f1ff;
 }
 
 .table-hover .table-back:hover > td,
 .table-hover .table-back:hover > th {
-  background-color: #e2e9ff;
+  background-color: #e4f1ff;
 }
 
 .table-login-form,
@@ -3314,41 +3314,41 @@ fieldset:disabled a.btn {
 
 .btn-back {
   color: #212529;
-  background-color: #eff6ff;
-  border-color: #eff6ff;
+  background-color: #f9fcff;
+  border-color: #f9fcff;
 }
 
 .btn-back:hover {
   color: #212529;
-  background-color: #c9e0ff;
-  border-color: #bcd9ff;
+  background-color: #d3e9ff;
+  border-color: #c6e3ff;
 }
 
 .btn-back:focus, .btn-back.focus {
   color: #212529;
-  background-color: #c9e0ff;
-  border-color: #bcd9ff;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(208, 215, 223, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(208, 215, 223, 0.5);
+  background-color: #d3e9ff;
+  border-color: #c6e3ff;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(217, 220, 223, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(217, 220, 223, 0.5);
 }
 
 .btn-back.disabled, .btn-back:disabled {
   color: #212529;
-  background-color: #eff6ff;
-  border-color: #eff6ff;
+  background-color: #f9fcff;
+  border-color: #f9fcff;
 }
 
 .btn-back:not(:disabled):not(.disabled):active, .btn-back:not(:disabled):not(.disabled).active,
 .show > .btn-back.dropdown-toggle {
   color: #212529;
-  background-color: #bcd9ff;
-  border-color: #afd2ff;
+  background-color: #c6e3ff;
+  border-color: #b9dcff;
 }
 
 .btn-back:not(:disabled):not(.disabled):active:focus, .btn-back:not(:disabled):not(.disabled).active:focus,
 .show > .btn-back.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(208, 215, 223, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(208, 215, 223, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(217, 220, 223, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(217, 220, 223, 0.5);
 }
 
 .btn-login-form {
@@ -3936,37 +3936,37 @@ fieldset:disabled a.btn {
 }
 
 .btn-outline-back {
-  color: #eff6ff;
-  border-color: #eff6ff;
+  color: #f9fcff;
+  border-color: #f9fcff;
 }
 
 .btn-outline-back:hover {
   color: #212529;
-  background-color: #eff6ff;
-  border-color: #eff6ff;
+  background-color: #f9fcff;
+  border-color: #f9fcff;
 }
 
 .btn-outline-back:focus, .btn-outline-back.focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(239, 246, 255, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(239, 246, 255, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(249, 252, 255, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(249, 252, 255, 0.5);
 }
 
 .btn-outline-back.disabled, .btn-outline-back:disabled {
-  color: #eff6ff;
+  color: #f9fcff;
   background-color: transparent;
 }
 
 .btn-outline-back:not(:disabled):not(.disabled):active, .btn-outline-back:not(:disabled):not(.disabled).active,
 .show > .btn-outline-back.dropdown-toggle {
   color: #212529;
-  background-color: #eff6ff;
-  border-color: #eff6ff;
+  background-color: #f9fcff;
+  border-color: #f9fcff;
 }
 
 .btn-outline-back:not(:disabled):not(.disabled):active:focus, .btn-outline-back:not(:disabled):not(.disabled).active:focus,
 .show > .btn-outline-back.dropdown-toggle:focus {
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(239, 246, 255, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(239, 246, 255, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(249, 252, 255, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(249, 252, 255, 0.5);
 }
 
 .btn-outline-login-form {
@@ -6494,18 +6494,18 @@ a.badge-dark:focus, a.badge-dark.focus {
 
 .badge-back {
   color: #212529;
-  background-color: #eff6ff;
+  background-color: #f9fcff;
 }
 
 a.badge-back:hover, a.badge-back:focus {
   color: #212529;
-  background-color: #bcd9ff;
+  background-color: #c6e3ff;
 }
 
 a.badge-back:focus, a.badge-back.focus {
   outline: 0;
-  -webkit-box-shadow: 0 0 0 0.2rem rgba(239, 246, 255, 0.5);
-          box-shadow: 0 0 0 0.2rem rgba(239, 246, 255, 0.5);
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(249, 252, 255, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(249, 252, 255, 0.5);
 }
 
 .badge-login-form {
@@ -6796,17 +6796,17 @@ a.badge-comp-table-text:focus, a.badge-comp-table-text.focus {
 }
 
 .alert-back {
-  color: #7c8085;
-  background-color: #fcfdff;
-  border-color: #fbfcff;
+  color: #818385;
+  background-color: #fefeff;
+  border-color: #fdfeff;
 }
 
 .alert-back hr {
-  border-top-color: #e2e9ff;
+  border-top-color: #e4f1ff;
 }
 
 .alert-back .alert-link {
-  color: #63676b;
+  color: #686a6b;
 }
 
 .alert-login-form {
@@ -7365,19 +7365,19 @@ a.badge-comp-table-text:focus, a.badge-comp-table-text.focus {
 }
 
 .list-group-item-back {
-  color: #7c8085;
-  background-color: #fbfcff;
+  color: #818385;
+  background-color: #fdfeff;
 }
 
 .list-group-item-back.list-group-item-action:hover, .list-group-item-back.list-group-item-action:focus {
-  color: #7c8085;
-  background-color: #e2e9ff;
+  color: #818385;
+  background-color: #e4f1ff;
 }
 
 .list-group-item-back.list-group-item-action.active {
   color: #fff;
-  background-color: #7c8085;
-  border-color: #7c8085;
+  background-color: #818385;
+  border-color: #818385;
 }
 
 .list-group-item-login-form {
@@ -8506,13 +8506,13 @@ button.bg-dark:focus {
 }
 
 .bg-back {
-  background-color: #eff6ff !important;
+  background-color: #f9fcff !important;
 }
 
 a.bg-back:hover, a.bg-back:focus,
 button.bg-back:hover,
 button.bg-back:focus {
-  background-color: #bcd9ff !important;
+  background-color: #c6e3ff !important;
 }
 
 .bg-login-form {
@@ -8676,7 +8676,7 @@ button.bg-comp-table-text:focus {
 }
 
 .border-back {
-  border-color: #eff6ff !important;
+  border-color: #f9fcff !important;
 }
 
 .border-login-form {
@@ -12110,11 +12110,11 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .text-back {
-  color: #eff6ff !important;
+  color: #f9fcff !important;
 }
 
 a.text-back:hover, a.text-back:focus {
-  color: #a3cbff !important;
+  color: #add6ff !important;
 }
 
 .text-login-form {
@@ -12315,7 +12315,7 @@ a.text-comp-table-text:hover, a.text-comp-table-text:focus {
 
 html,
 body {
-  background-color: #eff6ff;
+  background-color: #f9fcff;
 }
 
 .compTable {
@@ -12323,39 +12323,70 @@ body {
 }
 
 .compTable thead tr {
-  border-bottom: 2px solid #eff6ff;
+  border-bottom: 2px solid #f9fcff;
 }
 
 .compTable thead tr th {
   font-weight: 500;
-  font-size: 20px;
-  border-right: 2px solid #eff6ff;
+  font-size: 22px;
+  border-right: 2px solid #f9fcff;
   padding: 6px 12px;
+  color: #f9fcff;
 }
 
 .compTable thead tr th:first-child {
-  border-top-left-radius: 12px;
+  border-top-left-radius: 6px;
 }
 
 .compTable thead tr th:last-child {
-  border-top-right-radius: 12px;
+  border-top-right-radius: 6px;
   border-right: 0;
 }
 
+.compTable thead tr th .plus {
+  -webkit-filter: invert(100%);
+          filter: invert(100%);
+  float: right;
+  width: 28px;
+  margin-top: 2px;
+  margin-right: -3px;
+}
+
+.compTable thead tr th .plus:hover {
+  cursor: pointer;
+}
+
 .compTable tbody tr {
-  border-bottom: 2px solid #eff6ff;
+  border-bottom: 2px solid #f9fcff;
+  background-color: #c7e5ff;
+}
+
+.compTable tbody tr:nth-child(even) {
+  background-color: #aed8ff;
 }
 
 .compTable tbody tr td {
   font-weight: 400;
   font-size: 16px;
   color: #09141f;
-  border-right: 2px solid #eff6ff;
+  border-right: 2px solid #f9fcff;
   padding: 6px 12px;
+  width: 11%;
+}
+
+.compTable tbody tr td.compName {
+  width: 34%;
 }
 
 .compTable tbody tr td:last-child {
   border-right: 0;
+}
+
+.compTable tbody tr td.link:hover {
+  background-color: #f9fcff;
+  color: #4ba8ff;
+  font-weight: 400;
+  cursor: pointer;
 }
 
 .compTable tbody tr:last-child {
@@ -12363,9 +12394,14 @@ body {
 }
 
 .compTable tbody tr:last-child td:first-child {
-  border-bottom-left-radius: 12px;
+  border-bottom-left-radius: 6px;
 }
 
 .compTable tbody tr:last-child td:last-child {
-  border-bottom-right-radius: 12px;
+  border-bottom-right-radius: 6px;
+}
+
+#btnx:hover {
+  font-weight: 600;
+  color: #f9fcff;
 }

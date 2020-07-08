@@ -2,7 +2,7 @@
 
 /// For components, this will handle redirects and front-end page loading
 
-export const authStateChange = (actions, data, execute) => {
+export const authCommand = (actions, data, execute) => {
    // Handle state control
    if (data.status && data.status === "Forbidden") {
       // Invalid token

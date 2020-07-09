@@ -12,13 +12,17 @@ import {
 } from "reactstrap";
 const plus = require("bootstrap-icons/icons/plus-circle-fill.svg");
 
-const AddComp = ({ onSubmit, loading, messages }) => {
+const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
    // Set state variables
    const [modal, setModal] = useState(false);
    const [newCompName, setNewCompName] = useState("");
 
    // Define methods
-   const toggleModal = () => setModal(!modal);
+   const toggleModal = () => {
+      setModal(!modal);
+      setNewCompName("");
+      clearMessages();
+   };
 
    return (
       <Fragment>
@@ -28,7 +32,7 @@ const AddComp = ({ onSubmit, loading, messages }) => {
             alt='Add Competition'
             onClick={toggleModal}
          />
-         <Modal isOpen={modal} toggle={toggleModal} style={styles.modal}>
+         <Modal isOpen={modal} toggle={toggleModal} size='md'>
             <ModalHeader
                className={classes.modalHeader}
                style={styles.modalHeader}>
@@ -46,7 +50,9 @@ const AddComp = ({ onSubmit, loading, messages }) => {
                   <Alert
                      key={message.text}
                      color={
-                        message.type === "good" ? "login-good" : "login-error"
+                        message.type === "good"
+                           ? "message-good"
+                           : "message-error"
                      }
                      className={classes.alert}>
                      {message.text}
@@ -65,11 +71,11 @@ const AddComp = ({ onSubmit, loading, messages }) => {
                   </FormGroup>
                   <Button
                      color='comp-table-head'
+                     className={classes.modalSubmit}
                      style={styles.button}
                      block
                      outline
-                     size='md'
-                     id='btnx'>
+                     size='md'>
                      {loading ? (
                         <Spinner
                            className={classes.spinner}
@@ -95,13 +101,11 @@ const classes = {
    alert: "mb-4 py-2 text-center",
    formGroup: "mb-4",
    input: "m-0 bg-back",
+   modalSubmit: "modalSubmit",
    spinner: "bg-comp-table-head",
 };
 
 const styles = {
-   modal: {
-      width: "400px",
-   },
    modalHeader: {
       paddingLeft: "22px",
    },

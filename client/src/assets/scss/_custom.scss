@@ -2,8 +2,8 @@ $theme-colors: (
    "back": #f9fcff,
    "login-form": #6d8a9c,
    "login-text": #20313a,
-   "login-good": #0aac53,
-   "login-error": #e45151,
+   "message-good": #0aac53,
+   "message-error": #e45151,
    "comp-table-head": #4ba8ff,
    "comp-table-row-light": #c7e5ff,
    "comp-table-row-dark": #aed8ff,
@@ -14,7 +14,8 @@ $theme-colors: (
    back: map-get($theme-colors, "back");
    loginForm: map-get($theme-colors, "login-form");
    loginLight: map-get($theme-colors, "login-light");
-   loginError: map-get($theme-colors, "login-error");
+   messageGood: map-get($theme-colors, "message-good");
+   messageError: map-get($theme-colors, "message-error");
    compTableHead: map-get($theme-colors, "comp-table-head");
    compTableRowLight: map-get($theme-colors, "comp-table-row-light");
    compTableRowDark: map-get($theme-colors, "comp-table-row-dark");

@@ -33,6 +33,34 @@ export default {
       // Return api response to display to user
       return out;
    }),
+   editComp: thunk(async (actions, compEdit) => {
+      // Handle WS Call
+      actions.setAuth("Checking");
+      const res = await axios.patch(
+         `${url}${compEdit.id}`,
+         compEdit,
+         authHeader
+      );
+      const out = res.data;
+
+      // Call to getComps
+      authCommand(actions, out, () => actions.getComps());
+
+      // Return api response to display to user
+      return out;
+   }),
+   deleteComp: thunk(async (actions, id) => {
+      // Handle WS Call
+      actions.setAuth("Checking");
+      const res = await axios.delete(`${url}${id}`, authHeader);
+      const out = res.data;
+
+      // Call to getComps
+      authCommand(actions, out, () => actions.getComps());
+
+      // Return api response to display to user
+      return out;
+   }),
 
    // actions
    setComps: action((state, comps) => {

@@ -2,7 +2,7 @@
 import userModel from "./userModel";
 import compModel from "./compModel";
 const { auth, login, register, verify, setAuth } = userModel;
-const { comps, getComps, addComp, setComps } = compModel;
+const { comps, getComps, addComp, editComp, deleteComp, setComps } = compModel;
 
 export default {
    // State
@@ -15,6 +15,8 @@ export default {
    verify,
    getComps,
    addComp,
+   editComp,
+   deleteComp,
 
    // Actions
    setAuth,

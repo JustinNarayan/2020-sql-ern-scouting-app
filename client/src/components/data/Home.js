@@ -3,18 +3,22 @@ import { useStoreActions, useStoreState } from "easy-peasy";
 import { Table } from "reactstrap";
 import { authPageCheck } from "../../checkAuth";
 import AddComp from "./AddComp";
+import Comp from "./Comp";
 
 const Home = () => {
    // Set state variables
    const [authing, setAuthing] = useState(true);
    const [loading, setLoading] = useState(false);
    const [addMessages, setAddMessages] = useState([]);
+   const [editMessages, setEditMessages] = useState([]);
+   const [deleteMessages, setDeleteMessages] = useState([]);
    const auth = useStoreState((state) => state.auth);
    const comps = useStoreState((state) => state.comps);
 
    // Bring in commands
    const getComps = useStoreActions((actions) => actions.getComps);
    const addComp = useStoreActions((actions) => actions.addComp);
+   const editComp = useStoreActions((actions) => actions.editComp);
 
    // Define methods
    useEffect(() => {
@@ -25,6 +29,7 @@ const Home = () => {
 
    const onAddCompSubmit = async (e, competitionName) => {
       e.preventDefault();
+      if (loading) return;
 
       if (!competitionName) {
          setAddMessages([{ text: "Please fill out all fields", type: "bad" }]);
@@ -34,6 +39,34 @@ const Home = () => {
          setAddMessages([{ text: res.message, type: res.type }]);
          setLoading(false);
       }
+   };
+
+   const onEditCompSubmit = async (e, comp, competitionName) => {
+      e.preventDefault();
+      if (loading) return;
+
+      if (!competitionName) {
+         setEditMessages([{ text: "Please fill out all fields", type: "bad" }]);
+      } else if (competitionName === comp.CompetitionName) {
+         setEditMessages([
+            {
+               text: "The edited name is the same as the original name",
+               type: "bad",
+            },
+         ]);
+      } else {
+         setLoading(true);
+         const res = await editComp({ id: comp.ID, competitionName });
+         setEditMessages([{ text: res.message, type: res.type }]);
+         setLoading(false);
+      }
+   };
+
+   const onDeleteCompSubmit = async (e, id) => {
+      e.preventDefault();
+      if (loading) return;
+
+      console.log(e);
    };
 
    // Render Component
@@ -46,6 +79,7 @@ const Home = () => {
                      Competitions
                      <AddComp
                         onSubmit={onAddCompSubmit}
+                        clearMessages={() => setAddMessages([])}
                         loading={loading}
                         messages={addMessages}
                      />
@@ -56,17 +90,19 @@ const Home = () => {
                {authing
                   ? null
                   : comps.map((comp, index) => (
-                       <tr key={comp.ID}>
-                          <td className={classes.compName}>
-                             {comp.CompetitionName}
-                          </td>
-                          <td className={classes.link}>Teams</td>
-                          <td className={classes.link}>Matches</td>
-                          <td className={classes.link}>Scout</td>
-                          <td className={classes.link}>Pit Scout</td>
-                          <td className={classes.link}>Pending Data</td>
-                          <td className={classes.link}>Actions</td>
-                       </tr>
+                       <Comp
+                          key={comp.ID}
+                          comp={comp}
+                          onEditSubmit={onEditCompSubmit}
+                          onDeleteSubmit={onDeleteCompSubmit}
+                          clearMessages={() => {
+                             setEditMessages([]);
+                             setDeleteMessages([]);
+                          }}
+                          loading={loading}
+                          editMessages={editMessages}
+                          deleteMessages={deleteMessages}
+                       />
                     ))}
             </tbody>
          </Table>
@@ -78,8 +114,6 @@ const classes = {
    container: "p-0 mx-3",
    table: "compTable p-0 text-back",
    tableHead: "bg-comp-table-head",
-   compName: "compName",
-   link: "link",
 };
 
 const styles = {};

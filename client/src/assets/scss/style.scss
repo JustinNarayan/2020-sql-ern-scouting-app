@@ -94,7 +94,7 @@ body {
    }
 }
 
-#btnx {
+.modalSubmit {
    &:hover {
       font-weight: 600;
       color: map-get($theme-colors, "back");

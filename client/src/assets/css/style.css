@@ -2,7 +2,8 @@
 :export {
   back: #f9fcff;
   loginForm: #6d8a9c;
-  loginError: #e45151;
+  messageGood: #0aac53;
+  messageError: #e45151;
   compTableHead: #4ba8ff;
   compTableRowLight: #c7e5ff;
   compTableRowDark: #aed8ff;
@@ -40,8 +41,8 @@
   --back: #f9fcff;
   --login-form: #6d8a9c;
   --login-text: #20313a;
-  --login-good: #0aac53;
-  --login-error: #e45151;
+  --message-good: #0aac53;
+  --message-error: #e45151;
   --comp-table-head: #4ba8ff;
   --comp-table-row-light: #c7e5ff;
   --comp-table-row-dark: #aed8ff;
@@ -2187,47 +2188,47 @@ pre code {
   background-color: #b3b8bc;
 }
 
-.table-login-good,
-.table-login-good > th,
-.table-login-good > td {
+.table-message-good,
+.table-message-good > th,
+.table-message-good > td {
   background-color: #bae8cf;
 }
 
-.table-login-good th,
-.table-login-good td,
-.table-login-good thead th,
-.table-login-good tbody + tbody {
+.table-message-good th,
+.table-message-good td,
+.table-message-good thead th,
+.table-message-good tbody + tbody {
   border-color: #80d4a6;
 }
 
-.table-hover .table-login-good:hover {
+.table-hover .table-message-good:hover {
   background-color: #a7e2c2;
 }
 
-.table-hover .table-login-good:hover > td,
-.table-hover .table-login-good:hover > th {
+.table-hover .table-message-good:hover > td,
+.table-hover .table-message-good:hover > th {
   background-color: #a7e2c2;
 }
 
-.table-login-error,
-.table-login-error > th,
-.table-login-error > td {
+.table-message-error,
+.table-message-error > th,
+.table-message-error > td {
   background-color: #f7cece;
 }
 
-.table-login-error th,
-.table-login-error td,
-.table-login-error thead th,
-.table-login-error tbody + tbody {
+.table-message-error th,
+.table-message-error td,
+.table-message-error thead th,
+.table-message-error tbody + tbody {
   border-color: #f1a5a5;
 }
 
-.table-hover .table-login-error:hover {
+.table-hover .table-message-error:hover {
   background-color: #f3b8b8;
 }
 
-.table-hover .table-login-error:hover > td,
-.table-hover .table-login-error:hover > th {
+.table-hover .table-message-error:hover > td,
+.table-hover .table-message-error:hover > th {
   background-color: #f3b8b8;
 }
 
@@ -3429,19 +3430,19 @@ fieldset:disabled a.btn {
           box-shadow: 0 0 0 0.2rem rgba(65, 80, 88, 0.5);
 }
 
-.btn-login-good {
+.btn-message-good {
   color: #fff;
   background-color: #0aac53;
   border-color: #0aac53;
 }
 
-.btn-login-good:hover {
+.btn-message-good:hover {
   color: #fff;
   background-color: #088842;
   border-color: #077c3c;
 }
 
-.btn-login-good:focus, .btn-login-good.focus {
+.btn-message-good:focus, .btn-message-good.focus {
   color: #fff;
   background-color: #088842;
   border-color: #077c3c;
@@ -3449,38 +3450,38 @@ fieldset:disabled a.btn {
           box-shadow: 0 0 0 0.2rem rgba(47, 184, 109, 0.5);
 }
 
-.btn-login-good.disabled, .btn-login-good:disabled {
+.btn-message-good.disabled, .btn-message-good:disabled {
   color: #fff;
   background-color: #0aac53;
   border-color: #0aac53;
 }
 
-.btn-login-good:not(:disabled):not(.disabled):active, .btn-login-good:not(:disabled):not(.disabled).active,
-.show > .btn-login-good.dropdown-toggle {
+.btn-message-good:not(:disabled):not(.disabled):active, .btn-message-good:not(:disabled):not(.disabled).active,
+.show > .btn-message-good.dropdown-toggle {
   color: #fff;
   background-color: #077c3c;
   border-color: #067036;
 }
 
-.btn-login-good:not(:disabled):not(.disabled):active:focus, .btn-login-good:not(:disabled):not(.disabled).active:focus,
-.show > .btn-login-good.dropdown-toggle:focus {
+.btn-message-good:not(:disabled):not(.disabled):active:focus, .btn-message-good:not(:disabled):not(.disabled).active:focus,
+.show > .btn-message-good.dropdown-toggle:focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(47, 184, 109, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(47, 184, 109, 0.5);
 }
 
-.btn-login-error {
+.btn-message-error {
   color: #fff;
   background-color: #e45151;
   border-color: #e45151;
 }
 
-.btn-login-error:hover {
+.btn-message-error:hover {
   color: #fff;
   background-color: #df3030;
   border-color: #dd2525;
 }
 
-.btn-login-error:focus, .btn-login-error.focus {
+.btn-message-error:focus, .btn-message-error.focus {
   color: #fff;
   background-color: #df3030;
   border-color: #dd2525;
@@ -3488,21 +3489,21 @@ fieldset:disabled a.btn {
           box-shadow: 0 0 0 0.2rem rgba(232, 107, 107, 0.5);
 }
 
-.btn-login-error.disabled, .btn-login-error:disabled {
+.btn-message-error.disabled, .btn-message-error:disabled {
   color: #fff;
   background-color: #e45151;
   border-color: #e45151;
 }
 
-.btn-login-error:not(:disabled):not(.disabled):active, .btn-login-error:not(:disabled):not(.disabled).active,
-.show > .btn-login-error.dropdown-toggle {
+.btn-message-error:not(:disabled):not(.disabled):active, .btn-message-error:not(:disabled):not(.disabled).active,
+.show > .btn-message-error.dropdown-toggle {
   color: #fff;
   background-color: #dd2525;
   border-color: #d42121;
 }
 
-.btn-login-error:not(:disabled):not(.disabled):active:focus, .btn-login-error:not(:disabled):not(.disabled).active:focus,
-.show > .btn-login-error.dropdown-toggle:focus {
+.btn-message-error:not(:disabled):not(.disabled):active:focus, .btn-message-error:not(:disabled):not(.disabled).active:focus,
+.show > .btn-message-error.dropdown-toggle:focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(232, 107, 107, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(232, 107, 107, 0.5);
 }
@@ -4037,70 +4038,70 @@ fieldset:disabled a.btn {
           box-shadow: 0 0 0 0.2rem rgba(32, 49, 58, 0.5);
 }
 
-.btn-outline-login-good {
+.btn-outline-message-good {
   color: #0aac53;
   border-color: #0aac53;
 }
 
-.btn-outline-login-good:hover {
+.btn-outline-message-good:hover {
   color: #fff;
   background-color: #0aac53;
   border-color: #0aac53;
 }
 
-.btn-outline-login-good:focus, .btn-outline-login-good.focus {
+.btn-outline-message-good:focus, .btn-outline-message-good.focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(10, 172, 83, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(10, 172, 83, 0.5);
 }
 
-.btn-outline-login-good.disabled, .btn-outline-login-good:disabled {
+.btn-outline-message-good.disabled, .btn-outline-message-good:disabled {
   color: #0aac53;
   background-color: transparent;
 }
 
-.btn-outline-login-good:not(:disabled):not(.disabled):active, .btn-outline-login-good:not(:disabled):not(.disabled).active,
-.show > .btn-outline-login-good.dropdown-toggle {
+.btn-outline-message-good:not(:disabled):not(.disabled):active, .btn-outline-message-good:not(:disabled):not(.disabled).active,
+.show > .btn-outline-message-good.dropdown-toggle {
   color: #fff;
   background-color: #0aac53;
   border-color: #0aac53;
 }
 
-.btn-outline-login-good:not(:disabled):not(.disabled):active:focus, .btn-outline-login-good:not(:disabled):not(.disabled).active:focus,
-.show > .btn-outline-login-good.dropdown-toggle:focus {
+.btn-outline-message-good:not(:disabled):not(.disabled):active:focus, .btn-outline-message-good:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-message-good.dropdown-toggle:focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(10, 172, 83, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(10, 172, 83, 0.5);
 }
 
-.btn-outline-login-error {
+.btn-outline-message-error {
   color: #e45151;
   border-color: #e45151;
 }
 
-.btn-outline-login-error:hover {
+.btn-outline-message-error:hover {
   color: #fff;
   background-color: #e45151;
   border-color: #e45151;
 }
 
-.btn-outline-login-error:focus, .btn-outline-login-error.focus {
+.btn-outline-message-error:focus, .btn-outline-message-error.focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(228, 81, 81, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(228, 81, 81, 0.5);
 }
 
-.btn-outline-login-error.disabled, .btn-outline-login-error:disabled {
+.btn-outline-message-error.disabled, .btn-outline-message-error:disabled {
   color: #e45151;
   background-color: transparent;
 }
 
-.btn-outline-login-error:not(:disabled):not(.disabled):active, .btn-outline-login-error:not(:disabled):not(.disabled).active,
-.show > .btn-outline-login-error.dropdown-toggle {
+.btn-outline-message-error:not(:disabled):not(.disabled):active, .btn-outline-message-error:not(:disabled):not(.disabled).active,
+.show > .btn-outline-message-error.dropdown-toggle {
   color: #fff;
   background-color: #e45151;
   border-color: #e45151;
 }
 
-.btn-outline-login-error:not(:disabled):not(.disabled):active:focus, .btn-outline-login-error:not(:disabled):not(.disabled).active:focus,
-.show > .btn-outline-login-error.dropdown-toggle:focus {
+.btn-outline-message-error:not(:disabled):not(.disabled):active:focus, .btn-outline-message-error:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-message-error.dropdown-toggle:focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(228, 81, 81, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(228, 81, 81, 0.5);
 }
@@ -6540,33 +6541,33 @@ a.badge-login-text:focus, a.badge-login-text.focus {
           box-shadow: 0 0 0 0.2rem rgba(32, 49, 58, 0.5);
 }
 
-.badge-login-good {
+.badge-message-good {
   color: #fff;
   background-color: #0aac53;
 }
 
-a.badge-login-good:hover, a.badge-login-good:focus {
+a.badge-message-good:hover, a.badge-message-good:focus {
   color: #fff;
   background-color: #077c3c;
 }
 
-a.badge-login-good:focus, a.badge-login-good.focus {
+a.badge-message-good:focus, a.badge-message-good.focus {
   outline: 0;
   -webkit-box-shadow: 0 0 0 0.2rem rgba(10, 172, 83, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(10, 172, 83, 0.5);
 }
 
-.badge-login-error {
+.badge-message-error {
   color: #fff;
   background-color: #e45151;
 }
 
-a.badge-login-error:hover, a.badge-login-error:focus {
+a.badge-message-error:hover, a.badge-message-error:focus {
   color: #fff;
   background-color: #dd2525;
 }
 
-a.badge-login-error:focus, a.badge-login-error.focus {
+a.badge-message-error:focus, a.badge-message-error.focus {
   outline: 0;
   -webkit-box-shadow: 0 0 0 0.2rem rgba(228, 81, 81, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(228, 81, 81, 0.5);
@@ -6837,31 +6838,31 @@ a.badge-comp-table-text:focus, a.badge-comp-table-text.focus {
   color: black;
 }
 
-.alert-login-good {
+.alert-message-good {
   color: #05592b;
   background-color: #ceeedd;
   border-color: #bae8cf;
 }
 
-.alert-login-good hr {
+.alert-message-good hr {
   border-top-color: #a7e2c2;
 }
 
-.alert-login-good .alert-link {
+.alert-message-good .alert-link {
   color: #022914;
 }
 
-.alert-login-error {
+.alert-message-error {
   color: #772a2a;
   background-color: #fadcdc;
   border-color: #f7cece;
 }
 
-.alert-login-error hr {
+.alert-message-error hr {
   border-top-color: #f3b8b8;
 }
 
-.alert-login-error .alert-link {
+.alert-message-error .alert-link {
   color: #511d1d;
 }
 
@@ -7412,33 +7413,33 @@ a.badge-comp-table-text:focus, a.badge-comp-table-text.focus {
   border-color: #11191e;
 }
 
-.list-group-item-login-good {
+.list-group-item-message-good {
   color: #05592b;
   background-color: #bae8cf;
 }
 
-.list-group-item-login-good.list-group-item-action:hover, .list-group-item-login-good.list-group-item-action:focus {
+.list-group-item-message-good.list-group-item-action:hover, .list-group-item-message-good.list-group-item-action:focus {
   color: #05592b;
   background-color: #a7e2c2;
 }
 
-.list-group-item-login-good.list-group-item-action.active {
+.list-group-item-message-good.list-group-item-action.active {
   color: #fff;
   background-color: #05592b;
   border-color: #05592b;
 }
 
-.list-group-item-login-error {
+.list-group-item-message-error {
   color: #772a2a;
   background-color: #f7cece;
 }
 
-.list-group-item-login-error.list-group-item-action:hover, .list-group-item-login-error.list-group-item-action:focus {
+.list-group-item-message-error.list-group-item-action:hover, .list-group-item-message-error.list-group-item-action:focus {
   color: #772a2a;
   background-color: #f3b8b8;
 }
 
-.list-group-item-login-error.list-group-item-action.active {
+.list-group-item-message-error.list-group-item-action.active {
   color: #fff;
   background-color: #772a2a;
   border-color: #772a2a;
@@ -8535,23 +8536,23 @@ button.bg-login-text:focus {
   background-color: #0e1519 !important;
 }
 
-.bg-login-good {
+.bg-message-good {
   background-color: #0aac53 !important;
 }
 
-a.bg-login-good:hover, a.bg-login-good:focus,
-button.bg-login-good:hover,
-button.bg-login-good:focus {
+a.bg-message-good:hover, a.bg-message-good:focus,
+button.bg-message-good:hover,
+button.bg-message-good:focus {
   background-color: #077c3c !important;
 }
 
-.bg-login-error {
+.bg-message-error {
   background-color: #e45151 !important;
 }
 
-a.bg-login-error:hover, a.bg-login-error:focus,
-button.bg-login-error:hover,
-button.bg-login-error:focus {
+a.bg-message-error:hover, a.bg-message-error:focus,
+button.bg-message-error:hover,
+button.bg-message-error:focus {
   background-color: #dd2525 !important;
 }
 
@@ -8687,11 +8688,11 @@ button.bg-comp-table-text:focus {
   border-color: #20313a !important;
 }
 
-.border-login-good {
+.border-message-good {
   border-color: #0aac53 !important;
 }
 
-.border-login-error {
+.border-message-error {
   border-color: #e45151 !important;
 }
 
@@ -12133,19 +12134,19 @@ a.text-login-text:hover, a.text-login-text:focus {
   color: #050709 !important;
 }
 
-.text-login-good {
+.text-message-good {
   color: #0aac53 !important;
 }
 
-a.text-login-good:hover, a.text-login-good:focus {
+a.text-message-good:hover, a.text-message-good:focus {
   color: #066430 !important;
 }
 
-.text-login-error {
+.text-message-error {
   color: #e45151 !important;
 }
 
-a.text-login-error:hover, a.text-login-error:focus {
+a.text-message-error:hover, a.text-message-error:focus {
   color: #c91f1f !important;
 }
 
@@ -12401,7 +12402,7 @@ body {
   border-bottom-right-radius: 6px;
 }
 
-#btnx:hover {
+.modalSubmit:hover {
   font-weight: 600;
   color: #f9fcff;
 }

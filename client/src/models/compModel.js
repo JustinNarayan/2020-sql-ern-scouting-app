@@ -29,6 +29,9 @@ export default {
 
       // Call to getComps
       authCommand(actions, out, () => actions.getComps());
+
+      // Return api response to display to user
+      return out;
    }),
 
    // actions

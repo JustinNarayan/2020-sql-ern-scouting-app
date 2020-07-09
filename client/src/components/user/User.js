@@ -273,7 +273,11 @@ const User = ({ mode, query }) => {
                   size='lg'
                   outline>
                   {loading ? (
-                     <Spinner className={classes.spinner} color='login-form' />
+                     <Spinner
+                        className={classes.spinner}
+                        style={styles.spinner}
+                        color='login-form'
+                     />
                   ) : (
                      mode
                   )}
@@ -310,9 +314,9 @@ const User = ({ mode, query }) => {
 const classes = {
    card: "bg-login-form text-center mx-auto shadow",
    labelTitle: "text-login-text",
-   alert: "mb-4",
+   alert: "mb-4 py-2",
    cardBody: "p-0",
-   formGroup: " mb-4",
+   formGroup: "mb-4",
    formText: "text-login-text mb-0",
    link: "text-back",
    input: "text-login-text bg-back",
@@ -370,6 +374,10 @@ const styles = {
    button: {
       marginTop: "32px",
       fontWeight: "400",
+   },
+   spinner: {
+      width: "1.5rem",
+      height: "1.5rem",
    },
 };
 

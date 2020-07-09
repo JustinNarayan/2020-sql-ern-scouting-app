@@ -173,7 +173,9 @@ const User = ({ mode, query }) => {
          {messages.map((message) => (
             <Alert
                key={message.text}
-               color={message.type === "good" ? "login-good" : "login-error"}
+               color={
+                  message.type === "good" ? "message-good" : "message-error"
+               }
                className={classes.alert}>
                {message.text}
             </Alert>
@@ -183,7 +185,6 @@ const User = ({ mode, query }) => {
                <FormGroup className={classes.formGroup}>
                   <Input
                      type='text'
-                     name='username'
                      id='username'
                      autoComplete='username'
                      style={
@@ -198,7 +199,6 @@ const User = ({ mode, query }) => {
                   {mode === "Register" ? (
                      <Input
                         type='number'
-                        name='teamNumber'
                         autoComplete='team-number'
                         style={styles.input.right.small}
                         className={classes.input}
@@ -210,7 +210,6 @@ const User = ({ mode, query }) => {
                <FormGroup className={classes.formGroup}>
                   <Input
                      type='password'
-                     name='password'
                      autoComplete='new-password'
                      style={
                         mode === "Register" ? styles.input.left : styles.input
@@ -222,7 +221,6 @@ const User = ({ mode, query }) => {
                   {mode === "Register" ? (
                      <Input
                         type='password'
-                        name='passwordConfirm'
                         autoComplete='confirm-password'
                         style={styles.input.right}
                         className={classes.input}
@@ -236,7 +234,6 @@ const User = ({ mode, query }) => {
                      <FormGroup className={classes.formGroup}>
                         <Input
                            type='password'
-                           name='adminKey'
                            autoComplete='new-admin-key'
                            style={styles.input.left}
                            className={classes.input}
@@ -245,7 +242,6 @@ const User = ({ mode, query }) => {
                         />
                         <Input
                            type='password'
-                           name='adminKeyConfirm'
                            autoComplete='confirm-admin-key'
                            style={styles.input.right}
                            className={classes.input}
@@ -256,7 +252,6 @@ const User = ({ mode, query }) => {
                      <FormGroup className={classes.formGroup}>
                         <Input
                            type='email'
-                           name='email'
                            autoComplete='email'
                            style={styles.input}
                            className={classes.input}

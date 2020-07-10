@@ -8,16 +8,25 @@ const fix = require("./sqlStringFix");
 module.exports = (db) => {
    // Select Comps
    router.get("/", verifyToken, (req, res) => {
-      let sql = `SELECT * FROM competitions WHERE Username = '${req.auth.user.username}' ORDER BY ID ASC`;
-      db.query(sql, (err, rows) => {
+      // Connect to pool
+      db.getConnection((err, conn) => {
          if (err) {
-            res.status(404).send({
-               message: "Failed to get competitions",
-               type: "bad",
-               err,
-            });
+            res.status(404).send(err);
+            return;
          }
-         res.send(rows);
+
+         // Run code
+         let sql = `SELECT * FROM competitions WHERE Username = '${req.auth.user.username}' ORDER BY ID ASC`;
+         conn.query(sql, (err, rows) => {
+            if (err) {
+               res.status(404).send({
+                  message: "Failed to get competitions",
+                  type: "bad",
+                  err,
+               });
+            }
+            res.send(rows);
+         });
       });
    });
 
@@ -32,45 +41,55 @@ module.exports = (db) => {
          return;
       }
 
-      // Check if that name already exists
-      let sql = `SELECT ID FROM competitions WHERE Username = '${
-         req.auth.user.username
-      }' AND CompetitionName = '${fix(req.body.competitionName)}'`;
-
-      db.query(sql, (err, result) => {
+      // Connect to pool
+      db.getConnection((err, conn) => {
          if (err) {
-            res.status(404).send({
-               message: "Failed to locate competitions data",
-               type: "bad",
-               err,
-            });
+            res.status(404).send(err);
+            return;
          }
-         if (result.length) {
-            res.send({
-               message: "A competition with that name already exists",
-               type: "bad",
-               result,
-            });
-         } else {
-            // Now actually insert the new competition
-            let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${
-               req.auth.user.username
-            }', '${fix(req.body.competitionName)}')`;
 
-            db.query(sql, (err) => {
-               if (err) {
-                  res.status(404).send({
-                     message: "Failed to create competition",
-                     type: "bad",
-                     err,
-                  });
-               }
-               res.status(201).send({
-                  message: "Successfully created new competition",
-                  type: "good",
+         // Run code
+
+         // Check if that name already exists
+         let sql = `SELECT ID FROM competitions WHERE Username = '${
+            req.auth.user.username
+         }' AND CompetitionName = '${fix(req.body.competitionName)}'`;
+
+         conn.query(sql, (err, result) => {
+            if (err) {
+               res.status(404).send({
+                  message: "Failed to locate competitions data",
+                  type: "bad",
+                  err,
                });
-            });
-         }
+            }
+            if (result.length) {
+               res.send({
+                  message: "A competition with that name already exists",
+                  type: "bad",
+                  result,
+               });
+            } else {
+               // Now actually insert the new competition
+               let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${
+                  req.auth.user.username
+               }', '${fix(req.body.competitionName)}')`;
+
+               conn.query(sql, (err) => {
+                  if (err) {
+                     res.status(404).send({
+                        message: "Failed to create competition",
+                        type: "bad",
+                        err,
+                     });
+                  }
+                  res.status(201).send({
+                     message: "Successfully created new competition",
+                     type: "good",
+                  });
+               });
+            }
+         });
       });
    });
 

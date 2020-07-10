@@ -21,7 +21,7 @@ body {
             font-weight: 500;
             font-size: 22px;
             border-right: 2px solid map-get($theme-colors, "back");
-            padding: 6px 12px;
+            padding: 10px;
             color: map-get($theme-colors, "back");
 
             &:first-child {
@@ -35,9 +35,9 @@ body {
             .plus {
                filter: invert(100%);
                float: right;
-               width: 28px;
-               margin-top: 2px;
-               margin-right: -3px;
+               width: 32px;
+               margin-top: 0px;
+               margin-right: 0px;
 
                &:hover {
                   cursor: pointer;
@@ -58,7 +58,7 @@ body {
          td {
             font-weight: 400;
             font-size: 16px;
-            color: map-get($theme-colors, "comp-table-text");
+            color: map-get($theme-colors, "table-text");
             border-right: 2px solid map-get($theme-colors, "back");
             padding: 6px 12px;
 

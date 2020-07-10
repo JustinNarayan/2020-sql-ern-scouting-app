@@ -8,7 +8,7 @@ const fix = require("./sqlStringFix");
 module.exports = (db) => {
    // Select Comps
    router.get("/", verifyToken, (req, res) => {
-      let sql = `SELECT * FROM competitions WHERE Username = '${req.auth.user.username}'`;
+      let sql = `SELECT * FROM competitions WHERE Username = '${req.auth.user.username}' ORDER BY ID ASC`;
       db.query(sql, (err, rows) => {
          if (err) {
             res.status(404).send({

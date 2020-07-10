@@ -8,7 +8,8 @@ import {
    ModalBody,
    Button,
 } from "reactstrap";
-import { authPageCheck } from "../../utils/checkAuth";
+import { authPageCheck } from "../../../utils/checkAuth";
+import Admin from "./Admin";
 import AddComp from "./AddComp";
 import Comp from "./Comp";
 
@@ -106,10 +107,20 @@ const Home = () => {
    // Render Component
    return (
       <div className={classes.container} style={styles.container}>
+         <h1 className={classes.title}>
+            Welcome, {sessionStorage.getItem("username")}!
+         </h1>
+         <p className={classes.subtitle} style={styles.subtitle}>
+            If you need help, please visit <b>team7558.com/scouting</b> for
+            tutorials and contact info for Alt-F4's Scouting Department! Thanks
+            for using our app and have fun scouting!
+         </p>
+
          <Table borderless className={classes.table}>
             <thead>
                <tr className={classes.tableHead}>
                   <th colSpan='7'>
+                     <Admin />
                      Competitions
                      <AddComp
                         onSubmit={onAddCompSubmit}
@@ -187,6 +198,8 @@ const Home = () => {
 
 const classes = {
    container: "p-0 mx-3",
+   title: "mb-2 mt-2 text-table-text",
+   subtitle: "pl-1 mb-4 text-table-text",
    table: "compTable p-0 text-back",
    tableHead: "bg-comp-table-head",
    modalHeaderDelete: "bg-message-error text-back",

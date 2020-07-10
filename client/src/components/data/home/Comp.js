@@ -234,7 +234,7 @@ const classes = {
    formGroup: "mb-4",
    formGroupCheck: "mb-2",
    label: "pl-1 mb-3",
-   input: "m-0 bg-back",
+   input: "m-0 bg-back text-table-text",
    hr: "border-comp-table-head p-0 w-100 mx-0",
    modalSubmit: "modalSubmit",
    spinner: "bg-comp-table-head",

@@ -3,7 +3,7 @@ import { Switch, Route } from "react-router-dom";
 
 import User from "./user/User";
 
-import Home from "./data/Home";
+import Home from "./data/home/Home";
 
 const Routing = () => {
    return (

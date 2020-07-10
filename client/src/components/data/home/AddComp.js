@@ -10,7 +10,7 @@ import {
    Button,
    Spinner,
 } from "reactstrap";
-const plus = require("bootstrap-icons/icons/plus-circle-fill.svg");
+import plus from "bootstrap-icons/icons/plus-circle-fill.svg";
 
 const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
    // Set state variables
@@ -99,7 +99,7 @@ const classes = {
    modalBody: "bg-back",
    alert: "mb-4 py-2 text-center",
    formGroup: "mb-4",
-   input: "m-0 bg-back",
+   input: "m-0 bg-back text-table-text",
    modalSubmit: "modalSubmit",
    spinner: "bg-comp-table-head",
 };

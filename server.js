@@ -1,6 +1,5 @@
 /// Enable the server
 const express = require("express");
-//const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 
@@ -12,22 +11,19 @@ try {
    // Module does not exist
 }
 const mysql = require("mysql");
-const db = mysql.createConnection({
+const db = mysql.createPool({
+   connectionLimt: 100,
    host: process.env.SQL_HOST || keys.host,
    user: process.env.SQL_USER || keys.user,
    password: process.env.SQL_PASS || keys.pass,
    database: process.env.SQL_DATABASE || keys.database,
-});
-db.connect((err) => {
-   if (err) throw err;
-   console.log("MySQL Connected...");
+   debug: false,
 });
 
 // Init app
 const app = express();
 
 // Use middleware
-//app.use(cors());
 app.use(bodyParser.json());
 
 // Define and use routes

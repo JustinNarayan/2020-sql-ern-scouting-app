@@ -1,3 +1,4 @@
+/*eslint-disable*/
 import React, { useState, Fragment } from "react";
 import {
    Modal,

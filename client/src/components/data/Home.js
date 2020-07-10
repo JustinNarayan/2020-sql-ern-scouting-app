@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Table } from "reactstrap";
-import { authPageCheck } from "../../checkAuth";
+import {
+   Table,
+   Modal,
+   ModalHeader,
+   Alert,
+   ModalBody,
+   Button,
+} from "reactstrap";
+import { authPageCheck } from "../../utils/checkAuth";
 import AddComp from "./AddComp";
 import Comp from "./Comp";
 
@@ -12,6 +19,7 @@ const Home = () => {
    const [addMessages, setAddMessages] = useState([]);
    const [editMessages, setEditMessages] = useState([]);
    const [deleteMessages, setDeleteMessages] = useState([]);
+   const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
    const auth = useStoreState((state) => state.auth);
    const comps = useStoreState((state) => state.comps);
 
@@ -19,6 +27,7 @@ const Home = () => {
    const getComps = useStoreActions((actions) => actions.getComps);
    const addComp = useStoreActions((actions) => actions.addComp);
    const editComp = useStoreActions((actions) => actions.editComp);
+   const deleteComp = useStoreActions((actions) => actions.deleteComp);
 
    // Define methods
    useEffect(() => {
@@ -62,12 +71,37 @@ const Home = () => {
       }
    };
 
-   const onDeleteCompSubmit = async (e, id) => {
+   const onDeleteCompSubmit = async (e, comp, checked) => {
       e.preventDefault();
       if (loading) return;
 
-      console.log(e);
+      if (!checked) {
+         setDeleteMessages([
+            {
+               text: "Delete aborted; understanding boxes not checked",
+               type: "bad",
+            },
+         ]);
+      } else {
+         setLoading(true);
+         const res = await deleteComp(comp.ID);
+         setDeleteMessages([
+            {
+               text: `${res.message}${
+                  res.type === "good" ? comp.CompetitionName : "" // Will display 'Successfully deleted <CompetitionName>' or a regular error message
+               }`,
+               type: res.type,
+            },
+         ]);
+         setLoading(false);
+
+         // The comp modal will unmount so open this modal to present a success message
+         if (res.type === "good") toggleDeleteSuccessModal();
+      }
    };
+
+   const toggleDeleteSuccessModal = () =>
+      setDeleteSuccessModal(!deleteSuccessModal);
 
    // Render Component
    return (
@@ -106,6 +140,47 @@ const Home = () => {
                     ))}
             </tbody>
          </Table>
+         <Modal
+            isOpen={deleteSuccessModal}
+            toggle={toggleDeleteSuccessModal}
+            size='md'>
+            <ModalHeader
+               className={classes.modalHeaderDelete}
+               style={styles.modalHeader}>
+               Delete Success
+               <Button
+                  color='transparent'
+                  className={classes.modalClose}
+                  style={styles.modalClose}
+                  onClick={toggleDeleteSuccessModal}>
+                  &times;
+               </Button>
+            </ModalHeader>
+            <ModalBody>
+               {deleteMessages.map((message) => (
+                  <Alert
+                     key={message.text}
+                     color={
+                        message.type === "good"
+                           ? "message-good"
+                           : "message-error"
+                     }
+                     className={classes.alert}>
+                     {message.text}
+                  </Alert>
+               ))}
+               <Button
+                  color='comp-table-head'
+                  className={classes.modalSubmit}
+                  style={styles.button}
+                  block
+                  outline
+                  size='md'
+                  onClick={toggleDeleteSuccessModal}>
+                  OK
+               </Button>
+            </ModalBody>
+         </Modal>
       </div>
    );
 };
@@ -114,8 +189,30 @@ const classes = {
    container: "p-0 mx-3",
    table: "compTable p-0 text-back",
    tableHead: "bg-comp-table-head",
+   modalHeaderDelete: "bg-message-error text-back",
+   modalClose: "text-back",
+   modalBody: "bg-back",
+   alert: "mb-4 py-2 text-center",
+   modalSubmit: "modalSubmit",
 };
 
-const styles = {};
+const styles = {
+   modalHeader: {
+      paddingLeft: "22px",
+   },
+   modalClose: {
+      padding: "0px",
+      float: "right",
+      fontSize: "26px",
+      border: "0",
+      right: "20px",
+      top: "10px",
+      position: "absolute",
+      height: "0",
+   },
+   button: {
+      fontWeight: "400",
+   },
+};
 
 export default Home;

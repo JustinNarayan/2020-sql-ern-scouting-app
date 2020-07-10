@@ -63,7 +63,6 @@ const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
                      <Input
                         className={classes.input}
                         type='text'
-                        name='newCompName'
                         placeholder='Competition Name'
                         autoComplete='new-competition-name'
                         onChange={(e) => setNewCompName(e.target.value)}

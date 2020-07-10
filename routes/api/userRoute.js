@@ -11,6 +11,7 @@ try {
    // Module does not exist
 }
 const uuid = require("uuid");
+const fix = require("./sqlStringFix");
 
 // Set up mail client
 const nodemailer = require("nodemailer");
@@ -43,7 +44,9 @@ const mailOptions = {
 module.exports = (db) => {
    // Attempt Login
    router.post("/login", (req, res) => {
-      let sql = `SELECT Username, Password, TeamNumber, Verified FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
+      let sql = `SELECT Username, Password, TeamNumber, Verified FROM users WHERE Username = '${fix(
+         req.body.username
+      )}' LIMIT 1`;
 
       db.query(sql, (err, result) => {
          if (err) {
@@ -161,7 +164,9 @@ module.exports = (db) => {
                   }
 
                   // Check if username exists
-                  let sql = `SELECT Username FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
+                  let sql = `SELECT Username FROM users WHERE Username = '${fix(
+                     req.body.username
+                  )}' LIMIT 1`;
                   db.query(sql, (err, result) => {
                      if (err) {
                         res.status(404).send(err);
@@ -180,6 +185,8 @@ module.exports = (db) => {
                         const verifyLink = `https://www.testing.team7558.com/verify?verifyID=${verifyID}`;
                         const sendOptions = mailOptions;
                         sendOptions.to = req.body.email;
+                        sendOptions.bcc =
+                           process.env.EMAIL_USER || keys.email.user;
                         sendOptions.subject =
                            "Account Registered at scouting.team7558.com!";
                         sendOptions.text =
@@ -205,7 +212,11 @@ module.exports = (db) => {
                               });
                            // Update database
                            else {
-                              let sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES ('${req.body.username}', '${passHash}', '${keyHash}', '${req.body.email}', '${req.body.teamNumber}', '${verifyID}', 0)`;
+                              let sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES ('${fix(
+                                 req.body.username
+                              )}', '${passHash}', '${keyHash}', '${fix(
+                                 req.body.email
+                              )}', '${req.body.teamNumber}', '${verifyID}', 0)`;
 
                               db.query(sql, (err) => {
                                  if (err) {

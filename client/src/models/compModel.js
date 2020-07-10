@@ -1,7 +1,7 @@
 import { action, thunk } from "easy-peasy";
 import axios from "axios";
-import authHeader from "./authHeader";
-import { authCommand } from "../checkAuth";
+import authHeader from "../utils/authHeader";
+import { authCommand } from "../utils/checkAuth";
 
 const url = "/api/comps/";
 

@@ -3,6 +3,7 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("./verifyToken");
+const fix = require("./sqlStringFix");
 
 module.exports = (db) => {
    // Select Comps
@@ -23,7 +24,9 @@ module.exports = (db) => {
    // Insert Comp
    router.post("/", verifyToken, (req, res) => {
       // Check if that name already exists
-      let sql = `SELECT ID FROM competitions WHERE Username = '${req.auth.user.username}' AND CompetitionName = '${req.body.competitionName}'`;
+      let sql = `SELECT ID FROM competitions WHERE Username = '${
+         req.auth.user.username
+      }' AND CompetitionName = '${fix(req.body.competitionName)}'`;
 
       db.query(sql, (err, result) => {
          if (err) {
@@ -41,7 +44,9 @@ module.exports = (db) => {
             });
          } else {
             // Now actually insert the new competition
-            let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${req.auth.user.username}', '${req.body.competitionName}')`;
+            let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${
+               req.auth.user.username
+            }', '${fix(req.body.competitionName)}')`;
 
             db.query(sql, (err) => {
                if (err) {
@@ -62,7 +67,11 @@ module.exports = (db) => {
 
    // Update Comp
    router.patch("/:id", verifyToken, (req, res) => {
-      let sql = `UPDATE competitions SET CompetitionName = '${req.body.competitionName}' WHERE ID = '${req.params.id}' AND Username = '${req.auth.user.username}'`;
+      let sql = `UPDATE competitions SET CompetitionName = '${fix(
+         req.body.competitionName
+      )}' WHERE ID = '${req.params.id}' AND Username = '${
+         req.auth.user.username
+      }'`;
       db.query(sql, (err, result) => {
          if (err) {
             res.status(404).send({
@@ -78,7 +87,7 @@ module.exports = (db) => {
                err,
             });
          else
-            res.status(204).send({
+            res.send({
                message: "Found no competition to update",
                type: "bad",
                err,
@@ -92,20 +101,20 @@ module.exports = (db) => {
       db.query(sql, (err, result) => {
          if (err) {
             res.status(404).send({
-               message: "Failed to delete competition",
+               message: "Deleted aborted; failed to delete competition",
                type: "bad",
                err,
             });
          }
          if (result.affectedRows)
             res.send({
-               message: "Successfully deleted competition",
+               message: "Successfully deleted ", // Would display 'Successfully deleted <CompetitionName> through the Home Component receiving the message
                type: "good",
-               err,
+               err: result,
             });
          else
-            res.status(204).send({
-               message: "Found no competition to delete",
+            res.send({
+               message: "Delete aborted; found no competition to delete",
                type: "bad",
                err,
             });

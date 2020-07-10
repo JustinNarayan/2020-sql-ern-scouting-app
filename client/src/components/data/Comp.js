@@ -25,6 +25,9 @@ const Comp = ({
    const [modal, setModal] = useState(false);
    const [deleteModal, setDeleteModal] = useState(false);
    const [editCompName, setEditCompName] = useState(comp.CompetitionName);
+   const [deleteScouting, setDeleteScouting] = useState(false);
+   const [deleteTeams, setDeleteTeams] = useState(false);
+   const [deleteMatches, setDeleteMatches] = useState(false);
 
    // Define methods
    const toggleModal = () => {
@@ -37,13 +40,14 @@ const Comp = ({
       setDeleteModal(!deleteModal);
    };
 
+   const handleDeleteSubmit = (e) => {
+      onDeleteSubmit(e, comp, deleteScouting && deleteTeams && deleteMatches);
+   };
+
    return (
       <Fragment>
          <tr>
-            <td className={classes.compName}>
-               {comp.CompetitionName}
-               {comp.ID}
-            </td>
+            <td className={classes.compName}>{comp.CompetitionName}</td>
             <td className={classes.link}>Teams</td>
             <td className={classes.link}>Matches</td>
             <td className={classes.link}>Scout</td>
@@ -84,7 +88,6 @@ const Comp = ({
                      <Input
                         className={classes.input}
                         type='text'
-                        name='editCompName'
                         placeholder='Edited Competition Name'
                         autoComplete='edit-competition-name'
                         onChange={(e) => setEditCompName(e.target.value)}
@@ -112,18 +115,6 @@ const Comp = ({
             </ModalBody>
             <hr className={classes.hr} />
             <ModalBody>
-               {deleteMessages.map((message) => (
-                  <Alert
-                     key={message.text}
-                     color={
-                        message.type === "good"
-                           ? "message-good"
-                           : "message-error"
-                     }
-                     className={classes.alert}>
-                     {message.text}
-                  </Alert>
-               ))}
                <Button
                   color='message-error'
                   className={classes.modalSubmit}
@@ -136,7 +127,7 @@ const Comp = ({
                </Button>
 
                {/* Delete Modal is nested within main modal */}
-               <Modal isOpen={deleteModal} toggle={toggleDeleteModal} size='sm'>
+               <Modal isOpen={deleteModal} toggle={toggleDeleteModal} size='md'>
                   <ModalHeader
                      className={classes.modalHeaderDelete}
                      style={styles.modalHeader}>
@@ -150,9 +141,60 @@ const Comp = ({
                      </Button>
                   </ModalHeader>
                   <ModalBody>
-                     <Form onSubmit={(e) => onDeleteSubmit(e, comp.ID)}>
+                     {deleteMessages.map((message) => (
+                        <Alert
+                           key={message.text}
+                           color={
+                              message.type === "good"
+                                 ? "message-good"
+                                 : "message-error"
+                           }
+                           className={classes.alert}>
+                           {message.text}
+                        </Alert>
+                     ))}
+                     <Form onSubmit={(e) => handleDeleteSubmit(e)}>
+                        <FormGroup className={classes.formGroupCheck}>
+                           I understand that...
+                        </FormGroup>
+                        <FormGroup check className={classes.formGroupCheck}>
+                           <Input
+                              type='checkbox'
+                              name='deleteScouting'
+                              id='deleteScouting'
+                              onChange={() =>
+                                 setDeleteScouting(!deleteScouting)
+                              }
+                           />
+                           <Label for='deleteScouting'>
+                              All scouting data from {comp.CompetitionName} will
+                              be deleted <b>forever</b>
+                           </Label>
+                        </FormGroup>
+                        <FormGroup check className={classes.formGroupCheck}>
+                           <Input
+                              type='checkbox'
+                              name='deleteTeams'
+                              id='deleteTeams'
+                              onChange={() => setDeleteTeams(!deleteTeams)}
+                           />
+                           <Label for='deleteTeams'>
+                              All team data from {comp.CompetitionName} will be
+                              deleted <b>forever</b>
+                           </Label>
+                        </FormGroup>
                         <FormGroup check className={classes.formGroup}>
-                           <Input type='checkbox' />
+                           {/* Different class for margin purposes */}
+                           <Input
+                              type='checkbox'
+                              name='deleteMatches'
+                              id='deleteMatches'
+                              onChange={() => setDeleteMatches(!deleteMatches)}
+                           />
+                           <Label for='deleteMatches'>
+                              All match data from {comp.CompetitionName} will be
+                              deleted <b>forever</b>
+                           </Label>
                         </FormGroup>
                         <Button
                            color='message-error'
@@ -190,6 +232,7 @@ const classes = {
    modalBody: "bg-back",
    alert: "mb-4 py-2 text-center",
    formGroup: "mb-4",
+   formGroupCheck: "mb-2",
    label: "pl-1 mb-3",
    input: "m-0 bg-back",
    hr: "border-comp-table-head p-0 w-100 mx-0",

@@ -11,6 +11,7 @@ try {
    // Module does not exist
 }
 const uuid = require("uuid");
+const verifyToken = require("./verifyToken");
 const fix = require("./sqlStringFix");
 
 // Set up mail client
@@ -97,6 +98,7 @@ module.exports = (db) => {
                         const user = {
                            username: sqlUser.Username,
                            teamNumber: sqlUser.TeamNumber,
+                           isAdmin: false,
                         };
                         // Generate authentication token
                         jwt.sign(
@@ -309,6 +311,86 @@ module.exports = (db) => {
                            type: "good",
                         });
                      }
+                  }
+               }
+            );
+         }
+      });
+   });
+
+   // Attempt Admin Login
+   router.post("/admin", verifyToken, (req, res) => {
+      let sql = `SELECT Username, AdminKey, TeamNumber FROM users WHERE Username = '${fix(
+         req.auth.user.username
+      )}' LIMIT 1`;
+
+      db.query(sql, (err, result) => {
+         if (err) {
+            res.status(404).send(err);
+            return;
+         }
+
+         // Check if username exists
+         if (!result.length) {
+            res.send({
+               message: "That username is not registered",
+               type: "bad",
+            });
+         } else {
+            // Get user object
+            const sqlUser = result[0];
+
+            // Check password
+            bcrypt.compare(
+               req.body.adminKey,
+               sqlUser.AdminKey,
+               (err, result) => {
+                  if (err) {
+                     res.status(404).send({
+                        message: "Failed to check against admin key",
+                        type: "bad",
+                        err,
+                     });
+                     return;
+                  }
+
+                  // Check if password authenticated
+                  if (!result) {
+                     res.send({
+                        message: "Incorrect admin key",
+                        type: "bad",
+                     });
+                  } else {
+                     /* Create a new authentication token with a new isAdmin value */
+                     const user = {
+                        username: sqlUser.Username,
+                        teamNumber: sqlUser.TeamNumber,
+                        isAdmin: true,
+                     };
+                     // Generate authentication token
+                     jwt.sign(
+                        { user },
+                        process.env.JSONKEY || keys.jsonKey,
+                        {
+                           expiresIn: process.env.AUTHEXPIRY || keys.authExpiry,
+                        },
+                        (err, token) => {
+                           if (err) {
+                              res.status(404).send({
+                                 message:
+                                    "Failed to generate admin authentication token",
+                                 type: "bad",
+                                 err,
+                              });
+                              return;
+                           }
+                           res.send({
+                              message: "Admin authentication successful",
+                              type: "good",
+                              token,
+                           });
+                        }
+                     );
                   }
                }
             );

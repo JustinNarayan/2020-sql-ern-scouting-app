@@ -23,6 +23,15 @@ module.exports = (db) => {
 
    // Insert Comp
    router.post("/", verifyToken, (req, res) => {
+      // Check if admin
+      if (!req.auth.user.isAdmin) {
+         res.send({
+            message: "Missing admin privileges for that action",
+            type: "bad",
+         });
+         return;
+      }
+
       // Check if that name already exists
       let sql = `SELECT ID FROM competitions WHERE Username = '${
          req.auth.user.username
@@ -67,6 +76,15 @@ module.exports = (db) => {
 
    // Update Comp
    router.patch("/:id", verifyToken, (req, res) => {
+      // Check if admin
+      if (!req.auth.user.isAdmin) {
+         res.send({
+            message: "Missing admin privileges for that action",
+            type: "bad",
+         });
+         return;
+      }
+
       let sql = `UPDATE competitions SET CompetitionName = '${fix(
          req.body.competitionName
       )}' WHERE ID = '${req.params.id}' AND Username = '${
@@ -97,7 +115,16 @@ module.exports = (db) => {
 
    // Delete Comp
    router.delete("/:id", verifyToken, (req, res) => {
-      let sql = `DELETE FROM competitions WHERE ID = '${req.params.id}' AND Username = '${req.auth.user.username}' LIMIT 1`;
+      // Check if admin
+      if (!req.auth.user.isAdmin) {
+         res.send({
+            message: "Missing admin privileges for that action",
+            type: "bad",
+         });
+         return;
+      }
+
+      let sql = `DELETE FROM competitions WHERE ID = '${req.params.id}' AND Username = '${req.auth.user.username}'`;
       db.query(sql, (err, result) => {
          if (err) {
             res.status(404).send({

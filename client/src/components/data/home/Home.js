@@ -8,20 +8,17 @@ import {
    ModalBody,
    Button,
 } from "reactstrap";
-import { authPageCheck } from "../../../utils/checkAuth";
 import Admin from "./Admin";
 import AddComp from "./AddComp";
 import Comp from "./Comp";
 
 const Home = () => {
    // Set state variables
-   const [authing, setAuthing] = useState(true);
    const [loading, setLoading] = useState(false);
    const [addMessages, setAddMessages] = useState([]);
    const [editMessages, setEditMessages] = useState([]);
    const [deleteMessages, setDeleteMessages] = useState([]);
    const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
-   const auth = useStoreState((state) => state.auth);
    const comps = useStoreState((state) => state.comps);
 
    // Bring in commands
@@ -30,13 +27,14 @@ const Home = () => {
    const editComp = useStoreActions((actions) => actions.editComp);
    const deleteComp = useStoreActions((actions) => actions.deleteComp);
 
-   // Define methods
+   // Get data once when mounted to avoid excessive db calls
    useEffect(() => {
-      authPageCheck(auth, setAuthing);
-
       getComps();
-   }, [auth, getComps]);
 
+      //eslint-disable-next-line
+   }, []);
+
+   // Define methods
    const onAddCompSubmit = async (e, competitionName) => {
       e.preventDefault();
       if (loading) return;
@@ -132,23 +130,21 @@ const Home = () => {
                </tr>
             </thead>
             <tbody>
-               {authing
-                  ? null
-                  : comps.map((comp, index) => (
-                       <Comp
-                          key={comp.ID}
-                          comp={comp}
-                          onEditSubmit={onEditCompSubmit}
-                          onDeleteSubmit={onDeleteCompSubmit}
-                          clearMessages={() => {
-                             setEditMessages([]);
-                             setDeleteMessages([]);
-                          }}
-                          loading={loading}
-                          editMessages={editMessages}
-                          deleteMessages={deleteMessages}
-                       />
-                    ))}
+               {comps.map((comp) => (
+                  <Comp
+                     key={comp.ID}
+                     comp={comp}
+                     onEditSubmit={onEditCompSubmit}
+                     onDeleteSubmit={onDeleteCompSubmit}
+                     clearMessages={() => {
+                        setEditMessages([]);
+                        setDeleteMessages([]);
+                     }}
+                     loading={loading}
+                     editMessages={editMessages}
+                     deleteMessages={deleteMessages}
+                  />
+               ))}
             </tbody>
          </Table>
          <Modal

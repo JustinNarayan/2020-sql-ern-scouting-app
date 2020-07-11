@@ -12,57 +12,54 @@ export default {
    // Thunks
    getComps: thunk(async (actions) => {
       // Handle WS Call
-      actions.setAuth("Checking");
       const res = await axios.get(url, authHeader);
-      const comps = res.data;
+      const out = res.data; // List of comps || Forbidden
 
       // Handle state control
-      authCommand(actions, comps, () => {
-         actions.setComps(comps);
-      });
+      authCommand(out, () => actions.setComps(out));
    }),
+
    addComp: thunk(async (actions, comp) => {
       // Handle WS Call
-      actions.setAuth("Checking");
       const res = await axios.post(url, comp, authHeader);
-      const out = res.data;
+      const out = res.data; // Message || Forbidden
 
       // Call to getComps
-      authCommand(actions, out, () => actions.getComps());
+      authCommand(out, () => actions.getComps());
 
       // Return api response to display to user
       return out;
    }),
+
    editComp: thunk(async (actions, compEdit) => {
       // Handle WS Call
-      actions.setAuth("Checking");
       const res = await axios.patch(
          `${url}${compEdit.id}`,
          compEdit,
          authHeader
       );
-      const out = res.data;
+      const out = res.data; // Message || Forbidden
 
       // Call to getComps
-      authCommand(actions, out, () => actions.getComps());
+      authCommand(out, () => actions.getComps());
 
       // Return api response to display to user
       return out;
    }),
+
    deleteComp: thunk(async (actions, id) => {
       // Handle WS Call
-      actions.setAuth("Checking");
       const res = await axios.delete(`${url}${id}`, authHeader);
-      const out = res.data;
+      const out = res.data; // Message || Forbidden
 
       // Call to getComps
-      authCommand(actions, out, () => actions.getComps());
+      authCommand(out, () => actions.getComps());
 
       // Return api response to display to user
       return out;
    }),
 
-   // actions
+   // Actions
    setComps: action((state, comps) => {
       state.comps = comps;
    }),

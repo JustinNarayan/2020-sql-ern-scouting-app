@@ -95,12 +95,15 @@ const Home = () => {
          setLoading(false);
 
          // The comp modal will unmount so open this modal to present a success message
-         if (res.type === "good") toggleDeleteSuccessModal();
+         if (res.type === "good") {
+            toggleDeleteSuccessModal();
+         }
       }
    };
 
-   const toggleDeleteSuccessModal = () =>
+   const toggleDeleteSuccessModal = () => {
       setDeleteSuccessModal(!deleteSuccessModal);
+   };
 
    // Render Component
    return (
@@ -143,6 +146,7 @@ const Home = () => {
                      loading={loading}
                      editMessages={editMessages}
                      deleteMessages={deleteMessages}
+                     overwriteModals={deleteSuccessModal}
                   />
                ))}
             </tbody>

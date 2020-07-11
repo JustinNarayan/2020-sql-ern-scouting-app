@@ -20,6 +20,7 @@ const Comp = ({
    loading,
    editMessages,
    deleteMessages,
+   overwriteModals,
 }) => {
    // Set state variables
    const [modal, setModal] = useState(false);
@@ -40,7 +41,7 @@ const Comp = ({
       setDeleteModal(!deleteModal);
    };
 
-   const handleDeleteSubmit = (e) => {
+   const handleDeleteSubmit = async (e) => {
       onDeleteSubmit(e, comp, deleteScouting && deleteTeams && deleteMatches);
    };
 
@@ -57,7 +58,10 @@ const Comp = ({
                Actions
             </td>
          </tr>
-         <Modal isOpen={modal} toggle={toggleModal} size='md'>
+         <Modal
+            isOpen={modal && !overwriteModals} // Closes when the deleteSuccessModal is up
+            toggle={toggleModal}
+            size='md'>
             <ModalHeader
                className={classes.modalHeader}
                style={styles.modalHeader}>
@@ -127,7 +131,10 @@ const Comp = ({
                </Button>
 
                {/* Delete Modal is nested within main modal */}
-               <Modal isOpen={deleteModal} toggle={toggleDeleteModal} size='md'>
+               <Modal
+                  isOpen={deleteModal && !overwriteModals} // Closes when the deleteSuccessModal is up
+                  toggle={toggleDeleteModal}
+                  size='md'>
                   <ModalHeader
                      className={classes.modalHeaderDelete}
                      style={styles.modalHeader}>

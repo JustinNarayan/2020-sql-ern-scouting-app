@@ -34,6 +34,7 @@ const User = ({ mode, query }) => {
    const login = useStoreActions((actions) => actions.login);
    const register = useStoreActions((actions) => actions.register);
    const verify = useStoreActions((actions) => actions.verify);
+   const timeBeforeRedirect = 250; // A timeout to display a message before the redirect
 
    // Define methods
    useEffect(() => {
@@ -79,12 +80,8 @@ const User = ({ mode, query }) => {
       } else {
          setLoading(true);
          const res = await authenticate({ username, password });
-
-         // If it was a good message, the component would unmount upon redirect
-         if (res.type === "bad") {
-            setMessages([res]);
-            setLoading(false);
-         }
+         setMessages([res]);
+         setLoading(false);
       }
    };
 
@@ -154,12 +151,8 @@ const User = ({ mode, query }) => {
             nextRes = await authenticate({ username, password });
             alerts.push(nextRes);
          }
-
-         // If either was a good message, the component would unmount upon redirect
-         if (res.type === "bad" || (nextRes.type && nextRes.type === "bad")) {
-            setMessages(alerts);
-            setLoading(false);
-         }
+         setMessages(alerts);
+         setLoading(false);
       }
    };
 
@@ -170,7 +163,7 @@ const User = ({ mode, query }) => {
       if (auth.token) {
          sessionStorage.setItem("username", user.username);
          sessionStorage.setItem("token", auth.token);
-         window.location.href = "/home";
+         setTimeout(() => (window.location.href = "/home"), timeBeforeRedirect);
       }
       return { text: auth.message, type: auth.type };
    };

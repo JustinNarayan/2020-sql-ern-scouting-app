@@ -5,28 +5,20 @@ const router = express.Router();
 const verifyToken = require("./verifyToken");
 const fix = require("./sqlStringFix");
 
-module.exports = (db) => {
+module.exports = (pool) => {
    // Select Comps
    router.get("/", verifyToken, (req, res) => {
-      // Connect to pool
-      db.getConnection((err, conn) => {
+      // Run code
+      let sql = `SELECT * FROM competitions WHERE Username = '${req.auth.user.username}' ORDER BY ID ASC`;
+      pool.query(sql, (err, rows) => {
          if (err) {
-            res.status(404).send(err);
-            return;
+            res.status(404).send({
+               message: "Failed to get competitions",
+               type: "bad",
+               err,
+            });
          }
-
-         // Run code
-         let sql = `SELECT * FROM competitions WHERE Username = '${req.auth.user.username}' ORDER BY ID ASC`;
-         conn.query(sql, (err, rows) => {
-            if (err) {
-               res.status(404).send({
-                  message: "Failed to get competitions",
-                  type: "bad",
-                  err,
-               });
-            }
-            res.send(rows);
-         });
+         res.send(rows);
       });
    });
 
@@ -41,55 +33,45 @@ module.exports = (db) => {
          return;
       }
 
-      // Connect to pool
-      db.getConnection((err, conn) => {
+      // Check if that name already exists
+      let sql = `SELECT ID FROM competitions WHERE Username = '${
+         req.auth.user.username
+      }' AND CompetitionName = '${fix(req.body.competitionName)}'`;
+
+      pool.query(sql, (err, result) => {
          if (err) {
-            res.status(404).send(err);
-            return;
+            res.status(404).send({
+               message: "Failed to locate competitions data",
+               type: "bad",
+               err,
+            });
          }
+         if (result.length) {
+            res.send({
+               message: "A competition with that name already exists",
+               type: "bad",
+               result,
+            });
+         } else {
+            // Now actually insert the new competition
+            let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${
+               req.auth.user.username
+            }', '${fix(req.body.competitionName)}')`;
 
-         // Run code
-
-         // Check if that name already exists
-         let sql = `SELECT ID FROM competitions WHERE Username = '${
-            req.auth.user.username
-         }' AND CompetitionName = '${fix(req.body.competitionName)}'`;
-
-         conn.query(sql, (err, result) => {
-            if (err) {
-               res.status(404).send({
-                  message: "Failed to locate competitions data",
-                  type: "bad",
-                  err,
-               });
-            }
-            if (result.length) {
-               res.send({
-                  message: "A competition with that name already exists",
-                  type: "bad",
-                  result,
-               });
-            } else {
-               // Now actually insert the new competition
-               let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${
-                  req.auth.user.username
-               }', '${fix(req.body.competitionName)}')`;
-
-               conn.query(sql, (err) => {
-                  if (err) {
-                     res.status(404).send({
-                        message: "Failed to create competition",
-                        type: "bad",
-                        err,
-                     });
-                  }
-                  res.status(201).send({
-                     message: "Successfully created new competition",
-                     type: "good",
+            pool.query(sql, (err) => {
+               if (err) {
+                  res.status(404).send({
+                     message: "Failed to create competition",
+                     type: "bad",
+                     err,
                   });
+               }
+               res.status(201).send({
+                  message: "Successfully created new competition",
+                  type: "good",
                });
-            }
-         });
+            });
+         }
       });
    });
 
@@ -109,7 +91,7 @@ module.exports = (db) => {
       )}' WHERE ID = '${req.params.id}' AND Username = '${
          req.auth.user.username
       }'`;
-      db.query(sql, (err, result) => {
+      pool.query(sql, (err, result) => {
          if (err) {
             res.status(404).send({
                message: "Failed to update competition",
@@ -144,7 +126,7 @@ module.exports = (db) => {
       }
 
       let sql = `DELETE FROM competitions WHERE ID = '${req.params.id}' AND Username = '${req.auth.user.username}'`;
-      db.query(sql, (err, result) => {
+      pool.query(sql, (err, result) => {
          if (err) {
             res.status(404).send({
                message: "Deleted aborted; failed to delete competition",

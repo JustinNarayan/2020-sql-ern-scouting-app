@@ -11,7 +11,7 @@ try {
    // Module does not exist
 }
 const mysql = require("mysql");
-const db = mysql.createPool({
+const pool = mysql.createPool({
    connectionLimt: 100,
    host: process.env.SQL_HOST || keys.host,
    user: process.env.SQL_USER || keys.user,
@@ -27,9 +27,9 @@ const app = express();
 app.use(bodyParser.json());
 
 // Define and use routes
-const users = require("./routes/api/userRoute")(db);
+const users = require("./routes/api/userRoute")(pool);
 app.use("/api/users", users);
-const comps = require("./routes/api/compRoute")(db);
+const comps = require("./routes/api/compRoute")(pool);
 app.use("/api/comps", comps);
 
 // Serve static assets in production

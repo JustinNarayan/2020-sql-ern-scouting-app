@@ -56,7 +56,8 @@ module.exports = (pool) => {
 
          // Name may be taken
          errMessage = "That competition name is taken";
-         if (result.length) throw "";
+         if (result.length)
+            throw `Cannot have duplicate competition names under same user`;
 
          // Insert Comp
          sql = `INSERT INTO competitions (Username, CompetitionName) VALUES (?, ?)`;
@@ -98,7 +99,8 @@ module.exports = (pool) => {
 
          // May have found no data
          errMessage = "Found no competition to update";
-         if (!result.affectedRows) throw "";
+         if (!result.affectedRows)
+            throw `Competition not found in the database`;
 
          // Success!
          res.send({
@@ -130,7 +132,8 @@ module.exports = (pool) => {
 
          // May have found no data
          errMessage = "Delete aborted; found no competition to delete";
-         if (!result.affectedRows) throw "";
+         if (!result.affectedRows)
+            throw `Competition not found in the database`;
 
          // Success!
          res.send({

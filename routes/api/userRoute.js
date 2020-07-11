@@ -45,9 +45,7 @@ const mailOptions = {
 module.exports = (pool) => {
    // Attempt Login
    router.post("/login", (req, res) => {
-      let sql = `SELECT Username, Password, TeamNumber, Verified FROM users WHERE Username = '${fix(
-         req.body.username
-      )}' LIMIT 1`;
+      let sql = `SELECT Username, Password, TeamNumber, Verified FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
 
       pool.query(sql, (err, result) => {
          if (err) {
@@ -170,9 +168,7 @@ module.exports = (pool) => {
                   }
 
                   // Check if username exists
-                  let sql = `SELECT Username FROM users WHERE Username = '${fix(
-                     req.body.username
-                  )}' LIMIT 1`;
+                  let sql = `SELECT Username FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
                   pool.query(sql, (err, result) => {
                      if (err) {
                         res.send({
@@ -225,9 +221,9 @@ module.exports = (pool) => {
                            }
                            // Update database
                            else {
-                              let sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES ('${fix(
+                              let sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES ('${
                                  req.body.username
-                              )}', '${passHash}', '${keyHash}', '${fix(
+                              }', '${passHash}', '${keyHash}', '${fix(
                                  req.body.email
                               )}', '${req.body.teamNumber}', '${verifyID}', 0)`;
 
@@ -259,7 +255,9 @@ module.exports = (pool) => {
 
    // Verify user
    router.post("/verify/:id", (req, res) => {
-      let sql = `SELECT Username, Password, Verified FROM users WHERE Username = '${req.body.username}' AND VerifyID = '${req.params.id}' LIMIT 1`;
+      let sql = `SELECT Username, Password, Verified FROM users WHERE Username = '${
+         req.body.username
+      }' AND VerifyID = '${fix(req.params.id)}' LIMIT 1`;
 
       pool.query(sql, (err, result) => {
          if (err) {
@@ -335,9 +333,7 @@ module.exports = (pool) => {
 
    // Attempt Admin Login
    router.post("/admin", verifyToken, (req, res) => {
-      let sql = `SELECT Username, AdminKey, TeamNumber FROM users WHERE Username = '${fix(
-         req.auth.user.username
-      )}' LIMIT 1`;
+      let sql = `SELECT Username, AdminKey, TeamNumber FROM users WHERE Username = '${req.auth.user.username}' LIMIT 1`;
 
       pool.query(sql, (err, result) => {
          if (err) {

@@ -36,7 +36,7 @@ module.exports = (pool) => {
          return;
       }
 
-      // Create first method to search the database for a duplicate name and user
+      // Create first function to search the database for a duplicate name and user
       const checkForExistingComp = (nextMethod) => {
          let sql = `SELECT ID FROM competitions WHERE Username = '${
             req.auth.user.username
@@ -64,7 +64,7 @@ module.exports = (pool) => {
          });
       };
 
-      // Create second method to insert the new competition
+      // Create second function to insert the new competition
       const insertComp = () => {
          let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${
             req.auth.user.username
@@ -106,7 +106,7 @@ module.exports = (pool) => {
 
       let sql = `UPDATE competitions SET CompetitionName = '${fix(
          req.body.competitionName
-      )}' WHERE ID = '${req.params.id}' AND Username = '${
+      )}' WHERE ID = '${fix(req.params.id)}' AND Username = '${
          req.auth.user.username
       }'`;
       pool.query(sql, (err, result) => {
@@ -134,8 +134,6 @@ module.exports = (pool) => {
       });
    });
 
-   //
-
    // Delete Comp
    router.delete("/:id", verifyToken, (req, res) => {
       // Check if admin
@@ -147,7 +145,9 @@ module.exports = (pool) => {
          return;
       }
 
-      let sql = `DELETE FROM competitions WHERE ID = '${req.params.id}' AND Username = '${req.auth.user.username}'`;
+      let sql = `DELETE FROM competitions WHERE ID = '${fix(
+         req.params.id
+      )}' AND Username = '${req.auth.user.username}'`;
       pool.query(sql, (err, result) => {
          if (err || !result) {
             res.send({

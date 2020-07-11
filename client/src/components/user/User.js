@@ -69,6 +69,13 @@ const User = ({ mode, query }) => {
    const onLogin = async (e) => {
       if (!username || !password) {
          setMessages([{ text: "Please fill out all fields", type: "bad" }]);
+      } else if (!username.match(/^[0-9a-z]+$/)) {
+         setMessages([
+            {
+               text: "Usernames must be alphanumeric",
+               type: "bad",
+            },
+         ]);
       } else {
          setLoading(true);
          const res = await authenticate({ username, password });
@@ -95,6 +102,12 @@ const User = ({ mode, query }) => {
       ) {
          errors.push({ text: "Please fill out all fields", type: "bad" });
       } else {
+         if (!username.match(/^[0-9a-z]+$/)) {
+            errors.push({
+               text: "Usernames must be alphanumeric",
+               type: "bad",
+            });
+         }
          if (!validator.validate(email)) {
             errors.push({ text: "Invalid email address", type: "bad" });
          }

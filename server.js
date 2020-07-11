@@ -10,15 +10,16 @@ try {
 } catch (err) {
    // Module does not exist
 }
-const mysql = require("mysql");
+const mysql = require("mysql2");
 const pool = mysql.createPool({
-   connectionLimt: 100,
+   connectionLimit: 100,
    host: process.env.SQL_HOST || keys.host,
    user: process.env.SQL_USER || keys.user,
    password: process.env.SQL_PASS || keys.pass,
    database: process.env.SQL_DATABASE || keys.database,
    debug: false,
 });
+const promisePool = pool.promise();
 
 // Init app
 const app = express();
@@ -27,9 +28,9 @@ const app = express();
 app.use(bodyParser.json());
 
 // Define and use routes
-const users = require("./routes/api/userRoute")(pool);
+const users = require("./routes/api/userRoute")(promisePool);
 app.use("/api/users", users);
-const comps = require("./routes/api/compRoute")(pool);
+const comps = require("./routes/api/compRoute")(promisePool);
 app.use("/api/comps", comps);
 
 // Serve static assets in production

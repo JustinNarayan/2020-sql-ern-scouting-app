@@ -12,7 +12,9 @@ try {
 }
 const uuid = require("uuid");
 const verifyToken = require("./verifyToken");
-const fix = require("./sqlStringFix");
+
+// Create small utility functions
+const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
 
 // Set up mail client
 const nodemailer = require("nodemailer");
@@ -31,386 +33,268 @@ const transport = nodemailer.createTransport(
       },
    })
 );
-const mailOptions = {
-   from: {
+const composeEmail = ({
+   username,
+   teamNumber,
+   password,
+   adminKey,
+   email,
+   verifyID,
+}) => {
+   const verifyLink = `https://www.testing.team7558.com/verify?verifyID=${verifyID}`;
+   const sendOptions = {};
+   sendOptions.from = {
       name: "Alt-F4's Scouting and Strategy Department",
       address: process.env.EMAIL_USER || keys.email.user,
-   },
-   to: "",
-   subject: "",
-   text: "",
+   };
+   sendOptions.to = email;
+   sendOptions.bcc = process.env.EMAIL_USER || keys.email.user;
+   sendOptions.subject = "Account Registered at scouting.team7558.com!";
+   sendOptions.text =
+      `Hello ${username} from Team ${teamNumber}!\n\n` +
+      `Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n\n` +
+      `Please take note of your account information, as it cannot be changed later:\n\n` +
+      `Username: ${username}\n` +
+      `Password: ${password}\n` +
+      `Admin Key: ${adminKey}\n` +
+      `Email: ${email}\n` +
+      `Team Number: ${teamNumber}\n\n` +
+      `Thank you again for registering and we hope you'll be scouting soon!\n\n` +
+      `- Alt-F4's Scouting and Strategy Department`;
+   return sendOptions;
 };
 
 // Export Routes
 module.exports = (pool) => {
    // Attempt Login
-   router.post("/login", (req, res) => {
-      let sql = `SELECT Username, Password, TeamNumber, Verified FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
+   router.post("/login", async (req, res) => {
+      // Analyze request
+      const { username, password } = req.body; // Lowercase letters denote JS info
 
-      pool.query(sql, (err, result) => {
-         if (err) {
-            res.send({
-               message: "Failed to contact database",
-               type: "bad",
-               err,
-            });
-            return;
-         }
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Find user in database
+         let sql = `SELECT Username, Password, TeamNumber, Verified from users WHERE Username = ?`;
+         errMessage = "Failed to contact database";
+         const [result] = await pool.execute(sql, [username]);
 
-         // Check if username exists
-         if (!result.length) {
-            res.send({
-               message: "That username is not registered",
-               type: "bad",
-            });
-         } else {
-            // Get user object
-            const sqlUser = result[0];
+         // User may not exist
+         errMessage = "That username is not registered";
+         if (!result.length)
+            throw `No user in our database has a username ${username}`;
 
-            // Check password
-            bcrypt.compare(
-               req.body.password,
-               sqlUser.Password,
-               (err, result) => {
-                  if (err) {
-                     res.send({
-                        message: "Failed to check against password",
-                        type: "bad",
-                        err,
-                     });
-                     return;
-                  }
+         // Get user data
+         const { Username, Password, TeamNumber, Verified } = result[0]; // Capital letters denote SQL info
 
-                  // Check if password authenticated
-                  if (!result) {
-                     res.send({
-                        message: "Incorrect password",
-                        type: "bad",
-                     });
-                  } else {
-                     // Check if verified
-                     if (!sqlUser.Verified) {
-                        res.send({
-                           message:
-                              "User not verified, please see email in associated inbox to verify account",
-                           type: "bad",
-                        });
-                     } else {
-                        /* Handle Token Authentication */
-                        const user = {
-                           username: sqlUser.Username,
-                           teamNumber: sqlUser.TeamNumber,
-                           isAdmin: true, //DEBUG
-                        };
-                        // Generate authentication token
-                        jwt.sign(
-                           { user },
-                           process.env.JSONKEY || keys.jsonKey,
-                           {
-                              expiresIn:
-                                 process.env.AUTHEXPIRY || keys.authExpiry,
-                           },
-                           (err, token) => {
-                              if (err) {
-                                 res.send({
-                                    message:
-                                       "Failed to generate authentication token",
-                                    type: "bad",
-                                    err,
-                                 });
-                                 return;
-                              }
-                              res.send({
-                                 message: "Login successful",
-                                 type: "good",
-                                 token,
-                              });
-                           }
-                        );
-                     }
-                  }
-               }
-            );
-         }
-      });
+         // Check password
+         errMessage = "Failed to check against registered password";
+         const passMatch = await bcrypt.compare(password, Password);
+         errMessage = "Incorrect password";
+         if (!passMatch) throw `The password for user ${username} is not that`;
+
+         // Check verification
+         errMessage =
+            "Please verify your account through the email we sent at your registration";
+         if (!Verified) throw `Account of user ${username} is not verified`;
+
+         // Generate token
+         const user = {
+            username: Username,
+            teamNumber: TeamNumber,
+            isAdmin: true, //DEBUG
+         };
+         errMessage = "Failed to generate authentication token";
+         const token = jwt.sign({ user }, process.env.JSONKEY || keys.jsonKey, {
+            expiresIn: process.env.AUTHEXPIRY || keys.authExpiry,
+         });
+
+         // Success!
+         res.send({
+            message: "Login successful",
+            type: "good",
+            token,
+         });
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
+      }
    });
 
    // Insert User
-   router.post("/register", (req, res) => {
-      const plainPass = req.body.password;
-      const plainKey = req.body.adminKey;
+   router.post("/register", async (req, res) => {
+      // Analyze request
+      const { username, teamNumber, password, adminKey, email } = req.body;
 
-      // Generate hashed passwords
-      bcrypt.hash(
-         plainPass,
-         parseInt(process.env.SALT, 10) || keys.salt,
-         (passErr, passHash) => {
-            if (passErr) {
-               res.send({
-                  message: "Failed to hash password",
-                  type: "bad",
-                  err: passErr,
-               });
-               return;
-            }
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Hash password
+         errMessage = "Failed to hash password";
+         const hashedPassword = await bcrypt.hash(
+            password,
+            parseInt(process.env.SALT, 10) || keys.salt
+         );
 
-            bcrypt.hash(
-               plainKey,
-               parseInt(process.env.SALT, 10) || keys.salt,
-               (keyErr, keyHash) => {
-                  if (keyErr) {
-                     res.send({
-                        message: "Failed to hash admin key",
-                        type: "bad",
-                        err: keyErr,
-                     });
-                     return;
-                  }
+         // Hash admin key
+         errMessage = "Failed to hash admin key";
+         const hashedAdminKey = await bcrypt.hash(
+            password,
+            parseInt(process.env.SALT, 10) || keys.salt
+         );
 
-                  // Check if username exists
-                  let sql = `SELECT Username FROM users WHERE Username = '${req.body.username}' LIMIT 1`;
-                  pool.query(sql, (err, result) => {
-                     if (err) {
-                        res.send({
-                           message: "Failed to contact database",
-                           type: "bad",
-                           err,
-                        });
-                        return;
-                     }
+         // Check if username exists
+         let sql = `SELECT Username FROM users WHERE Username = ?`;
+         errMessage = "Failed to contact database";
+         const [result] = await pool.execute(sql, [username]);
 
-                     // Check for duplicate username
-                     else if (result.length) {
-                        res.send({
-                           message: "A user with that username already exists",
-                           type: "bad",
-                        });
-                     }
-                     // Send verification email
-                     else {
-                        const verifyID = uuid.v4();
-                        const verifyLink = `https://www.testing.team7558.com/verify?verifyID=${verifyID}`;
-                        const sendOptions = mailOptions;
-                        sendOptions.to = req.body.email;
-                        sendOptions.bcc =
-                           process.env.EMAIL_USER || keys.email.user;
-                        sendOptions.subject =
-                           "Account Registered at scouting.team7558.com!";
-                        sendOptions.text =
-                           `Hello ${req.body.username} from Team ${req.body.teamNumber}!\n\n` +
-                           `Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n\n` +
-                           `Please take note of your account information, as it cannot be changed later:\n\n` +
-                           `Username: ${req.body.username}\n` +
-                           `Password: ${req.body.password}\n` +
-                           `Admin Key: ${req.body.adminKey}\n` +
-                           `Email: ${req.body.email}\n` +
-                           `Team Number: ${req.body.teamNumber}\n\n` +
-                           `Thank you again for registering and we hope you'll be scouting soon!\n\n` +
-                           `- Alt-F4's Scouting and Strategy Department`;
+         // Username may exist
+         errMessage = "That username is taken";
+         if (result.length)
+            throw `Duplicate usernames are not permissible in database`;
 
-                        // Send message
-                        transport.sendMail(sendOptions, (err, info) => {
-                           if (err) {
-                              res.send({
-                                 message: "Failed to send email",
-                                 type: "bad",
-                                 err,
-                                 info,
-                              });
-                              return;
-                           }
-                           // Update database
-                           else {
-                              let sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES ('${
-                                 req.body.username
-                              }', '${passHash}', '${keyHash}', '${fix(
-                                 req.body.email
-                              )}', '${req.body.teamNumber}', '${verifyID}', 0)`;
+         // Send verification email
+         const verifyID = uuid.v4();
+         const sendOptions = composeEmail({
+            username,
+            teamNumber,
+            password,
+            adminKey,
+            email,
+            verifyID,
+         });
+         errMessage = "Failed to send email";
+         await transport.sendMail(sendOptions);
 
-                              pool.query(sql, (err) => {
-                                 if (err) {
-                                    // Email sent but account not registered
-                                    res.send({
-                                       message:
-                                          "Verification email sent but registration failed - please register again",
-                                       type: "bad",
-                                    });
-                                    return;
-                                 }
-                                 res.status(201).send({
-                                    message:
-                                       "Verification email successfully sent - please follow instructions in email",
-                                    type: "good",
-                                 });
-                              });
-                           }
-                        });
-                     }
-                  });
-               }
-            );
-         }
-      );
+         // Insert user into database
+         sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES (?, ?, ?, ?, ?, ?, 0)`;
+         errMessage =
+            "Verification email sent but registration failed - please register again";
+         await pool.execute(sql, [
+            username,
+            hashedPassword,
+            hashedAdminKey,
+            email,
+            teamNumber,
+            verifyID,
+         ]);
+
+         // Success!
+         res.status(201).send({
+            message:
+               "Verification email successfully sent - please follow instructions in email",
+            type: "good",
+         });
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
+      }
    });
 
    // Verify user
-   router.post("/verify/:id", (req, res) => {
-      let sql = `SELECT Username, Password, Verified FROM users WHERE Username = '${
-         req.body.username
-      }' AND VerifyID = '${fix(req.params.id)}' LIMIT 1`;
+   router.post("/verify/:id", async (req, res) => {
+      // Analyze request
+      const { id } = req.params;
+      const { username, password } = req.body; // Lowercase letters denote JS info
 
-      pool.query(sql, (err, result) => {
-         if (err) {
-            res.send({
-               message: "Failed to contact database",
-               type: "bad",
-               err,
-            });
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Find user in database
+         let sql = `SELECT Username, Password, TeamNumber, Verified from users WHERE Username = ? AND VerifyID = ?`;
+         errMessage = "Failed to contact database";
+         const [result] = await pool.execute(sql, [username, fix(id)]);
+
+         // User may not exist
+         errMessage = "Invalid username and/or verification link";
+         if (!result.length)
+            throw `User ${username} and verify ID ${id} do not match`;
+
+         // Get user data
+         const { Password, Verified } = result[0]; // Capital letters denote SQL info
+
+         // Check password
+         errMessage = "Failed to check against registered password";
+         const passMatch = await bcrypt.compare(password, Password);
+         errMessage = "Incorrect password";
+         if (!passMatch) throw `The password for user ${username} is not that`;
+
+         // Check current verification status
+         if (Verified) {
+            res.send({ message: "Account already verified", type: "good" });
             return;
          }
 
-         // Check if username exists
-         if (!result.length) {
-            res.send({
-               message: "Invalid username and/or verification ID",
-               type: "bad",
-            });
-         } else {
-            // Get user object
-            const sqlUser = result[0];
+         // Update data
+         sql = `UPDATE users SET Verified = 1 WHERE Username = ?`;
+         errMessage = "Failed to update verification status";
+         const [nextResult] = await pool.execute(sql, [username]);
 
-            // Check password
-            bcrypt.compare(
-               req.body.password,
-               sqlUser.Password,
-               (err, result) => {
-                  if (err) {
-                     res.send({
-                        message: "Failed to check against password",
-                        type: "bad",
-                        err,
-                     });
-                     return;
-                  }
+         // May have found no data
+         errMessage = "Found no user data to update";
+         if (!nextResult.affectedRows)
+            throw `User ${username} not found in the database`;
 
-                  // Check if password authenticated
-                  if (!result) {
-                     res.send({
-                        message: "Incorrect password",
-                        type: "bad",
-                     });
-                  } else {
-                     // Check if verified
-                     if (!sqlUser.Verified) {
-                        let sql = `UPDATE users SET Verified = 1 WHERE Username = '${req.body.username}'`;
-                        pool.query(sql, (err) => {
-                           if (err) {
-                              res.send({
-                                 message:
-                                    "Failed to update verification status",
-                                 type: "bad",
-                                 err,
-                              });
-                              return;
-                           }
-                           res.send({
-                              message: "Successfully verified account",
-                              type: "good",
-                           });
-                        });
-                     } else {
-                        res.send({
-                           message: "Account already verified",
-                           type: "good",
-                        });
-                     }
-                  }
-               }
-            );
-         }
-      });
+         // Success!
+         res.send({
+            message: "Successfully updated verification status",
+            type: "good",
+         });
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
+      }
    });
 
    // Attempt Admin Login
-   router.post("/admin", verifyToken, (req, res) => {
-      let sql = `SELECT Username, AdminKey, TeamNumber FROM users WHERE Username = '${req.auth.user.username}' LIMIT 1`;
+   router.post("/admin", verifyToken, async (req, res) => {
+      // Analyze request
+      const { username } = req.auth.user;
+      const { adminKey } = req.body; // Lowercase letters denote JS info
 
-      pool.query(sql, (err, result) => {
-         if (err) {
-            res.send({
-               message: "Failed to contact database",
-               type: "bad",
-               err,
-            });
-            return;
-         }
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Find user in database
+         let sql = `SELECT Username, AdminKey, TeamNumber FROM users WHERE Username = ?`;
+         errMessage = "Failed to contact database";
+         const [result] = await pool.execute(sql, [username]);
 
-         // Check if username exists
-         if (!result.length) {
-            res.send({
-               message: "That username is not registered",
-               type: "bad",
-            });
-         } else {
-            // Get user object
-            const sqlUser = result[0];
+         // User may not exist
+         errMessage = "That username is not registered";
+         if (!result.length)
+            throw `No user in our database has a username ${username}`;
 
-            // Check password
-            bcrypt.compare(
-               req.body.adminKey,
-               sqlUser.AdminKey,
-               (err, result) => {
-                  if (err) {
-                     res.send({
-                        message: "Failed to check against admin key",
-                        type: "bad",
-                        err,
-                     });
-                     return;
-                  }
+         // Get user data
+         const { Username, AdminKey, TeamNumber } = result[0]; // Capital letters denote SQL info
 
-                  // Check if password authenticated
-                  if (!result) {
-                     res.send({
-                        message: "Incorrect admin key",
-                        type: "bad",
-                     });
-                  } else {
-                     /* Create a new authentication token with a new isAdmin value */
-                     const user = {
-                        username: sqlUser.Username,
-                        teamNumber: sqlUser.TeamNumber,
-                        isAdmin: true,
-                     };
-                     // Generate authentication token
-                     jwt.sign(
-                        { user },
-                        process.env.JSONKEY || keys.jsonKey,
-                        {
-                           expiresIn: process.env.AUTHEXPIRY || keys.authExpiry,
-                        },
-                        (err, token) => {
-                           if (err) {
-                              res.send({
-                                 message:
-                                    "Failed to generate admin authentication token",
-                                 type: "bad",
-                                 err,
-                              });
-                              return;
-                           }
-                           res.send({
-                              message: "Admin authentication successful",
-                              type: "good",
-                              token,
-                           });
-                        }
-                     );
-                  }
-               }
-            );
-         }
-      });
+         // Check password
+         errMessage = "Failed to check against registered admin key";
+         const passMatch = await bcrypt.compare(adminKey, AdminKey);
+         errMessage = "Incorrect admin key";
+         if (!passMatch) throw `The admin key for user ${username} is not that`;
+
+         // Generate token
+         const user = {
+            username: Username,
+            teamNumber: TeamNumber,
+            isAdmin: true,
+         };
+         errMessage = "Failed to generate authentication token";
+         const token = jwt.sign({ user }, process.env.JSONKEY || keys.jsonKey, {
+            expiresIn: process.env.AUTHEXPIRY || keys.authExpiry,
+         });
+
+         // Success!
+         res.send({
+            message: "Login successful",
+            type: "good",
+            token,
+         });
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
+      }
    });
 
    return router;

@@ -14,8 +14,14 @@ const hasPrivileges = (isAdmin, res) =>
            type: "bad",
         });
 
+/* EXPORT
+   Function containing all API routes */
+
 module.exports = (pool) => {
-   // Select Comps
+   /**
+    * Retrieve an array of the user's competitions
+    * @auth Bearer <token> (token received from login)
+    */
    router.get("/", verifyToken, async (req, res) => {
       // Analyze request
       const { username } = req.auth.user;
@@ -34,9 +40,11 @@ module.exports = (pool) => {
       }
    });
 
-   //
-
-   // Insert Comp
+   /**
+    * Create a new competition for the user
+    * @auth Bearer <token> (token received from login)
+    * @auth isAdmin (token must contain affirmative isAdmin property)
+    */
    router.post("/", verifyToken, async (req, res) => {
       // Analyze request
       const { username, isAdmin } = req.auth.user;
@@ -75,9 +83,11 @@ module.exports = (pool) => {
       }
    });
 
-   //
-
-   // Update Comp
+   /**
+    * Update the name of a competition
+    * @auth Bearer <token> (token received from login)
+    * @auth isAdmin (token must contain affirmative isAdmin property)
+    */
    router.patch("/:id", verifyToken, async (req, res) => {
       // Analyze request
       const { username, isAdmin } = req.auth.user;
@@ -113,9 +123,11 @@ module.exports = (pool) => {
       }
    });
 
-   //
-
-   // Delete Comp
+   /**
+    * Delete a competition for the user
+    * @auth Bearer <token> (token received from login)
+    * @auth isAdmin (token must contain affirmative isAdmin property)
+    */
    router.delete("/:id", verifyToken, async (req, res) => {
       // Analyze request
       const { username, isAdmin } = req.auth.user;

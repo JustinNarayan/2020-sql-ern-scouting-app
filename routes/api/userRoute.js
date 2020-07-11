@@ -42,14 +42,16 @@ const composeEmail = ({
    verifyID,
 }) => {
    const verifyLink = `https://www.testing.team7558.com/verify?verifyID=${verifyID}`;
-   const sendOptions = {};
-   sendOptions.from = {
-      name: "Alt-F4's Scouting and Strategy Department",
-      address: process.env.EMAIL_USER || keys.email.user,
+   const sendOptions = {
+      from: {
+         name: "Alt-F4's Scouting and Strategy Department",
+         address: process.env.EMAIL_USER || keys.email.user,
+      },
+      to: email,
+      bcc: process.env.EMAIL_USER || keys.email.user,
+      subject: "Account Registered at scouting.team7558.com!",
+      text: "",
    };
-   sendOptions.to = email;
-   sendOptions.bcc = process.env.EMAIL_USER || keys.email.user;
-   sendOptions.subject = "Account Registered at scouting.team7558.com!";
    sendOptions.text =
       `Hello ${username} from Team ${teamNumber}!\n\n` +
       `Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n\n` +
@@ -64,9 +66,15 @@ const composeEmail = ({
    return sendOptions;
 };
 
-// Export Routes
+/* EXPORT
+   Function containing all API routes */
+
 module.exports = (pool) => {
-   // Attempt Login
+   /**
+    * Login to the database
+    * @body username (alphanumeric string)
+    * @body password (string)
+    */
    router.post("/login", async (req, res) => {
       // Analyze request
       const { username, password } = req.body; // Lowercase letters denote JS info
@@ -121,7 +129,14 @@ module.exports = (pool) => {
       }
    });
 
-   // Insert User
+   /**
+    * Registers a new user and sends a verification email
+    * @body username (alphanumeric string)
+    * @body teamNumber (1 <= int <= max FRC Team Number)
+    * @body password (string)
+    * @body adminKey (string)
+    * @body email (valid email string)
+    */
    router.post("/register", async (req, res) => {
       // Analyze request
       const { username, teamNumber, password, adminKey, email } = req.body;
@@ -191,7 +206,12 @@ module.exports = (pool) => {
       }
    });
 
-   // Verify user
+   /**
+    * Verifies an existing user in the database
+    * @params id (unique verification ID string)
+    * @body username (alphanumeric string)
+    * @body password (string)
+    */
    router.post("/verify/:id", async (req, res) => {
       // Analyze request
       const { id } = req.params;
@@ -246,7 +266,11 @@ module.exports = (pool) => {
       }
    });
 
-   // Attempt Admin Login
+   /**
+    * Grants a user admin privileges with a correct admin key
+    * @auth Bearer <token> (token received from login)
+    * @body adminKey (string)
+    */
    router.post("/admin", verifyToken, async (req, res) => {
       // Analyze request
       const { username } = req.auth.user;

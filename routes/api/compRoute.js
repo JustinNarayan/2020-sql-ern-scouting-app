@@ -3,174 +3,144 @@
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("./verifyToken");
-const fix = require("./sqlStringFix");
+
+// Create small utility functions
+const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
+const hasPrivileges = (isAdmin, res) =>
+   isAdmin
+      ? true
+      : res.send({
+           message: "Missing admin privileges for that action",
+           type: "bad",
+        });
 
 module.exports = (pool) => {
    // Select Comps
-   router.get("/", verifyToken, (req, res) => {
-      // Run code
-      let sql = `SELECT * FROM competitions WHERE Username = '${req.auth.user.username}' ORDER BY ID ASC`;
-      pool.query(sql, (err, rows) => {
-         if (err) {
-            res.send({
-               message: "Failed to get competitions",
-               type: "bad",
-               err,
-            });
-            return;
-         }
-         res.send(rows);
-      });
+   router.get("/", verifyToken, async (req, res) => {
+      // Analyze request
+      const { username } = req.auth.user;
+
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Query database for user's competitions
+         let sql = `SELECT * FROM competitions WHERE Username = ? ORDER BY ID ASC`;
+         errMessage = "Failed to get competitions";
+         const [result] = await pool.execute(sql, [username]);
+         res.send(result);
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
+      }
    });
 
    //
 
    // Insert Comp
-   router.post("/", verifyToken, (req, res) => {
-      // Check if admin
-      if (!req.auth.user.isAdmin) {
-         res.send({
-            message: "Missing admin privileges for that action",
-            type: "bad",
+   router.post("/", verifyToken, async (req, res) => {
+      // Analyze request
+      const { username, isAdmin } = req.auth.user;
+      const { competitionName } = req.body;
+      if (!hasPrivileges(isAdmin, res)) return;
+
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Check if this name is taken
+         let sql = `SELECT * FROM competitions WHERE Username = ? AND CompetitionName = ?`;
+         errMessage = "Failed to get competitions";
+         const [result] = await pool.execute(sql, [
+            username,
+            fix(competitionName),
+         ]);
+
+         // Name may be taken
+         errMessage = "That competition name is taken";
+         if (result.length) throw "";
+
+         // Insert Comp
+         sql = `INSERT INTO competitions (Username, CompetitionName) VALUES (?, ?)`;
+         errMessage = "Failed to create competition";
+         await pool.execute(sql, [username, fix(competitionName)]);
+
+         // Success!
+         res.status(201).send({
+            message: "Successfully created new competition",
+            type: "good",
          });
-         return;
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
       }
-
-      // Create first function to search the database for a duplicate name and user
-      const checkForExistingComp = (nextMethod) => {
-         let sql = `SELECT ID FROM competitions WHERE Username = '${
-            req.auth.user.username
-         }' AND CompetitionName = '${fix(req.body.competitionName)}'`;
-
-         pool.query(sql, (err, result) => {
-            if (err || !result) {
-               res.send({
-                  message: "Failed to locate competitions data",
-                  type: "bad",
-                  err,
-               });
-               return;
-            }
-
-            if (result.length) {
-               res.send({
-                  message: "A competition with that name already exists",
-                  type: "bad",
-                  result,
-               });
-            } else {
-               nextMethod();
-            }
-         });
-      };
-
-      // Create second function to insert the new competition
-      const insertComp = () => {
-         let sql = `INSERT INTO competitions (Username, CompetitionName) VALUES ('${
-            req.auth.user.username
-         }', '${fix(req.body.competitionName)}')`;
-
-         pool.query(sql, (err) => {
-            if (err) {
-               res.send({
-                  message: "Failed to create competition",
-                  type: "bad",
-                  err,
-               });
-               return;
-            }
-
-            res.status(201).send({
-               message: "Successfully created new competition",
-               type: "good",
-            });
-         });
-      };
-
-      // Connect all commands and execute
-      checkForExistingComp(insertComp);
    });
 
    //
 
    // Update Comp
-   router.patch("/:id", verifyToken, (req, res) => {
-      // Check if admin
-      if (!req.auth.user.isAdmin) {
+   router.patch("/:id", verifyToken, async (req, res) => {
+      // Analyze request
+      const { username, isAdmin } = req.auth.user;
+      const { id } = req.params;
+      const { competitionName } = req.body;
+      if (!hasPrivileges(isAdmin, res)) return;
+
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Update data
+         let sql = `UPDATE competitions SET CompetitionName = ? WHERE ID = ? AND Username = ?`;
+         errMessage = "Failed to update competition";
+         const [result] = await pool.execute(sql, [
+            fix(competitionName),
+            fix(id),
+            username,
+         ]);
+
+         // May have found no data
+         errMessage = "Found no competition to update";
+         if (!result.affectedRows) throw "";
+
+         // Success!
          res.send({
-            message: "Missing admin privileges for that action",
-            type: "bad",
+            message: "Successfully updated competition",
+            type: "good",
          });
-         return;
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
       }
-
-      let sql = `UPDATE competitions SET CompetitionName = '${fix(
-         req.body.competitionName
-      )}' WHERE ID = '${fix(req.params.id)}' AND Username = '${
-         req.auth.user.username
-      }'`;
-      pool.query(sql, (err, result) => {
-         if (err || !result) {
-            res.send({
-               message: "Failed to update competition",
-               type: "bad",
-               err,
-            });
-            return;
-         }
-
-         if (result.affectedRows)
-            res.send({
-               message: "Successfully updated competition",
-               type: "good",
-               err,
-            });
-         else
-            res.send({
-               message: "Found no competition to update",
-               type: "bad",
-               err,
-            });
-      });
    });
 
+   //
+
    // Delete Comp
-   router.delete("/:id", verifyToken, (req, res) => {
-      // Check if admin
-      if (!req.auth.user.isAdmin) {
+   router.delete("/:id", verifyToken, async (req, res) => {
+      // Analyze request
+      const { username, isAdmin } = req.auth.user;
+      const { id } = req.params;
+      if (!hasPrivileges(isAdmin, res)) return;
+
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         // Delete data
+         let sql = `DELETE FROM competitions WHERE ID = ? AND Username = ?`;
+         errMessage = "Delete aborted; failed to delete competition";
+         const [result] = await pool.execute(sql, [fix(id), username]);
+
+         // May have found no data
+         errMessage = "Delete aborted; found no competition to delete";
+         if (!result.affectedRows) throw "";
+
+         // Success!
          res.send({
-            message: "Missing admin privileges for that action",
-            type: "bad",
+            message: "Successfully deleted ", // Displays 'Successfully deleted <CompetitionName> in Home component
+            type: "good",
          });
-         return;
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
       }
-
-      let sql = `DELETE FROM competitions WHERE ID = '${fix(
-         req.params.id
-      )}' AND Username = '${req.auth.user.username}'`;
-      pool.query(sql, (err, result) => {
-         if (err || !result) {
-            res.send({
-               message: "Deleted aborted; failed to delete competition",
-               type: "bad",
-               err,
-            });
-            return;
-         }
-
-         if (result.affectedRows)
-            res.send({
-               message: "Successfully deleted ", // Would display 'Successfully deleted <CompetitionName> through the Home Component receiving the message
-               type: "good",
-               err: result,
-            });
-         else
-            res.send({
-               message: "Delete aborted; found no competition to delete",
-               type: "bad",
-               err,
-            });
-      });
    });
 
    return router;

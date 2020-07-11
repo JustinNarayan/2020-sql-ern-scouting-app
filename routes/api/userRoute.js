@@ -89,8 +89,7 @@ module.exports = (pool) => {
 
          // User may not exist
          errMessage = "That username is not registered";
-         if (!result.length)
-            throw `No user in our database has a username ${username}`;
+         if (!result.length) throw "";
 
          // Get user data
          const { Username, Password, TeamNumber, Verified } = result[0]; // Capital letters denote SQL info
@@ -99,12 +98,12 @@ module.exports = (pool) => {
          errMessage = "Failed to check against registered password";
          const passMatch = await bcrypt.compare(password, Password);
          errMessage = "Incorrect password";
-         if (!passMatch) throw `The password for user ${username} is not that`;
+         if (!passMatch) throw "";
 
          // Check verification
          errMessage =
             "Please verify your account through the email we sent at your registration";
-         if (!Verified) throw `Account of user ${username} is not verified`;
+         if (!Verified) throw "";
 
          // Generate token
          const user = {
@@ -165,8 +164,7 @@ module.exports = (pool) => {
 
          // Username may exist
          errMessage = "That username is taken";
-         if (result.length)
-            throw `Duplicate usernames are not permissible in database`;
+         if (result.length) throw "";
 
          // Send verification email
          const verifyID = uuid.v4();
@@ -227,8 +225,7 @@ module.exports = (pool) => {
 
          // User may not exist
          errMessage = "Invalid username and/or verification link";
-         if (!result.length)
-            throw `User ${username} and verify ID ${id} do not match`;
+         if (!result.length) throw "";
 
          // Get user data
          const { Password, Verified } = result[0]; // Capital letters denote SQL info
@@ -237,7 +234,7 @@ module.exports = (pool) => {
          errMessage = "Failed to check against registered password";
          const passMatch = await bcrypt.compare(password, Password);
          errMessage = "Incorrect password";
-         if (!passMatch) throw `The password for user ${username} is not that`;
+         if (!passMatch) throw "";
 
          // Check current verification status
          if (Verified) {
@@ -252,8 +249,7 @@ module.exports = (pool) => {
 
          // May have found no data
          errMessage = "Found no user data to update";
-         if (!nextResult.affectedRows)
-            throw `User ${username} not found in the database`;
+         if (!nextResult.affectedRows) throw "";
 
          // Success!
          res.send({
@@ -286,8 +282,7 @@ module.exports = (pool) => {
 
          // User may not exist
          errMessage = "That username is not registered";
-         if (!result.length)
-            throw `No user in our database has a username ${username}`;
+         if (!result.length) throw "";
 
          // Get user data
          const { Username, AdminKey, TeamNumber } = result[0]; // Capital letters denote SQL info
@@ -296,7 +291,7 @@ module.exports = (pool) => {
          errMessage = "Failed to check against registered admin key";
          const passMatch = await bcrypt.compare(adminKey, AdminKey);
          errMessage = "Incorrect admin key";
-         if (!passMatch) throw `The admin key for user ${username} is not that`;
+         if (!passMatch) throw "";
 
          // Generate token
          const user = {

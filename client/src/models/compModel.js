@@ -14,7 +14,9 @@ export default {
       // Handle WS Call
       const res = await axios.get(url, authHeader);
       const out = res.data; // List of comps || Forbidden
-      if (out.err) console.log(out); // Log error
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
 
       // Handle state control
       authCommand(out, () => actions.setComps(out));
@@ -24,7 +26,9 @@ export default {
       // Handle WS Call
       const res = await axios.post(url, comp, authHeader);
       const out = res.data; // Message || Forbidden
-      if (out.err) console.log(out); // Log error
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
 
       // Call to getComps
       authCommand(out, () => actions.getComps());
@@ -41,7 +45,9 @@ export default {
          authHeader
       );
       const out = res.data; // Message || Forbidden
-      if (out.err) console.log(out); // Log error
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
 
       // Call to getComps
       authCommand(out, () => actions.getComps());
@@ -54,7 +60,9 @@ export default {
       // Handle WS Call
       const res = await axios.delete(`${url}${id}`, authHeader);
       const out = res.data; // Message || Forbidden
-      if (out.err) console.log(out); // Log error
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
 
       // Call to getComps
       authCommand(out, () => actions.getComps());
@@ -70,7 +78,6 @@ export default {
       else {
          // Issue with database
          alert("Error: see console for details");
-         console.log(comps);
       }
    }),
 };

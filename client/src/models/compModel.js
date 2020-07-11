@@ -61,6 +61,12 @@ export default {
 
    // Actions
    setComps: action((state, comps) => {
-      state.comps = comps;
+      // Only set to value if correct type
+      if (Array.isArray(comps)) state.comps = comps;
+      else {
+         // Issue with database
+         alert("Error: see console for details");
+         console.log(comps);
+      }
    }),
 };

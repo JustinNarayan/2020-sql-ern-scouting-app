@@ -109,7 +109,7 @@ module.exports = (pool) => {
          const user = {
             username: Username,
             teamNumber: TeamNumber,
-            isAdmin: true, //DEBUG
+            isAdmin: false,
          };
          errMessage = "Failed to generate authentication token";
          const token = jwt.sign({ user }, process.env.JSONKEY || keys.jsonKey, {

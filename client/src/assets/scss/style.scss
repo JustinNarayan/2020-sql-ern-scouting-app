@@ -32,6 +32,22 @@ body {
                border-right: 0;
             }
 
+            .admin {
+               filter: invert(100%);
+               float: left;
+               width: 32px;
+               margin-top: 0px;
+               margin-left: 0px;
+
+               &:hover {
+                  cursor: pointer;
+               }
+            }
+
+            .none {
+               width: 0px;
+            }
+
             .plus {
                filter: invert(100%);
                float: right;
@@ -60,7 +76,8 @@ body {
             font-size: 16px;
             color: map-get($theme-colors, "table-text");
             border-right: 2px solid map-get($theme-colors, "back");
-            padding: 6px 12px;
+            padding: 16px 8px;
+            vertical-align: middle;
 
             width: 11%;
 

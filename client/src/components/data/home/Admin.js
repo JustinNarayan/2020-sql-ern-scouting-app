@@ -1,5 +1,6 @@
 /*eslint-disable*/
-import React, { useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
+import { useStoreState } from "easy-peasy";
 import {
    Modal,
    ModalHeader,
@@ -11,13 +12,14 @@ import {
    Button,
    Spinner,
 } from "reactstrap";
-// import adminLock from "bootstrap-icons/icons/shield-lock-fill.svg";
-// import adminCheck from "bootstrap-icons/icons/shield-fill-check.svg";
+import adminLock from "bootstrap-icons/icons/shield-lock-fill.svg";
+import adminCheck from "bootstrap-icons/icons/shield-fill-check.svg";
 
 const Admin = ({ onSubmit, clearMessages, loading, messages }) => {
    // Set state variables
    const [modal, setModal] = useState(false);
    const [adminKey, setAdminKey] = useState("");
+   const appearsAdmin = useStoreState((state) => state.appearsAdmin);
 
    // Define methods
    const toggleModal = () => {
@@ -26,11 +28,82 @@ const Admin = ({ onSubmit, clearMessages, loading, messages }) => {
       clearMessages();
    };
 
-   return <Fragment>Hello</Fragment>;
+   return (
+      <Fragment>
+         <img
+            className={appearsAdmin ? classes.none : classes.admin}
+            src={adminLock}
+            alt='Admin Login'
+            onClick={toggleModal}
+         />
+         <img
+            className={appearsAdmin ? classes.admin : classes.none}
+            src={adminCheck}
+            alt='Is Admin'
+         />
+         <Modal isOpen={modal} toggle={toggleModal} size='md'>
+            <ModalHeader
+               className={classes.modalHeader}
+               style={styles.modalHeader}>
+               Admin Login
+               <Button
+                  color='transparent'
+                  className={classes.modalClose}
+                  style={styles.modalClose}
+                  onClick={toggleModal}>
+                  &times;
+               </Button>
+            </ModalHeader>
+            <ModalBody className={classes.modalBody}>
+               {messages.map((message) => (
+                  <Alert
+                     key={message.text}
+                     color={
+                        message.type === "good"
+                           ? "message-good"
+                           : "message-error"
+                     }
+                     className={classes.alert}>
+                     {message.text}
+                  </Alert>
+               ))}
+               <Form onSubmit={(e) => onSubmit(e, adminKey)}>
+                  <FormGroup className={classes.formGroup}>
+                     <Input
+                        className={classes.input}
+                        type='password'
+                        placeholder='Admin Key'
+                        autoComplete='admin-key'
+                        onChange={(e) => setAdminKey(e.target.value)}
+                     />
+                  </FormGroup>
+                  <Button
+                     color='comp-table-head'
+                     className={classes.modalSubmit}
+                     style={styles.button}
+                     block
+                     outline
+                     size='md'>
+                     {loading ? (
+                        <Spinner
+                           className={classes.spinner}
+                           style={styles.spinner}
+                           color='back'
+                        />
+                     ) : (
+                        "Login"
+                     )}
+                  </Button>
+               </Form>
+            </ModalBody>
+         </Modal>
+      </Fragment>
+   );
 };
 
 const classes = {
-   plus: "plus",
+   admin: "admin",
+   none: "none",
    modalHeader: "bg-comp-table-head text-back",
    modalClose: "text-back",
    modalBody: "bg-back",

@@ -12333,6 +12333,23 @@ body {
   border-right: 0;
 }
 
+.compTable thead tr th .admin {
+  -webkit-filter: invert(100%);
+          filter: invert(100%);
+  float: left;
+  width: 32px;
+  margin-top: 0px;
+  margin-left: 0px;
+}
+
+.compTable thead tr th .admin:hover {
+  cursor: pointer;
+}
+
+.compTable thead tr th .none {
+  width: 0px;
+}
+
 .compTable thead tr th .plus {
   -webkit-filter: invert(100%);
           filter: invert(100%);
@@ -12360,7 +12377,8 @@ body {
   font-size: 16px;
   color: #09141f;
   border-right: 2px solid #f9fcff;
-  padding: 6px 12px;
+  padding: 16px 8px;
+  vertical-align: middle;
   width: 11%;
 }
 

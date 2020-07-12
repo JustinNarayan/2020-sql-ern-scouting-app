@@ -15,6 +15,7 @@ import Comp from "./Comp";
 const Home = () => {
    // Set state variables
    const [loading, setLoading] = useState(false);
+   const [adminMessages, setAdminMessages] = useState([]);
    const [addMessages, setAddMessages] = useState([]);
    const [editMessages, setEditMessages] = useState([]);
    const [deleteMessages, setDeleteMessages] = useState([]);
@@ -22,6 +23,7 @@ const Home = () => {
    const comps = useStoreState((state) => state.comps);
 
    // Bring in commands
+   const admin = useStoreActions((actions) => actions.admin);
    const getComps = useStoreActions((actions) => actions.getComps);
    const addComp = useStoreActions((actions) => actions.addComp);
    const editComp = useStoreActions((actions) => actions.editComp);
@@ -35,6 +37,22 @@ const Home = () => {
    }, []);
 
    // Define methods
+   const onAdminSubmit = async (e, adminKey) => {
+      e.preventDefault();
+      if (loading) return;
+
+      if (!adminKey) {
+         setAdminMessages([
+            { text: "Please fill out all fields", type: "bad" },
+         ]);
+      } else {
+         setLoading(true);
+         const res = await admin({ adminKey });
+         setAdminMessages([{ text: res.message, type: res.type }]);
+         setLoading(false);
+      }
+   };
+
    const onAddCompSubmit = async (e, competitionName) => {
       e.preventDefault();
       if (loading) return;
@@ -121,7 +139,12 @@ const Home = () => {
             <thead>
                <tr className={classes.tableHead}>
                   <th colSpan='7'>
-                     <Admin />
+                     <Admin
+                        onSubmit={onAdminSubmit}
+                        clearMessages={() => setAdminMessages([])}
+                        loading={loading}
+                        messages={adminMessages}
+                     />
                      Competitions
                      <AddComp
                         onSubmit={onAddCompSubmit}

@@ -153,7 +153,7 @@ module.exports = (pool) => {
          // Hash admin key
          errMessage = "Failed to hash admin key";
          const hashedAdminKey = await bcrypt.hash(
-            password,
+            adminKey,
             parseInt(process.env.SALT, 10) || keys.salt
          );
 
@@ -290,6 +290,7 @@ module.exports = (pool) => {
          // Check password
          errMessage = "Failed to check against registered admin key";
          const passMatch = await bcrypt.compare(adminKey, AdminKey);
+         console.log(adminKey);
          errMessage = "Incorrect admin key";
          if (!passMatch) throw "";
 

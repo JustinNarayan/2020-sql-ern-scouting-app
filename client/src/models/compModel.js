@@ -22,6 +22,18 @@ export default {
       authCommand(out, () => actions.setComps(out));
    }),
 
+   getComp: thunk(async (actions, id) => {
+      // Handle WS Call
+      const res = await axios.get(`${url}${id}`, authHeader);
+      const out = res.data; // Message (w/ 'valid' and maybe 'comp') || Forbidden
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
+
+      // Send response
+      return out;
+   }),
+
    addComp: thunk(async (actions, comp) => {
       // Handle WS Call
       const res = await axios.post(url, comp, authHeader);

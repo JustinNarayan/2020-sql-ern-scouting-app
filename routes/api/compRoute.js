@@ -36,10 +36,47 @@ module.exports = (pool) => {
          let sql = `SELECT * FROM competitions WHERE Username = ? ORDER BY ID ASC`;
          errMessage = "Failed to get competitions";
          const [result] = await pool.execute(sql, [username]);
+
+         // Success!
          res.send(result);
       } catch (err) {
          // Send error message
          res.send({ message: errMessage, type: "bad", err });
+      }
+   });
+
+   /**
+    * Check if a competition is valid for a user
+    * @params id (competition ID int)
+    * @auth Bearer <token> (token received from login)
+    */
+   router.get("/:id", verifyToken, async (req, res) => {
+      // Analyze request
+      const { id } = req.params;
+      const { username } = req.auth.user;
+
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         /* Check if this competition is valid for this user
+          */
+         let sql = `SELECT * FROM competitions WHERE ID = ? AND Username = ? LIMIT 1`;
+         errMessage = "Failed to contact competitions database";
+         const [result] = await pool.execute(sql, [id, username]);
+         errMessage = "Invalid competition for this user";
+         if (!result.length) throw "";
+         /* */
+
+         // Success!
+         res.send({
+            valid: true,
+            message: "Valid competition",
+            type: "good",
+            comp: result[0],
+         });
+      } catch (err) {
+         // Send error message
+         res.send({ valid: false, message: errMessage, type: "bad", err });
       }
    });
 
@@ -87,6 +124,7 @@ module.exports = (pool) => {
 
    /**
     * Update the name of a competition
+    * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     * @auth isAdmin (token must contain affirmative isAdmin property)
     */
@@ -126,6 +164,7 @@ module.exports = (pool) => {
 
    /**
     * Delete a competition for the user
+    * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     * @auth isAdmin (token must contain affirmative isAdmin property)
     */

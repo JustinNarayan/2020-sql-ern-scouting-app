@@ -14,6 +14,7 @@ const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
 module.exports = (pool) => {
    /**
     * Retrieve an array of all matches from a specific competition
+    * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     */
    router.get("/:id", verifyToken, async (req, res) => {
@@ -37,6 +38,8 @@ module.exports = (pool) => {
          sql = `SELECT * FROM matchData WHERE CompetitionID = ? ORDER BY ID ASC`;
          errMessage = "Failed to get match data";
          const [result] = await pool.execute(sql, [id]);
+
+         // Success!
          res.send(result);
       } catch (err) {
          // Send error message
@@ -46,6 +49,7 @@ module.exports = (pool) => {
 
    /**
     * Post a piece of match data to a specific competition
+    * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     * @auth isAdmin (token must contain affirmative isAdmin property)
     */

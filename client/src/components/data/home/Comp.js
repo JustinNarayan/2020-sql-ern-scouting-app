@@ -1,3 +1,4 @@
+/// Modules
 import React, { useState, Fragment } from "react";
 import {
    Modal,
@@ -11,7 +12,13 @@ import {
    Button,
    Spinner,
 } from "reactstrap";
+import PropTypes from "prop-types";
 
+/**
+ * Comp Component
+ * --------------
+ * Displays a competition with navigation and edit/delete functionality.
+ */
 const Comp = ({
    comp,
    onEditSubmit,
@@ -22,7 +29,9 @@ const Comp = ({
    deleteMessages,
    overwriteModals,
 }) => {
-   // Set state variables
+   /**
+    * Set dynamic state variables
+    */
    const [modal, setModal] = useState(false);
    const [deleteModal, setDeleteModal] = useState(false);
    const [editCompName, setEditCompName] = useState(comp.CompetitionName);
@@ -30,23 +39,31 @@ const Comp = ({
    const [deleteTeams, setDeleteTeams] = useState(false);
    const [deleteMatches, setDeleteMatches] = useState(false);
 
-   // Define methods
+   /**
+    * Define all component methods
+    */
+   /// Toggle showing main actions modal
    const toggleModal = () => {
       setModal(!modal);
       setEditCompName(comp.CompetitionName);
       clearMessages();
    };
 
+   /// Toggle showing delete confirm modal
    const toggleDeleteModal = () => {
       setDeleteModal(!deleteModal);
    };
 
-   const handleDeleteSubmit = async (e) => {
+   /// Handle checkbox logic before a delete submission
+   const handleDeleteSubmit = async (e) =>
       onDeleteSubmit(e, comp, deleteScouting && deleteTeams && deleteMatches);
-   };
 
+   /**
+    * Render component
+    */
    return (
       <Fragment>
+         {/* Competition row with data, navigation links, and actions function */}
          <tr>
             <td className={classes.compName}>{comp.CompetitionName}</td>
             <td className={classes.link}>Teams</td>
@@ -58,6 +75,8 @@ const Comp = ({
                Actions
             </td>
          </tr>
+
+         {/* Competition actions button */}
          <Modal
             isOpen={modal && !overwriteModals} // Closes when the deleteSuccessModal is up
             toggle={toggleModal}
@@ -66,6 +85,7 @@ const Comp = ({
                className={classes.modalHeader}
                style={styles.modalHeader}>
                Actions
+               {/* Custom close button */}
                <Button
                   color='transparent'
                   className={classes.modalClose}
@@ -87,8 +107,11 @@ const Comp = ({
                      {message.text}
                   </Alert>
                ))}
+
+               {/* Edit form */}
                <Form onSubmit={(e) => onEditSubmit(e, comp, editCompName)}>
                   <FormGroup className={classes.formGroup}>
+                     {/* New Comp Name */}
                      <Input
                         className={classes.input}
                         type='text'
@@ -98,6 +121,7 @@ const Comp = ({
                         value={editCompName}
                      />
                   </FormGroup>
+                  {/* Submit button to Edit Comp */}
                   <Button
                      color='comp-table-head'
                      className={classes.modalSubmit}
@@ -117,8 +141,12 @@ const Comp = ({
                   </Button>
                </Form>
             </ModalBody>
+
+            {/* Visual Divider */}
             <hr className={classes.hr} />
+
             <ModalBody>
+               {/* Delete button to open confirm modal */}
                <Button
                   color='message-error'
                   className={classes.modalSubmit}
@@ -130,7 +158,7 @@ const Comp = ({
                   Delete Competition
                </Button>
 
-               {/* Delete Modal is nested within main modal */}
+               {/* Nested delete modal */}
                <Modal
                   isOpen={deleteModal && !overwriteModals} // Closes when the deleteSuccessModal is up
                   toggle={toggleDeleteModal}
@@ -139,6 +167,7 @@ const Comp = ({
                      className={classes.modalHeaderDelete}
                      style={styles.modalHeader}>
                      Delete Competition
+                     {/* Custom close button */}
                      <Button
                         color='transparent'
                         className={classes.modalClose}
@@ -160,10 +189,14 @@ const Comp = ({
                            {message.text}
                         </Alert>
                      ))}
+
+                     {/* Delete form with checkbox confirmations */}
                      <Form onSubmit={(e) => handleDeleteSubmit(e)}>
                         <FormGroup className={classes.formGroupCheck}>
                            I understand that...
                         </FormGroup>
+
+                        {/* Confirm checkbox 1 */}
                         <FormGroup check className={classes.formGroupCheck}>
                            <Input
                               type='checkbox'
@@ -178,6 +211,8 @@ const Comp = ({
                               be deleted <b>forever</b>
                            </Label>
                         </FormGroup>
+
+                        {/* Confirm checkbox 2 */}
                         <FormGroup check className={classes.formGroupCheck}>
                            <Input
                               type='checkbox'
@@ -190,6 +225,8 @@ const Comp = ({
                               deleted <b>forever</b>
                            </Label>
                         </FormGroup>
+
+                        {/* Confirm checkbox 3 */}
                         <FormGroup check className={classes.formGroup}>
                            {/* Different class for margin purposes */}
                            <Input
@@ -203,6 +240,8 @@ const Comp = ({
                               deleted <b>forever</b>
                            </Label>
                         </FormGroup>
+
+                        {/* Submit button to Delete Comp */}
                         <Button
                            color='message-error'
                            className={classes.modalSubmit}
@@ -230,6 +269,7 @@ const Comp = ({
    );
 };
 
+/// Inline class manager
 const classes = {
    compName: "compName",
    link: "link",
@@ -248,6 +288,7 @@ const classes = {
    spinnerDelete: "bg-message-error",
 };
 
+/// Inline style manager
 const styles = {
    modalHeader: {
       paddingLeft: "22px",
@@ -271,4 +312,17 @@ const styles = {
    },
 };
 
+/// Prop Types
+Comp.propTypes = {
+   comp: PropTypes.object, // Comp object from database
+   onEditSubmit: PropTypes.func, // Edit submission function
+   onDeleteSubmit: PropTypes.func, // Delete submission function
+   clearMessages: PropTypes.func, // Function to clear edit and delete messages in the modal
+   loading: PropTypes.bool, // If an async call is in progress
+   editMessages: PropTypes.array, // List of response messages regarding edit actions
+   deleteMessages: PropTypes.array, // List of response messages regarding delete actions
+   overwriteModals: PropTypes.bool, // If the deleteSuccessModal is up, which would close the actions / delete modal for visual niceness
+};
+
+/// Export
 export default Comp;

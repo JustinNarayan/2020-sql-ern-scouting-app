@@ -1,3 +1,4 @@
+/// Modules
 import React, { useState, useEffect, Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useStoreActions } from "easy-peasy";
@@ -16,42 +17,58 @@ import QueryString from "query-string";
 import PropTypes from "prop-types";
 import validator from "email-validator";
 
+/**
+ * User Component
+ * --------------
+ * Allows users to login, register, or verify
+ */
 const User = ({ mode, query }) => {
-   // Set state variables
+   /**
+    * Set static and dynamic state variables
+    */
+   const maxTeamNumber = 8427;
+   const verifyID = QueryString.parse(query).verifyID;
+   const timeBeforeRedirect = 250; // A timeout to display a message before the redirect
+
    const [messages, setMessages] = useState([]);
    const [username, setUsername] = useState("");
    const [teamNumber, setTeamNumber] = useState();
-   const maxTeamNumber = 8427;
    const [password, setPassword] = useState("");
    const [scoutPassword, setScoutPassword] = useState("");
    const [scoutPasswordConfirm, setScoutPasswordConfirm] = useState("");
    const [adminPassword, setAdminPassword] = useState("");
    const [adminPasswordConfirm, setAdminPasswordConfirm] = useState("");
    const [email, setEmail] = useState("");
-   const verifyID = QueryString.parse(query).verifyID;
    const [loading, setLoading] = useState(false);
 
-   // Bring in commands
+   /**
+    * Bring in easy-peasy store thunks/actions
+    */
    const login = useStoreActions((actions) => actions.login);
    const register = useStoreActions((actions) => actions.register);
    const verify = useStoreActions((actions) => actions.verify);
-   const timeBeforeRedirect = 250; // A timeout to display a message before the redirect
 
-   // Define methods
+   /**
+    * Handle life cycle
+    */
    useEffect(() => {
-      // Check if verify
       if (mode === "Verify") {
          if (!verifyID) {
-            setMessages([{ text: "Invalid verification link", type: "bad" }]);
+            window.location.href = "/";
          }
       }
       //eslint-disable-next-line
    }, []);
 
+   /**
+    * Define all component methods
+    */
+   /// IN PROGRESS
    const handleRedirect = () => {
       setMessages([]);
    };
 
+   /// Call relevant submission method
    const onSubmit = (e) => {
       e.preventDefault();
       if (loading) return;
@@ -68,7 +85,8 @@ const User = ({ mode, query }) => {
       }
    };
 
-   const onLogin = async (e) => {
+   /// Manage login submission
+   const onLogin = async () => {
       if (!username || !password) {
          setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else if (!username.match(/^[0-9a-z]+$/)) {
@@ -86,7 +104,8 @@ const User = ({ mode, query }) => {
       }
    };
 
-   const onRegister = async (e) => {
+   /// Manage register submission
+   const onRegister = async () => {
       setMessages([]);
       const errors = [];
       // Check for errors
@@ -137,7 +156,8 @@ const User = ({ mode, query }) => {
       }
    };
 
-   const onVerify = async (e) => {
+   /// Manage verify submission
+   const onVerify = async () => {
       if (!username || !password) {
          setMessages([{ text: "Please fill out all fields", type: "bad" }]);
       } else {
@@ -169,7 +189,9 @@ const User = ({ mode, query }) => {
       return { text: auth.message, type: auth.type };
    };
 
-   // Render Component
+   /**
+    * Render component
+    */
    return (
       <Card className={classes.card} style={styles.card}>
          <Label
@@ -188,9 +210,11 @@ const User = ({ mode, query }) => {
                {message.text}
             </Alert>
          ))}
+         {/* Submission form recycles certain fields between Login/Register/Verify */}
          <Form className={classes.form} onSubmit={onSubmit}>
             <CardBody className={classes.cardBody} style={styles.cardBody}>
                <FormGroup className={classes.formGroup}>
+                  {/* Username */}
                   <Input
                      type='text'
                      id='username'
@@ -205,6 +229,7 @@ const User = ({ mode, query }) => {
                      onChange={(e) => setUsername(e.target.value)}
                   />
                   {mode === "Register" ? (
+                     /* Team Number */
                      <Input
                         type='number'
                         autoComplete='team-number'
@@ -218,6 +243,7 @@ const User = ({ mode, query }) => {
                <FormGroup className={classes.formGroup}>
                   {mode === "Register" ? (
                      <Fragment>
+                        {/* Scout Password */}
                         <Input
                            type='password'
                            autoComplete='new-scout-password'
@@ -226,6 +252,8 @@ const User = ({ mode, query }) => {
                            placeholder='Scout Password'
                            onChange={(e) => setScoutPassword(e.target.value)}
                         />
+
+                        {/* Confirm Scout Password */}
                         <Input
                            type='password'
                            autoComplete='confirm-scout-password'
@@ -238,6 +266,7 @@ const User = ({ mode, query }) => {
                         />
                      </Fragment>
                   ) : (
+                     /* Password (Login/Verify) */
                      <Input
                         type='password'
                         autoComplete='scout-or-admin-password'
@@ -255,6 +284,7 @@ const User = ({ mode, query }) => {
                {mode === "Register" ? (
                   <Fragment>
                      <FormGroup className={classes.formGroup}>
+                        {/* Admin Password */}
                         <Input
                            type='password'
                            autoComplete='new-admin-password'
@@ -263,6 +293,8 @@ const User = ({ mode, query }) => {
                            placeholder='Admin Password'
                            onChange={(e) => setAdminPassword(e.target.value)}
                         />
+
+                        {/* Confirm Admin Password */}
                         <Input
                            type='password'
                            autoComplete='confirm-admin-password'
@@ -275,6 +307,7 @@ const User = ({ mode, query }) => {
                         />
                      </FormGroup>
                      <FormGroup className={classes.formGroup}>
+                        {/* Email */}
                         <Input
                            type='email'
                            autoComplete='email'
@@ -286,6 +319,8 @@ const User = ({ mode, query }) => {
                      </FormGroup>
                   </Fragment>
                ) : null}
+
+               {/* Submit Button */}
                <Button
                   style={styles.button}
                   color='login-text'
@@ -302,6 +337,8 @@ const User = ({ mode, query }) => {
                      mode
                   )}
                </Button>
+
+               {/* Small text to navigate between 'No Account?' and 'Have an Account?' */}
                <p className={classes.formText} style={styles.formText}>
                   {mode === "Register" ? (
                      <Fragment>
@@ -331,6 +368,7 @@ const User = ({ mode, query }) => {
    );
 };
 
+/// Inline class manager
 const classes = {
    card: "bg-login-form text-center mx-auto shadow",
    labelTitle: "text-login-text",
@@ -343,6 +381,7 @@ const classes = {
    spinner: "bg-login-text",
 };
 
+/// Inline style manager
 const styles = {
    card: {
       borderRadius: "12px",
@@ -401,9 +440,11 @@ const styles = {
    },
 };
 
+/// Prop Types
 User.propTypes = {
-   mode: PropTypes.string, //Type of user page
+   mode: PropTypes.string, // Type of user page
    query: PropTypes.string, // URL search details
 };
 
+/// Export
 export default User;

@@ -1,3 +1,4 @@
+/// Modules
 import React, { useState, Fragment } from "react";
 import {
    Modal,
@@ -10,33 +11,53 @@ import {
    Button,
    Spinner,
 } from "reactstrap";
+import PropTypes from "prop-types";
+
+/// Assets
 import plus from "bootstrap-icons/icons/plus-circle-fill.svg";
 
+/**
+ * AddComp Component
+ * -----------------
+ * Allows comp creation
+ */
 const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
-   // Set state variables
+   /**
+    * Set dynamic state variables
+    */
    const [modal, setModal] = useState(false);
    const [newCompName, setNewCompName] = useState("");
 
-   // Define methods
+   /**
+    * Define all component methods
+    */
+   /// Toggle showing the add modal
    const toggleModal = () => {
       setModal(!modal);
       setNewCompName("");
       clearMessages();
    };
 
+   /**
+    * Render component
+    */
    return (
       <Fragment>
+         {/* Clickable icon to open modal */}
          <img
             className={classes.plus}
             src={plus}
             alt='Add Competition'
             onClick={toggleModal}
          />
+
+         {/* Add modal */}
          <Modal isOpen={modal} toggle={toggleModal} size='md'>
             <ModalHeader
                className={classes.modalHeader}
                style={styles.modalHeader}>
                New Competition
+               {/* Custom close button */}
                <Button
                   color='transparent'
                   className={classes.modalClose}
@@ -58,8 +79,11 @@ const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
                      {message.text}
                   </Alert>
                ))}
+
+               {/* Add form */}
                <Form onSubmit={(e) => onSubmit(e, newCompName)}>
                   <FormGroup className={classes.formGroup}>
+                     {/* Comp Name */}
                      <Input
                         className={classes.input}
                         type='text'
@@ -68,6 +92,8 @@ const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
                         onChange={(e) => setNewCompName(e.target.value)}
                      />
                   </FormGroup>
+
+                  {/* Submit button to Add Comp */}
                   <Button
                      color='comp-table-head'
                      className={classes.modalSubmit}
@@ -92,6 +118,7 @@ const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
    );
 };
 
+/// Inline class manager
 const classes = {
    plus: "plus",
    modalHeader: "bg-comp-table-head text-back",
@@ -104,6 +131,7 @@ const classes = {
    spinner: "bg-comp-table-head",
 };
 
+/// Inline style manager
 const styles = {
    modalHeader: {
       paddingLeft: "22px",
@@ -127,4 +155,13 @@ const styles = {
    },
 };
 
+/// Prop Types
+AddComp.propTypes = {
+   onSubmit: PropTypes.func, // Add submission function
+   clearMessages: PropTypes.func, // Function to clear add messages in the modal
+   loading: PropTypes.bool, // If an async call is in progress
+   messages: PropTypes.array, // List of response actions regarding add actions
+};
+
+/// Export
 export default AddComp;

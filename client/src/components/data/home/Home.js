@@ -1,3 +1,4 @@
+/// Modules
 import React, { useState, useEffect } from "react";
 import { useStoreActions, useStoreState } from "easy-peasy";
 import {
@@ -8,12 +9,23 @@ import {
    ModalBody,
    Button,
 } from "reactstrap";
+
+/// Components
 import Admin from "./Admin";
 import AddComp from "./AddComp";
 import Comp from "./Comp";
 
+/**
+ * Home Component
+ * --------------
+ * Main landing page.
+ * Lists all the user's competitions, allows competition creation, name editing, and deleting.
+ * Allows navigation to Teams, Matches, Scouting App, Pit Scouting App, and Pending Data pages.
+ */
 const Home = () => {
-   // Set state variables
+   /**
+    * Set dynamic and easy-peasy store state variables
+    */
    const [loading, setLoading] = useState(false);
    const [isAdmin, setIsAdmin] = useState(false);
    const [addMessages, setAddMessages] = useState([]);
@@ -22,14 +34,18 @@ const Home = () => {
    const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
    const comps = useStoreState((state) => state.comps);
 
-   // Bring in commands
+   /**
+    * Bring in easy-peasy store thunks/actions
+    */
    const appearAdmin = useStoreActions((actions) => actions.appearAdmin);
    const getComps = useStoreActions((actions) => actions.getComps);
    const addComp = useStoreActions((actions) => actions.addComp);
    const editComp = useStoreActions((actions) => actions.editComp);
    const deleteComp = useStoreActions((actions) => actions.deleteComp);
 
-   // Get data once when mounted to avoid excessive db calls
+   /**
+    * Handle life-cycle
+    */
    useEffect(() => {
       getComps();
       appearAdmin(setIsAdmin); // Determine admin status
@@ -37,7 +53,10 @@ const Home = () => {
       //eslint-disable-next-line
    }, []);
 
-   // Define methods
+   /**
+    * Define all component methods
+    */
+   /// Handle add submissions
    const onAddCompSubmit = async (e, competitionName) => {
       e.preventDefault();
       if (loading) return;
@@ -52,6 +71,7 @@ const Home = () => {
       }
    };
 
+   /// Handle edit submissions
    const onEditCompSubmit = async (e, comp, competitionName) => {
       e.preventDefault();
       if (loading) return;
@@ -73,6 +93,7 @@ const Home = () => {
       }
    };
 
+   /// Handle delete submissions
    const onDeleteCompSubmit = async (e, comp, checked) => {
       e.preventDefault();
       if (loading) return;
@@ -104,13 +125,17 @@ const Home = () => {
       }
    };
 
+   /// Toggle showing delete success modal
    const toggleDeleteSuccessModal = () => {
       setDeleteSuccessModal(!deleteSuccessModal);
    };
 
-   // Render Component
+   /**
+    * Render component
+    */
    return (
       <div className={classes.container} style={styles.container}>
+         {/* Landing page text */}
          <h1 className={classes.title}>
             Welcome, {sessionStorage.getItem("username")}!
          </h1>
@@ -120,10 +145,12 @@ const Home = () => {
             for using our app and have fun scouting!
          </p>
 
+         {/* Table of competitions */}
          <Table borderless className={classes.table}>
             <thead>
                <tr className={classes.tableHead}>
                   <th colSpan='7'>
+                     {/* Icons and title in header */}
                      <Admin isAdmin={isAdmin} />
                      Competitions
                      <AddComp
@@ -136,6 +163,7 @@ const Home = () => {
                </tr>
             </thead>
             <tbody>
+               {/* Cycle through Comps as rows */}
                {comps.map((comp) => (
                   <Comp
                      key={comp.ID}
@@ -154,6 +182,8 @@ const Home = () => {
                ))}
             </tbody>
          </Table>
+
+         {/* Delete Success Modal */}
          <Modal
             isOpen={deleteSuccessModal}
             toggle={toggleDeleteSuccessModal}
@@ -162,6 +192,7 @@ const Home = () => {
                className={classes.modalHeaderDelete}
                style={styles.modalHeader}>
                Delete Success
+               {/* Custom close button */}
                <Button
                   color='transparent'
                   className={classes.modalClose}
@@ -183,6 +214,8 @@ const Home = () => {
                      {message.text}
                   </Alert>
                ))}
+
+               {/* Submit button */}
                <Button
                   color='comp-table-head'
                   className={classes.modalSubmit}
@@ -199,6 +232,7 @@ const Home = () => {
    );
 };
 
+/// Inline class manager
 const classes = {
    container: "p-0 mx-3",
    title: "mb-2 mt-2 text-table-text",
@@ -212,6 +246,7 @@ const classes = {
    modalSubmit: "modalSubmit",
 };
 
+/// Inline style manager
 const styles = {
    modalHeader: {
       paddingLeft: "22px",
@@ -231,4 +266,5 @@ const styles = {
    },
 };
 
+/// Export
 export default Home;

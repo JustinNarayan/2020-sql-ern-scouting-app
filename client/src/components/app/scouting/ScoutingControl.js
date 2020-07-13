@@ -1,5 +1,13 @@
+/// Modules
 import React, { useState } from "react";
 
+/**
+ * ScoutingControl Component
+ * -------------------------
+ * Stores relevant match scouting state data.
+ * Contains all scouting app components and handles connective functionality.
+ * Bundles scouting data before submission.
+ */
 const ScoutingControl = () => {
    return (
       <p style={{ color: "red" }}>
@@ -9,4 +17,5 @@ const ScoutingControl = () => {
    );
 };
 
+/// Export
 export default ScoutingControl;

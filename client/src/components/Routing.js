@@ -1,19 +1,27 @@
+/// Modules
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 
-// User component
+/// Components
 import User from "./user/User";
 
-// Data components
 import Home from "./data/home/Home";
 
-// App components
 import Scouting from "./app/scouting/Scouting";
 
+/**
+ * Routing Component
+ * -----------------
+ * Manages all front-end routes.
+ */
 const Routing = () => {
+   /**
+    * Render component
+    */
    return (
       <main>
          <Switch>
+            {/* User Routes */}
             <Route exact path='/' render={() => <User mode='Login' />} />
             <Route
                exact
@@ -28,8 +36,10 @@ const Routing = () => {
                )}
             />
 
+            {/* Data Routes */}
             <Route exact path='/home' render={() => <Home />} />
 
+            {/* App Routes */}
             <Route
                exact
                path='/scout'
@@ -42,4 +52,5 @@ const Routing = () => {
    );
 };
 
+/// Export
 export default Routing;

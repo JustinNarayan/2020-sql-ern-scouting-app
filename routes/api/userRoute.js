@@ -11,7 +11,6 @@ try {
    // Module does not exist
 }
 const uuid = require("uuid");
-const verifyToken = require("./verifyToken");
 
 // Create small utility functions
 const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
@@ -36,8 +35,8 @@ const transport = nodemailer.createTransport(
 const composeEmail = ({
    username,
    teamNumber,
-   password,
-   adminKey,
+   scoutPassword,
+   adminPassword,
    email,
    verifyID,
 }) => {
@@ -54,11 +53,11 @@ const composeEmail = ({
    };
    sendOptions.text =
       `Hello ${username} from Team ${teamNumber}!\n\n` +
-      `Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link: ${verifyLink}\n\n` +
+      `Thank you for registering an account with scouting.team7558.com! To use our web application for gathering and using your own scouting data, please verify your account at this link using your admin credentials: ${verifyLink}\n\n` +
       `Please take note of your account information, as it cannot be changed later:\n\n` +
       `Username: ${username}\n` +
-      `Password: ${password}\n` +
-      `Admin Key: ${adminKey}\n` +
+      `Scout Password: ${scoutPassword}\n` +
+      `Admin Password: ${adminPassword}\n` +
       `Email: ${email}\n` +
       `Team Number: ${teamNumber}\n\n` +
       `Thank you again for registering and we hope you'll be scouting soon!\n\n` +
@@ -73,7 +72,7 @@ module.exports = (pool) => {
    /**
     * Login to the database
     * @body username (alphanumeric string)
-    * @body password (string)
+    * @body scout or admin password (string)
     */
    router.post("/login", async (req, res) => {
       // Analyze request
@@ -83,7 +82,7 @@ module.exports = (pool) => {
       let errMessage;
       try {
          // Find user in database
-         let sql = `SELECT Username, Password, TeamNumber, Verified from users WHERE Username = ?`;
+         let sql = `SELECT Username, ScoutPassword, AdminPassword, TeamNumber, Verified from users WHERE Username = ?`;
          errMessage = "Failed to contact database";
          const [result] = await pool.execute(sql, [username]);
 
@@ -92,13 +91,21 @@ module.exports = (pool) => {
          if (!result.length) throw "";
 
          // Get user data
-         const { Username, Password, TeamNumber, Verified } = result[0]; // Capital letters denote SQL info
+         const {
+            Username,
+            ScoutPassword,
+            AdminPassword,
+            TeamNumber,
+            Verified,
+         } = result[0]; // Capital letters denote SQL info
 
          // Check password
-         errMessage = "Failed to check against registered password";
-         const passMatch = await bcrypt.compare(password, Password);
-         errMessage = "Incorrect password";
-         if (!passMatch) throw "";
+         errMessage = "Failed to check against registered scout password";
+         const scoutPassMatch = await bcrypt.compare(password, ScoutPassword);
+         errMessage = "Failed to check against registered admin password";
+         const adminPassMatch = await bcrypt.compare(password, AdminPassword);
+         errMessage = "Incorrect scout or admin password";
+         if (!scoutPassMatch && !adminPassMatch) throw "";
 
          // Check verification
          errMessage =
@@ -109,7 +116,7 @@ module.exports = (pool) => {
          const user = {
             username: Username,
             teamNumber: TeamNumber,
-            isAdmin: false,
+            isAdmin: adminPassMatch,
          };
          errMessage = "Failed to generate authentication token";
          const token = jwt.sign({ user }, process.env.JSONKEY || keys.jsonKey, {
@@ -138,27 +145,33 @@ module.exports = (pool) => {
     */
    router.post("/register", async (req, res) => {
       // Analyze request
-      const { username, teamNumber, password, adminKey, email } = req.body;
+      const {
+         username,
+         teamNumber,
+         scoutPassword,
+         adminPassword,
+         email,
+      } = req.body;
 
       // Handle response and track error source locations
       let errMessage;
       try {
-         // Hash password
-         errMessage = "Failed to hash password";
-         const hashedPassword = await bcrypt.hash(
-            password,
+         // Hash scout password
+         errMessage = "Failed to hash scout password";
+         const hashedScoutPassword = await bcrypt.hash(
+            scoutPassword,
             parseInt(process.env.SALT, 10) || keys.salt
          );
 
-         // Hash admin key
-         errMessage = "Failed to hash admin key";
-         const hashedAdminKey = await bcrypt.hash(
-            adminKey,
+         // Hash admin password
+         errMessage = "Failed to hash admin password";
+         const hashedAdminPassword = await bcrypt.hash(
+            adminPassword,
             parseInt(process.env.SALT, 10) || keys.salt
          );
 
          // Check if username exists
-         let sql = `SELECT Username FROM users WHERE Username = ?`;
+         let sql = `SELECT * FROM users WHERE Username = ?`;
          errMessage = "Failed to contact database";
          const [result] = await pool.execute(sql, [username]);
 
@@ -171,8 +184,8 @@ module.exports = (pool) => {
          const sendOptions = composeEmail({
             username,
             teamNumber,
-            password,
-            adminKey,
+            scoutPassword,
+            adminPassword,
             email,
             verifyID,
          });
@@ -180,13 +193,13 @@ module.exports = (pool) => {
          await transport.sendMail(sendOptions);
 
          // Insert user into database
-         sql = `INSERT INTO users (Username, Password, AdminKey, Email, TeamNumber, VerifyID, Verified) VALUES (?, ?, ?, ?, ?, ?, 0)`;
+         sql = `INSERT INTO users (Username, ScoutPassword, AdminPassword, Email, TeamNumber, VerifyID, Verified) VALUES (?, ?, ?, ?, ?, ?, 0)`;
          errMessage =
             "Verification email sent but registration failed - please register again";
          await pool.execute(sql, [
             username,
-            hashedPassword,
-            hashedAdminKey,
+            hashedScoutPassword,
+            hashedAdminPassword,
             email,
             teamNumber,
             verifyID,
@@ -208,7 +221,7 @@ module.exports = (pool) => {
     * Verifies an existing user in the database
     * @params id (unique verification ID string)
     * @body username (alphanumeric string)
-    * @body password (string)
+    * @body scout or admin password (string)
     */
    router.post("/verify/:id", async (req, res) => {
       // Analyze request
@@ -219,7 +232,7 @@ module.exports = (pool) => {
       let errMessage;
       try {
          // Find user in database
-         let sql = `SELECT Username, Password, TeamNumber, Verified from users WHERE Username = ? AND VerifyID = ?`;
+         let sql = `SELECT Username, AdminPassword, TeamNumber, Verified from users WHERE Username = ? AND VerifyID = ?`;
          errMessage = "Failed to contact database";
          const [result] = await pool.execute(sql, [username, fix(id)]);
 
@@ -228,12 +241,12 @@ module.exports = (pool) => {
          if (!result.length) throw "";
 
          // Get user data
-         const { Password, Verified } = result[0]; // Capital letters denote SQL info
+         const { AdminPassword, Verified } = result[0]; // Capital letters denote SQL info
 
          // Check password
-         errMessage = "Failed to check against registered password";
-         const passMatch = await bcrypt.compare(password, Password);
-         errMessage = "Incorrect password";
+         errMessage = "Failed to check against registered admin password";
+         const passMatch = await bcrypt.compare(password, AdminPassword);
+         errMessage = "Incorrect admin password";
          if (!passMatch) throw "";
 
          // Check current verification status
@@ -255,61 +268,6 @@ module.exports = (pool) => {
          res.send({
             message: "Successfully updated verification status",
             type: "good",
-         });
-      } catch (err) {
-         // Send error message
-         res.send({ message: errMessage, type: "bad", err });
-      }
-   });
-
-   /**
-    * Grants a user admin privileges with a correct admin key
-    * @auth Bearer <token> (token received from login)
-    * @body adminKey (string)
-    */
-   router.post("/admin", verifyToken, async (req, res) => {
-      // Analyze request
-      const { username } = req.auth.user;
-      const { adminKey } = req.body; // Lowercase letters denote JS info
-
-      // Handle response and track error source locations
-      let errMessage;
-      try {
-         // Find user in database
-         let sql = `SELECT Username, AdminKey, TeamNumber FROM users WHERE Username = ?`;
-         errMessage = "Failed to contact database";
-         const [result] = await pool.execute(sql, [username]);
-
-         // User may not exist
-         errMessage = "That username is not registered";
-         if (!result.length) throw "";
-
-         // Get user data
-         const { Username, AdminKey, TeamNumber } = result[0]; // Capital letters denote SQL info
-
-         // Check password
-         errMessage = "Failed to check against registered admin key";
-         const passMatch = await bcrypt.compare(adminKey, AdminKey);
-         console.log(adminKey);
-         errMessage = "Incorrect admin key";
-         if (!passMatch) throw "";
-
-         // Generate token
-         const user = {
-            username: Username,
-            teamNumber: TeamNumber,
-            isAdmin: true,
-         };
-         errMessage = "Failed to generate authentication token";
-         const token = jwt.sign({ user }, process.env.JSONKEY || keys.jsonKey, {
-            expiresIn: process.env.AUTHEXPIRY || keys.authExpiry,
-         });
-
-         // Success!
-         res.send({
-            message: "Login successful",
-            type: "good",
-            token,
          });
       } catch (err) {
          // Send error message

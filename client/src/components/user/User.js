@@ -23,9 +23,10 @@ const User = ({ mode, query }) => {
    const [teamNumber, setTeamNumber] = useState();
    const maxTeamNumber = 8427;
    const [password, setPassword] = useState("");
-   const [passwordConfirm, setPasswordConfirm] = useState("");
-   const [adminKey, setAdminKey] = useState("");
-   const [adminKeyConfirm, setAdminKeyConfirm] = useState("");
+   const [scoutPassword, setScoutPassword] = useState("");
+   const [scoutPasswordConfirm, setScoutPasswordConfirm] = useState("");
+   const [adminPassword, setAdminPassword] = useState("");
+   const [adminPasswordConfirm, setAdminPasswordConfirm] = useState("");
    const [email, setEmail] = useState("");
    const [verifyID] = useState(QueryString.parse(query).verifyID);
    const [loading, setLoading] = useState(false);
@@ -91,10 +92,10 @@ const User = ({ mode, query }) => {
       // Check for errors
       if (
          !username ||
-         !password ||
-         !passwordConfirm ||
-         !adminKey ||
-         !adminKeyConfirm ||
+         !scoutPassword ||
+         !scoutPasswordConfirm ||
+         !adminPassword ||
+         !adminPasswordConfirm ||
          !teamNumber
       ) {
          errors.push({ text: "Please fill out all fields", type: "bad" });
@@ -108,11 +109,11 @@ const User = ({ mode, query }) => {
          if (!validator.validate(email)) {
             errors.push({ text: "Invalid email address", type: "bad" });
          }
-         if (password !== passwordConfirm) {
-            errors.push({ text: "Passwords do not match", type: "bad" });
+         if (scoutPassword !== scoutPasswordConfirm) {
+            errors.push({ text: "Scout passwords do not match", type: "bad" });
          }
-         if (adminKey !== adminKeyConfirm) {
-            errors.push({ text: "Admin keys do not match", type: "bad" });
+         if (adminPassword !== adminPasswordConfirm) {
+            errors.push({ text: "Admin passwords do not match", type: "bad" });
          }
          if (teamNumber < 1 || teamNumber > maxTeamNumber) {
             errors.push({ text: "Invalid team number", type: "bad" });
@@ -126,8 +127,8 @@ const User = ({ mode, query }) => {
          setLoading(true);
          const res = await register({
             username,
-            password,
-            adminKey,
+            scoutPassword,
+            adminPassword,
             email,
             teamNumber,
          });
@@ -215,45 +216,62 @@ const User = ({ mode, query }) => {
                   ) : null}
                </FormGroup>
                <FormGroup className={classes.formGroup}>
-                  <Input
-                     type='password'
-                     autoComplete='new-password'
-                     style={
-                        mode === "Register" ? styles.input.left : styles.input
-                     }
-                     className={classes.input}
-                     placeholder='Password'
-                     onChange={(e) => setPassword(e.target.value)}
-                  />
                   {mode === "Register" ? (
+                     <Fragment>
+                        <Input
+                           type='password'
+                           autoComplete='new-scout-password'
+                           style={styles.input.left}
+                           className={classes.input}
+                           placeholder='Scout Password'
+                           onChange={(e) => setScoutPassword(e.target.value)}
+                        />
+                        <Input
+                           type='password'
+                           autoComplete='confirm-scout-password'
+                           style={styles.input.right}
+                           className={classes.input}
+                           placeholder='Confirm Scout Password'
+                           onChange={(e) =>
+                              setScoutPasswordConfirm(e.target.value)
+                           }
+                        />
+                     </Fragment>
+                  ) : (
                      <Input
                         type='password'
-                        autoComplete='confirm-password'
-                        style={styles.input.right}
+                        autoComplete='scout-or-admin-password'
+                        style={styles.input}
                         className={classes.input}
-                        placeholder='Confirm Password'
-                        onChange={(e) => setPasswordConfirm(e.target.value)}
+                        placeholder={
+                           mode === "Verify"
+                              ? "Admin Password"
+                              : "Scout or Admin Password"
+                        }
+                        onChange={(e) => setPassword(e.target.value)}
                      />
-                  ) : null}
+                  )}
                </FormGroup>
                {mode === "Register" ? (
                   <Fragment>
                      <FormGroup className={classes.formGroup}>
                         <Input
                            type='password'
-                           autoComplete='new-admin-key'
+                           autoComplete='new-admin-password'
                            style={styles.input.left}
                            className={classes.input}
-                           placeholder='Admin Key'
-                           onChange={(e) => setAdminKey(e.target.value)}
+                           placeholder='Admin Password'
+                           onChange={(e) => setAdminPassword(e.target.value)}
                         />
                         <Input
                            type='password'
-                           autoComplete='confirm-admin-key'
+                           autoComplete='confirm-admin-password'
                            style={styles.input.right}
                            className={classes.input}
                            placeholder='Confirm Admin Key'
-                           onChange={(e) => setAdminKeyConfirm(e.target.value)}
+                           onChange={(e) =>
+                              setAdminPasswordConfirm(e.target.value)
+                           }
                         />
                      </FormGroup>
                      <FormGroup className={classes.formGroup}>

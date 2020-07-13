@@ -138,10 +138,22 @@ module.exports = (pool) => {
       // Handle response and track error source locations
       let errMessage;
       try {
+         // Check if this name is taken
+         let sql = `SELECT * FROM competitions WHERE Username = ? AND CompetitionName = ?`;
+         errMessage = "Failed to get competitions";
+         const [existsResult] = await pool.execute(sql, [
+            username,
+            fix(competitionName),
+         ]);
+
+         // Name may be taken
+         errMessage = "That competition name is taken";
+         if (existsResult.length) throw "";
+
          // Update data
-         let sql = `UPDATE competitions SET CompetitionName = ? WHERE ID = ? AND Username = ?`;
+         sql = `UPDATE competitions SET CompetitionName = ? WHERE ID = ? AND Username = ?`;
          errMessage = "Failed to update competition";
-         const [result] = await pool.execute(sql, [
+         const [updateResult] = await pool.execute(sql, [
             fix(competitionName),
             fix(id),
             username,
@@ -149,7 +161,7 @@ module.exports = (pool) => {
 
          // May have found no data
          errMessage = "Found no competition to update";
-         if (!result.affectedRows) throw "";
+         if (!updateResult.affectedRows) throw "";
 
          // Success!
          res.send({

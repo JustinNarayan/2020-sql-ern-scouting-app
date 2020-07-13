@@ -67,7 +67,7 @@ const Scouting = ({ query }) => {
          <ScoutingControl />
 
          {/* Modal for redirects */}
-         <Modal isOpen={redirectModal} size='md'>
+         <Modal isOpen={redirectModal} size='sm'>
             <ModalHeader
                className={classes.modalHeader}
                style={styles.modalHeader}>

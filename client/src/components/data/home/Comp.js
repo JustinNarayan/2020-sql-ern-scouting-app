@@ -42,6 +42,18 @@ const Comp = ({
    /**
     * Define all component methods
     */
+   /// Handle navigation
+   const navigate = (to) => {
+      switch (to) {
+         case "scout":
+            window.location.href = `/scout?compID=${comp.ID}`;
+            break;
+         default:
+            alert("Error in navigation");
+            break;
+      }
+   };
+
    /// Toggle showing main actions modal
    const toggleModal = () => {
       setModal(!modal);
@@ -68,7 +80,9 @@ const Comp = ({
             <td className={classes.compName}>{comp.CompetitionName}</td>
             <td className={classes.link}>Teams</td>
             <td className={classes.link}>Matches</td>
-            <td className={classes.link}>Scout</td>
+            <td className={classes.link} onClick={() => navigate("scout")}>
+               Scout
+            </td>
             <td className={classes.link}>Pit Scout</td>
             <td className={classes.link}>Pending Data</td>
             <td className={classes.link} onClick={toggleModal}>

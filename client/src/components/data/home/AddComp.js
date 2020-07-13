@@ -116,7 +116,7 @@ const styles = {
       right: "20px",
       top: "10px",
       position: "absolute",
-      height: "0",
+      height: "40px",
    },
    button: {
       fontWeight: "400",

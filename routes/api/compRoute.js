@@ -6,13 +6,16 @@ const verifyToken = require("./verifyToken");
 
 // Create small utility functions
 const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
-const hasPrivileges = (isAdmin, res) =>
-   isAdmin
-      ? true
-      : res.send({
-           message: "Missing admin privileges for that action",
-           type: "bad",
-        });
+const hasPrivileges = (isAdmin, res) => {
+   if (!isAdmin) {
+      res.send({
+         message: "Missing admin privileges for that action",
+         type: "bad",
+      });
+      return false;
+   }
+   return true;
+};
 
 /* EXPORT
    Function containing all API routes */

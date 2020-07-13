@@ -1,9 +1,14 @@
 import React from "react";
 import { Switch, Route } from "react-router-dom";
 
+// User component
 import User from "./user/User";
 
+// Data components
 import Home from "./data/home/Home";
+
+// App components
+import Scouting from "./app/scouting/Scouting";
 
 const Routing = () => {
    return (
@@ -24,6 +29,14 @@ const Routing = () => {
             />
 
             <Route exact path='/home' render={() => <Home />} />
+
+            <Route
+               exact
+               path='/scout'
+               render={({ location: { search } }) => (
+                  <Scouting query={search} />
+               )}
+            />
          </Switch>
       </main>
    );

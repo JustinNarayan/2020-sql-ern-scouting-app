@@ -37,6 +37,7 @@ const Home = () => {
       //eslint-disable-next-line
    }, []);
 
+   // Define methods
    const onAddCompSubmit = async (e, competitionName) => {
       e.preventDefault();
       if (loading) return;

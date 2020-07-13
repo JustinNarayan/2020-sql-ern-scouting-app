@@ -28,7 +28,7 @@ const User = ({ mode, query }) => {
    const [adminPassword, setAdminPassword] = useState("");
    const [adminPasswordConfirm, setAdminPasswordConfirm] = useState("");
    const [email, setEmail] = useState("");
-   const [verifyID] = useState(QueryString.parse(query).verifyID);
+   const verifyID = QueryString.parse(query).verifyID;
    const [loading, setLoading] = useState(false);
 
    // Bring in commands

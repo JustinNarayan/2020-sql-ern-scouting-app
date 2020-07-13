@@ -12342,10 +12342,6 @@ body {
   margin-left: 0px;
 }
 
-.compTable thead tr th .admin:hover {
-  cursor: pointer;
-}
-
 .compTable thead tr th .none {
   width: 0px;
 }

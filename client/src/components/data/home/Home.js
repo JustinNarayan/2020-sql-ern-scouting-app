@@ -8,12 +8,14 @@ import {
    ModalBody,
    Button,
 } from "reactstrap";
+import Admin from "./Admin";
 import AddComp from "./AddComp";
 import Comp from "./Comp";
 
 const Home = () => {
    // Set state variables
    const [loading, setLoading] = useState(false);
+   const [isAdmin, setIsAdmin] = useState(false);
    const [addMessages, setAddMessages] = useState([]);
    const [editMessages, setEditMessages] = useState([]);
    const [deleteMessages, setDeleteMessages] = useState([]);
@@ -21,6 +23,7 @@ const Home = () => {
    const comps = useStoreState((state) => state.comps);
 
    // Bring in commands
+   const appearAdmin = useStoreActions((actions) => actions.appearAdmin);
    const getComps = useStoreActions((actions) => actions.getComps);
    const addComp = useStoreActions((actions) => actions.addComp);
    const editComp = useStoreActions((actions) => actions.editComp);
@@ -29,6 +32,7 @@ const Home = () => {
    // Get data once when mounted to avoid excessive db calls
    useEffect(() => {
       getComps();
+      appearAdmin(setIsAdmin); // Determine admin status
 
       //eslint-disable-next-line
    }, []);
@@ -119,6 +123,7 @@ const Home = () => {
             <thead>
                <tr className={classes.tableHead}>
                   <th colSpan='7'>
+                     <Admin isAdmin={isAdmin} />
                      Competitions
                      <AddComp
                         onSubmit={onAddCompSubmit}

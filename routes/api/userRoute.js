@@ -11,6 +11,7 @@ try {
    // Module does not exist
 }
 const uuid = require("uuid");
+const verifyToken = require("./verifyToken");
 
 // Create small utility functions
 const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
@@ -273,6 +274,14 @@ module.exports = (pool) => {
          // Send error message
          res.send({ message: errMessage, type: "bad", err });
       }
+   });
+
+   /**
+    * Returns a boolean value regarding the user's admin status
+    * @auth Bearer <token> (token received from login)
+    */
+   router.get("/admin", verifyToken, async (req, res) => {
+      res.send(req.auth.user.isAdmin);
    });
 
    return router;

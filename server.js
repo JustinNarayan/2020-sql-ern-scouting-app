@@ -32,6 +32,8 @@ const users = require("./routes/api/userRoute")(promisePool);
 app.use("/api/users", users);
 const comps = require("./routes/api/compRoute")(promisePool);
 app.use("/api/comps", comps);
+const data = require("./routes/api/dataRoute")(promisePool);
+app.use("/api/data", data);
 
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {

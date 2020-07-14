@@ -300,7 +300,7 @@ const User = ({ mode, query }) => {
                            autoComplete='confirm-admin-password'
                            style={styles.input.right}
                            className={classes.input}
-                           placeholder='Confirm Admin Key'
+                           placeholder='Confirm Admin Password'
                            onChange={(e) =>
                               setAdminPasswordConfirm(e.target.value)
                            }
@@ -393,13 +393,14 @@ const styles = {
       borderRadius: "12px",
    },
    labelTitle: {
-      fontWeight: "300",
-      fontSize: "30px",
+      fontWeight: "400",
+      fontSize: "28px",
       marginBottom: "20px",
    },
    formText: {
       marginTop: "16px",
       fontSize: "14px",
+      fontWeight: "500",
    },
    input: {
       left: {

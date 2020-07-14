@@ -140,102 +140,255 @@ body {
       margin: 0;
       font-size: 16px;
       font-weight: 500;
+      background-color: map-get($theme-colors, "button-grey");
       color: map-get($theme-colors, "button-white");
    }
 
-   /// Field zone buttons
-   .field {
-      width: 560px;
-      height: 336px;
+   .userArea {
       display: flex;
       flex-direction: row;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0;
+      justify-content: center;
 
-      .group {
+      /// Sidebars
+      .sidebar {
          display: flex;
          flex-direction: column;
+         justify-content: space-around;
+         padding: 0;
+         margin: 0 32px;
 
-         $border-width: 1.5px;
-         $border-radius: 20px;
+         // For sidebar buttons
+         $border-radius: 16px;
 
+         /// Long buttons (Cross Line, etc.)
          button {
-            padding: 0;
-            margin: 0;
-            border: $border-width solid map-get($theme-colors, "button-white");
-            border-radius: 0px;
-            background-color: map-get($theme-colors, "light-grey");
+            width: 272px;
+            height: 72px;
+            border: 0;
+            border-radius: $border-radius;
+
+            &.crossLine {
+               font-size: 24px;
+            }
          }
 
-         /// Squares
-         ._0,
-         ._1,
-         ._2,
-         ._10,
-         ._11,
-         ._12 {
-            width: 112px;
-            height: 112px;
-         }
-         /// Tall rectangles
-         ._3,
-         ._4,
-         ._8,
-         ._9 {
-            width: 84px;
-            height: 168px;
-         }
-         /// Long rectangles
-         ._5,
-         ._7 {
-            width: 168px;
-            height: 84px;
-         }
-         /// Center
-         ._6 {
-            width: 168px;
-            height: 168px;
-         }
+         /// Button rows (flips, scoring, etc.)
+         .buttonRow {
+            display: flex;
+            flex-direction: row;
 
-         /// Thicker Outer Borders
-         ._0,
-         ._1,
-         ._2 {
-            border-left-width: $border-width * 2;
-         }
-         ._10,
-         ._11,
-         ._12 {
-            border-right-width: $border-width * 2;
-         }
-         ._0,
-         ._3,
-         ._5,
-         ._8,
-         ._10 {
-            border-top-width: $border-width * 2;
-         }
-         ._2,
-         ._4,
-         ._7,
-         ._9,
-         ._12 {
-            border-bottom-width: $border-width * 2;
-         }
+            button {
+               width: 80px;
+               height: 72px;
+               border: 0;
+               border-radius: 0;
+               font-size: 16px;
+               line-height: 1.25;
 
-         /// Rounded borders
-         ._0 {
-            border-top-left-radius: $border-radius;
+               &:first-child {
+                  width: 96px;
+                  border-top-left-radius: $border-radius;
+                  border-bottom-left-radius: $border-radius;
+
+                  // Flip
+                  &.flipRed {
+                     background-color: map-get($theme-colors, "dark-red");
+                  }
+               }
+
+               &:last-child {
+                  width: 96px;
+                  border-top-right-radius: $border-radius;
+                  border-bottom-right-radius: $border-radius;
+
+                  // Flip
+                  &.flipBlue {
+                     background-color: map-get($theme-colors, "dark-blue");
+                  }
+               }
+
+               // Plus or minus
+               &.symbol {
+                  font-size: 56px;
+                  font-weight: 100;
+                  line-height: 0;
+
+                  &.active {
+                     background-color: map-get($theme-colors, "button-click");
+                  }
+               }
+
+               // Info (teamNumber, matchNumber, scoutName)
+               &.info {
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 18px;
+
+                  &.button {
+                     width: 272px;
+                     height: 156px;
+                  }
+
+                  .group {
+                     display: flex;
+                     flex-direction: column;
+                     align-items: center;
+
+                     label {
+                        margin: 0;
+                        padding: 0;
+                     }
+
+                     input {
+                        width: 192px;
+                        height: 28px;
+                     }
+                  }
+
+                  .row {
+                     display: flex;
+                     flex-direction: row;
+                     justify-content: center;
+
+                     .group {
+                        // Keeps style from above
+                        margin: 16px 16px 4px 16px;
+
+                        input {
+                           width: 80px;
+                        }
+                     }
+                  }
+               }
+            }
          }
-         ._2 {
-            border-bottom-left-radius: $border-radius;
-         }
-         ._10 {
-            border-top-right-radius: $border-radius;
-         }
-         ._12 {
-            border-bottom-right-radius: $border-radius;
+      }
+
+      /// Field zone buttons
+      .field {
+         width: 560px;
+         height: 336px;
+         display: flex;
+         flex-direction: row;
+         padding: 0;
+
+         .group {
+            display: flex;
+            flex-direction: column;
+
+            // For zone buttons
+            $border-width: 1.5px;
+            $border-radius: 20px;
+
+            /// Default zone button style
+            button {
+               padding: 0;
+               margin: 0;
+               border: $border-width solid map-get($theme-colors, "button-white");
+               border-radius: 0px;
+
+               /// Colors
+               background-color: map-get($theme-colors, "light-grey");
+               &.active {
+                  background-color: map-get($theme-colors, "dark-grey");
+               }
+               &.red {
+                  background-color: map-get($theme-colors, "light-red");
+                  &.active {
+                     background-color: map-get($theme-colors, "dark-red");
+                  }
+               }
+               &.blue {
+                  background-color: map-get($theme-colors, "light-blue");
+                  &.active {
+                     background-color: map-get($theme-colors, "dark-blue");
+                  }
+               }
+
+               /// Team Number
+               .teamNumber {
+                  font-size: 62px;
+
+                  &.red {
+                     color: map-get($theme-colors, "dark-red");
+                  }
+                  &.blue {
+                     color: map-get($theme-colors, "dark-blue");
+                  }
+               }
+            }
+
+            /// Squares
+            ._0,
+            ._1,
+            ._2,
+            ._10,
+            ._11,
+            ._12 {
+               width: 112px;
+               height: 112px;
+            }
+            /// Tall rectangles
+            ._3,
+            ._4,
+            ._8,
+            ._9 {
+               width: 84px;
+               height: 168px;
+            }
+            /// Long rectangles
+            ._5,
+            ._7 {
+               width: 168px;
+               height: 84px;
+            }
+            /// Center
+            ._6 {
+               width: 168px;
+               height: 168px;
+            }
+
+            /// Thicker Outer Borders
+            ._0,
+            ._1,
+            ._2 {
+               border-left-width: $border-width * 2;
+            }
+            ._10,
+            ._11,
+            ._12 {
+               border-right-width: $border-width * 2;
+            }
+            ._0,
+            ._3,
+            ._5,
+            ._8,
+            ._10 {
+               border-top-width: $border-width * 2;
+            }
+            ._2,
+            ._4,
+            ._7,
+            ._9,
+            ._12 {
+               border-bottom-width: $border-width * 2;
+            }
+
+            /// Rounded borders
+            ._0 {
+               border-top-left-radius: $border-radius;
+            }
+            ._2 {
+               border-bottom-left-radius: $border-radius;
+            }
+            ._10 {
+               border-top-right-radius: $border-radius;
+            }
+            ._12 {
+               border-bottom-right-radius: $border-radius;
+            }
          }
       }
    }

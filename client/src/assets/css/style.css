@@ -4,7 +4,7 @@
  * Copyright 2011-2020 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap");
 :root {
   --blue: #007bff;
   --indigo: #6610f2;
@@ -49,6 +49,7 @@
   --button-grey: #494a4d;
   --button-white: #ffffff;
   --button-click: #8f9092;
+  --options: #ff7300;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -2608,6 +2609,28 @@ pre code {
   background-color: lightgray;
 }
 
+.table-options,
+.table-options > th,
+.table-options > td {
+  background-color: #ffd8b8;
+}
+
+.table-options th,
+.table-options td,
+.table-options thead th,
+.table-options tbody + tbody {
+  border-color: #ffb67a;
+}
+
+.table-hover .table-options:hover {
+  background-color: #ffca9f;
+}
+
+.table-hover .table-options:hover > td,
+.table-hover .table-options:hover > th {
+  background-color: #ffca9f;
+}
+
 .table-active,
 .table-active > th,
 .table-active > td {
@@ -4459,6 +4482,45 @@ fieldset:disabled a.btn {
           box-shadow: 0 0 0 0.2rem rgba(160, 161, 162, 0.5);
 }
 
+.btn-options {
+  color: #fff;
+  background-color: #ff7300;
+  border-color: #ff7300;
+}
+
+.btn-options:hover {
+  color: #fff;
+  background-color: #d96200;
+  border-color: #cc5c00;
+}
+
+.btn-options:focus, .btn-options.focus {
+  color: #fff;
+  background-color: #d96200;
+  border-color: #cc5c00;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(255, 136, 38, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(255, 136, 38, 0.5);
+}
+
+.btn-options.disabled, .btn-options:disabled {
+  color: #fff;
+  background-color: #ff7300;
+  border-color: #ff7300;
+}
+
+.btn-options:not(:disabled):not(.disabled):active, .btn-options:not(:disabled):not(.disabled).active,
+.show > .btn-options.dropdown-toggle {
+  color: #fff;
+  background-color: #cc5c00;
+  border-color: #bf5600;
+}
+
+.btn-options:not(:disabled):not(.disabled):active:focus, .btn-options:not(:disabled):not(.disabled).active:focus,
+.show > .btn-options.dropdown-toggle:focus {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(255, 136, 38, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(255, 136, 38, 0.5);
+}
+
 .btn-outline-primary {
   color: #007bff;
   border-color: #007bff;
@@ -5477,6 +5539,40 @@ fieldset:disabled a.btn {
 .show > .btn-outline-button-click.dropdown-toggle:focus {
   -webkit-box-shadow: 0 0 0 0.2rem rgba(143, 144, 146, 0.5);
           box-shadow: 0 0 0 0.2rem rgba(143, 144, 146, 0.5);
+}
+
+.btn-outline-options {
+  color: #ff7300;
+  border-color: #ff7300;
+}
+
+.btn-outline-options:hover {
+  color: #fff;
+  background-color: #ff7300;
+  border-color: #ff7300;
+}
+
+.btn-outline-options:focus, .btn-outline-options.focus {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(255, 115, 0, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(255, 115, 0, 0.5);
+}
+
+.btn-outline-options.disabled, .btn-outline-options:disabled {
+  color: #ff7300;
+  background-color: transparent;
+}
+
+.btn-outline-options:not(:disabled):not(.disabled):active, .btn-outline-options:not(:disabled):not(.disabled).active,
+.show > .btn-outline-options.dropdown-toggle {
+  color: #fff;
+  background-color: #ff7300;
+  border-color: #ff7300;
+}
+
+.btn-outline-options:not(:disabled):not(.disabled):active:focus, .btn-outline-options:not(:disabled):not(.disabled).active:focus,
+.show > .btn-outline-options.dropdown-toggle:focus {
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(255, 115, 0, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(255, 115, 0, 0.5);
 }
 
 .btn-link {
@@ -8082,6 +8178,22 @@ a.badge-button-click:focus, a.badge-button-click.focus {
           box-shadow: 0 0 0 0.2rem rgba(143, 144, 146, 0.5);
 }
 
+.badge-options {
+  color: #fff;
+  background-color: #ff7300;
+}
+
+a.badge-options:hover, a.badge-options:focus {
+  color: #fff;
+  background-color: #cc5c00;
+}
+
+a.badge-options:focus, a.badge-options.focus {
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(255, 115, 0, 0.5);
+          box-shadow: 0 0 0 0.2rem rgba(255, 115, 0, 0.5);
+}
+
 .jumbotron {
   padding: 2rem 1rem;
   margin-bottom: 2rem;
@@ -8547,6 +8659,20 @@ a.badge-button-click:focus, a.badge-button-click.focus {
 
 .alert-button-click .alert-link {
   color: #313232;
+}
+
+.alert-options {
+  color: #853c00;
+  background-color: #ffe3cc;
+  border-color: #ffd8b8;
+}
+
+.alert-options hr {
+  border-top-color: #ffca9f;
+}
+
+.alert-options .alert-link {
+  color: #522500;
 }
 
 @-webkit-keyframes progress-bar-stripes {
@@ -9342,6 +9468,22 @@ a.badge-button-click:focus, a.badge-button-click.focus {
   color: #fff;
   background-color: #4a4b4c;
   border-color: #4a4b4c;
+}
+
+.list-group-item-options {
+  color: #853c00;
+  background-color: #ffd8b8;
+}
+
+.list-group-item-options.list-group-item-action:hover, .list-group-item-options.list-group-item-action:focus {
+  color: #853c00;
+  background-color: #ffca9f;
+}
+
+.list-group-item-options.list-group-item-action.active {
+  color: #fff;
+  background-color: #853c00;
+  border-color: #853c00;
 }
 
 .close {
@@ -10561,6 +10703,16 @@ button.bg-button-click:focus {
   background-color: #757679 !important;
 }
 
+.bg-options {
+  background-color: #ff7300 !important;
+}
+
+a.bg-options:hover, a.bg-options:focus,
+button.bg-options:hover,
+button.bg-options:focus {
+  background-color: #cc5c00 !important;
+}
+
 .bg-white {
   background-color: #fff !important;
 }
@@ -10727,6 +10879,10 @@ button.bg-button-click:focus {
 
 .border-button-click {
   border-color: #8f9092 !important;
+}
+
+.border-options {
+  border-color: #ff7300 !important;
 }
 
 .border-white {
@@ -14303,6 +14459,14 @@ a.text-button-click:hover, a.text-button-click:focus {
   color: #696a6c !important;
 }
 
+.text-options {
+  color: #ff7300 !important;
+}
+
+a.text-options:hover, a.text-options:focus {
+  color: #b35100 !important;
+}
+
 .text-body {
   color: #212529 !important;
 }
@@ -14552,6 +14716,7 @@ body {
   padding: 0;
   margin: 0;
   position: absolute;
+  text-align: center;
   left: 0;
   right: 0;
   top: 0;
@@ -14571,6 +14736,34 @@ body {
   font-weight: 500;
   background-color: #494a4d;
   color: #ffffff;
+}
+
+.scoutingApp button.on {
+  color: #494a4d;
+  background-color: #ffffff;
+}
+
+.scoutingApp .timerButtons {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.scoutingApp .timerButtons button {
+  width: 160px;
+  height: 64px;
+  font-size: 48px;
+  line-height: 0;
+  margin: 20px 0;
+}
+
+.scoutingApp .timerButtons .options {
+  background-color: #ff7300;
+  font-size: 32px;
+  margin: 20px;
 }
 
 .scoutingApp .userArea {
@@ -14597,7 +14790,7 @@ body {
   -ms-flex-pack: distribute;
       justify-content: space-around;
   padding: 0;
-  margin: 0 32px;
+  margin: 0 24px;
 }
 
 .scoutingApp .userArea .sidebar button {
@@ -14605,6 +14798,11 @@ body {
   height: 72px;
   border: 0;
   border-radius: 16px;
+  line-height: 1.25;
+}
+
+.scoutingApp .userArea .sidebar button.active {
+  background-color: #8f9092;
 }
 
 .scoutingApp .userArea .sidebar button.crossLine {
@@ -14627,7 +14825,6 @@ body {
   border: 0;
   border-radius: 0;
   font-size: 16px;
-  line-height: 1.25;
 }
 
 .scoutingApp .userArea .sidebar .buttonRow button:first-child {
@@ -14652,12 +14849,8 @@ body {
 
 .scoutingApp .userArea .sidebar .buttonRow button.symbol {
   font-size: 56px;
-  font-weight: 100;
+  font-weight: 200;
   line-height: 0;
-}
-
-.scoutingApp .userArea .sidebar .buttonRow button.symbol.active {
-  background-color: #8f9092;
 }
 
 .scoutingApp .userArea .sidebar .buttonRow button.info {
@@ -14871,17 +15064,19 @@ body {
       -ms-flex-direction: row;
           flex-direction: row;
   width: 1200px;
+  margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
-  -webkit-box-pack: space-evenly;
-      -ms-flex-pack: space-evenly;
-          justify-content: space-evenly;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
 }
 
 .scoutingApp .mode button {
   width: 240px;
   height: 56px;
   background-color: #2e2f30;
+  margin: 0 20px;
 }
 
 .scoutingApp .mode button.auto {

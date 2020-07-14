@@ -75,7 +75,9 @@ const ScoutingScore = ({
                +
             </button>
          </div>
-         <button>
+         <button
+            className={clickTarget === "pickup" ? classes.activePickup : ""}
+            onClick={incrementPickups}>
             PICKUP
             <br />
             {pickups}
@@ -89,6 +91,8 @@ const classes = {
    buttonRow: "buttonRow",
    symbol: "symbol",
    active: "symbol active",
+   activePickup: "active",
+   red: "text-danger",
 };
 
 export default ScoutingScore;

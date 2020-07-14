@@ -123,6 +123,7 @@ body {
    padding: 0;
    margin: 0;
    position: absolute;
+   text-align: center;
    left: 0;
    right: 0;
    top: 0;
@@ -142,8 +143,34 @@ body {
       font-weight: 500;
       background-color: map-get($theme-colors, "button-grey");
       color: map-get($theme-colors, "button-white");
+
+      &.on {
+         color: map-get($theme-colors, "button-grey");
+         background-color: map-get($theme-colors, "button-white");
+      }
    }
 
+   /// Top timer buttons
+   .timerButtons {
+      display: flex;
+      justify-content: center;
+
+      button {
+         width: 160px;
+         height: 64px;
+         font-size: 48px;
+         line-height: 0;
+         margin: 20px 0;
+      }
+
+      .options {
+         background-color: #ff7300;
+         font-size: 32px;
+         margin: 20px;
+      }
+   }
+
+   /// What the user interacts with
    .userArea {
       display: flex;
       flex-direction: row;
@@ -155,7 +182,7 @@ body {
          flex-direction: column;
          justify-content: space-around;
          padding: 0;
-         margin: 0 32px;
+         margin: 0 24px;
 
          // For sidebar buttons
          $border-radius: 16px;
@@ -166,6 +193,12 @@ body {
             height: 72px;
             border: 0;
             border-radius: $border-radius;
+            line-height: 1.25;
+
+            // Clicked +, -, or pickup
+            &.active {
+               background-color: map-get($theme-colors, "button-click");
+            }
 
             &.crossLine {
                font-size: 24px;
@@ -183,7 +216,6 @@ body {
                border: 0;
                border-radius: 0;
                font-size: 16px;
-               line-height: 1.25;
 
                &:first-child {
                   width: 96px;
@@ -210,12 +242,8 @@ body {
                // Plus or minus
                &.symbol {
                   font-size: 56px;
-                  font-weight: 100;
+                  font-weight: 200;
                   line-height: 0;
-
-                  &.active {
-                     background-color: map-get($theme-colors, "button-click");
-                  }
                }
 
                // Info (teamNumber, matchNumber, scoutName)
@@ -398,14 +426,16 @@ body {
       display: flex;
       flex-direction: row;
       width: 1200px;
+      margin-top: 20px;
       margin-left: auto;
       margin-right: auto;
-      justify-content: space-evenly;
+      justify-content: center;
 
       button {
          width: 240px;
          height: 56px;
          background-color: map-get($theme-colors, "dark-grey");
+         margin: 0 20px;
 
          &.auto {
             background-color: map-get($theme-colors, "auto");

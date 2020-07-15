@@ -40,7 +40,7 @@ export default {
       // Handle WS Call
       try {
          let res = await axios.get(`${url}admin`, authHeader);
-         setIsAdmin(res.data);
+         setIsAdmin(res.data.status ? false : res.data); // Send a false response if gets a Forbidden response
       } catch (err) {
          setIsAdmin(false);
          alert("Failed to make admin status request");

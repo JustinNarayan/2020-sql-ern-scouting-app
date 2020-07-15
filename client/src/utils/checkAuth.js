@@ -4,8 +4,7 @@ export const authCommand = (data, execute) => {
    // Handle state control
    if (data.status && data.status === "Forbidden") {
       // Invalid token
-      alert("Invalid session!");
-      window.location.href = "/";
+      console.log("Invalid session");
    } else {
       // Execute function
       execute();

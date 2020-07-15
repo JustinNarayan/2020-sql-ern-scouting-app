@@ -90,7 +90,7 @@ const Scouting = ({ query }) => {
    };
 
    /// Redirect the page
-   const redirect = () => (window.location.href = "/home");
+   const redirect = (link = "/home") => (window.location.href = link);
 
    /**
     * Render component
@@ -139,7 +139,7 @@ const Scouting = ({ query }) => {
                   block
                   outline
                   size='md'
-                  onClick={redirect}>
+                  onClick={() => redirect("/")}>
                   Go
                </Button>
             </ModalBody>

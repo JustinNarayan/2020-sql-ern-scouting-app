@@ -20,6 +20,9 @@ export default {
 
       // Handle state control
       authCommand(out, () => actions.setComps(out));
+
+      // Send response (error or comps)
+      return out;
    }),
 
    getComp: thunk(async (actions, id) => {

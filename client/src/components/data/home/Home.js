@@ -32,6 +32,8 @@ const Home = () => {
    const [editMessages, setEditMessages] = useState([]);
    const [deleteMessages, setDeleteMessages] = useState([]);
    const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
+   const [redirectModal, setRedirectModal] = useState(false);
+   const [redirectMessages, setRedirectMessages] = useState([]);
    const comps = useStoreState((state) => state.comps);
 
    /**
@@ -47,7 +49,7 @@ const Home = () => {
     * Handle life-cycle
     */
    useEffect(() => {
-      getComps();
+      checkComps();
       appearAdmin(setIsAdmin); // Determine admin status
 
       //eslint-disable-next-line
@@ -56,6 +58,15 @@ const Home = () => {
    /**
     * Define all component methods
     */
+   /// Check the comps response and potentially redirect
+   const checkComps = async () => {
+      const res = await getComps();
+      if (res.status) {
+         setRedirectMessages([{ text: res.message, type: "bad" }]);
+         setRedirectModal(true);
+      }
+   };
+
    /// Handle add submissions
    const onAddCompSubmit = async (e, competitionName) => {
       e.preventDefault();
@@ -129,6 +140,9 @@ const Home = () => {
    const toggleDeleteSuccessModal = () => {
       setDeleteSuccessModal(!deleteSuccessModal);
    };
+
+   /// Redirect
+   const redirect = (link = "/") => (window.location.href = link);
 
    /**
     * Render component
@@ -228,6 +242,38 @@ const Home = () => {
                </Button>
             </ModalBody>
          </Modal>
+
+         {/* Modal for redirects */}
+         <Modal isOpen={redirectModal} size='md'>
+            <ModalHeader
+               className={classes.modalHeader}
+               style={styles.modalHeader}>
+               Redirect
+            </ModalHeader>
+            <ModalBody>
+               {redirectMessages.map((message) => (
+                  <Alert
+                     key={message.text}
+                     color='message-error'
+                     className={classes.alert}>
+                     {message.text}
+                  </Alert>
+               ))}
+
+               {/* Redirect button */}
+               <Button
+                  color='comp-table-head'
+                  className={classes.modalSubmit}
+                  style={styles.button}
+                  block
+                  outline
+                  size='md'
+                  onClick={() => redirect()}>
+                  {/* Arrow function so it doesn't send (e) as a parameter to overwrite the link */}
+                  Go
+               </Button>
+            </ModalBody>
+         </Modal>
       </div>
    );
 };
@@ -240,6 +286,7 @@ const classes = {
    table: "compTable p-0 text-back",
    tableHead: "bg-comp-table-head",
    modalHeaderDelete: "bg-message-error text-back",
+   modalHeader: "bg-comp-table-head text-back",
    modalClose: "text-back",
    modalBody: "bg-back",
    alert: "mb-4 py-2 text-center",

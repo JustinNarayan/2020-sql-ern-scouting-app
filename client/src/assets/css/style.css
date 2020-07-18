@@ -14809,6 +14809,26 @@ body {
   font-size: 24px;
 }
 
+.scoutingApp .userArea .sidebar .buttonSet {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.scoutingApp .userArea .sidebar .buttonSet button {
+  width: 128px;
+  height: 72px;
+  border: 0;
+  border: 16px;
+}
+
 .scoutingApp .userArea .sidebar .buttonRow {
   display: -webkit-box;
   display: -ms-flexbox;

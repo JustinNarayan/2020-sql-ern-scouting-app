@@ -205,6 +205,20 @@ body {
             }
          }
 
+         /// Button sets (parked/hanged)
+         .buttonSet {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            button {
+               width: 128px;
+               height: 72px;
+               border: 0;
+               border: $border-radius;
+            }
+         }
+
          /// Button rows (flips, scoring, etc.)
          .buttonRow {
             display: flex;

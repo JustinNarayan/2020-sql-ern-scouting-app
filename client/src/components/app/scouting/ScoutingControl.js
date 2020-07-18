@@ -4,6 +4,7 @@ import React, { useEffect, useState, Fragment } from "react";
 /// Components
 import ScoutingTimer from "./ScoutingTimer";
 import ScoutingSetup from "./ScoutingSetup";
+import ScoutingState from "./ScoutingState";
 import ScoutingField from "./ScoutingField";
 import ScoutingScore from "./ScoutingScore";
 import ScoutingMode from "./ScoutingMode";
@@ -36,7 +37,16 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const [time, setTime] = useState(150);
    const [timeInterval, setTimeInterval] = useState(0);
    const [showTimer, setShowTimer] = useState(true);
-   const timeTick = 500; // Should always be 1 second in ms
+   const timeTick = 50; // Should always be 1 second in ms
+
+   const [defendedTime, setDefendedTime] = useState(0);
+   const [defendedTimeInterval, setDefendedTimeInterval] = useState(0);
+   const [defendingTime, setDefendingTime] = useState(0);
+   const [defendingTimeInterval, setDefendingTimeInterval] = useState(0);
+   const [malTime, setMalTime] = useState(0);
+   const [malTimeInterval, setMalTimeInterval] = useState(0);
+
+   const [endgame, setEndgame] = useState("");
 
    const [teamColor, setTeamColor] = useState("red");
    const [fieldFlipped, setFieldFlipped] = useState(false);
@@ -50,10 +60,19 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const pickupDisabledTime = 1000;
 
    useEffect(() => {
+      // Handle timer end
       if (time <= 0) {
+         // Turn off and reset timer
          clearInterval(timeInterval);
+         setTimeInterval(null);
+         setTime(150);
+
+         // Toggle all states to off (if they were off, they can't turn on)
+         toggleState("defended", true);
+         toggleState("defending", true);
+         toggleState("mal", true);
       }
-   });
+   }, [time]);
 
    // Methods
    const convertTime = (val) =>
@@ -64,6 +83,7 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
          /// useState can not directly hold a setInterval ID
          const interval = setInterval(() => {
             setTime((time) => time - 1);
+            console.log("helo");
          }, timeTick);
          setTimeInterval(interval);
       }
@@ -75,6 +95,51 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
       }
    };
 
+   const toggleState = (which, timerOff = !timeInterval) => {
+      // Set variables for state toggling
+      let stateInterval, setState, setStateInterval;
+
+      // Determine set of variables for toggling
+      switch (which) {
+         case "defended":
+            stateInterval = defendedTimeInterval;
+            setState = setDefendedTime;
+            setStateInterval = setDefendedTimeInterval;
+            break;
+         case "defending":
+            stateInterval = defendingTimeInterval;
+            setState = setDefendingTime;
+            setStateInterval = setDefendingTimeInterval;
+            break;
+         default:
+            stateInterval = malTimeInterval;
+            setState = setMalTime;
+            setStateInterval = setMalTimeInterval;
+            break;
+      }
+
+      // Generalized toggle statement
+      if (!stateInterval) {
+         if (timerOff) return; // Can't toggle state if timer has run out
+
+         /// useState can not directly hold a setInterval ID
+         const interval = setInterval(() => {
+            setState((value) => value + 1);
+         }, timeTick);
+         setStateInterval(interval);
+      } else {
+         clearInterval(stateInterval);
+         setStateInterval(null);
+      }
+   };
+
+   const toggleEndgame = (what) => {
+      if (!timeInterval) return;
+
+      if (endgame === what) setEndgame("");
+      else setEndgame(what);
+   };
+
    const toggleFieldFlipped = () => setFieldFlipped(!fieldFlipped);
 
    const changeZone = (newZone) => {
@@ -82,6 +147,8 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    };
 
    const incrementScore = (where, amount) => {
+      if (!timeInterval) return;
+
       // Set variables for general score adjustment statement below
       let score, scoreAuto, setScore, setScoreAuto, heatmap, setHeatmap;
 
@@ -129,6 +196,8 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    };
 
    const incrementPickups = () => {
+      if (!timeInterval) return;
+
       if (!pickupDisabledTimer) {
          // Adjust pickups
          setPickups(pickups + 1);
@@ -173,11 +242,10 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    return (
       <Fragment>
          <ScoutingTimer
-            time={time}
+            time={convertTime(time)}
             showTimer={showTimer}
             isRunning={timeInterval}
             setupComplete={scoutName && matchNumber && teamNumber}
-            convertTime={convertTime}
             clickTimer={clickTimer}
             prepareConfirmModal={prepareConfirmModal}
          />
@@ -189,6 +257,19 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
                   setTeamNumber={setTeamNumber}
                   setTeamColor={setTeamColor}
                   toggleFieldFlipped={toggleFieldFlipped}
+               />
+            )}
+            {mode === "teleop" && (
+               <ScoutingState
+                  toggleState={toggleState}
+                  defendedTime={convertTime(defendedTime)}
+                  defendingTime={convertTime(defendingTime)}
+                  malTime={convertTime(malTime)}
+                  defendedOn={defendedTimeInterval}
+                  defendingOn={defendingTimeInterval}
+                  malOn={malTimeInterval}
+                  endgame={endgame}
+                  toggleEndgame={toggleEndgame}
                />
             )}
             {(mode === "auto" || mode === "teleop") && (

@@ -6,7 +6,6 @@ const ScoutingTimer = ({
    showTimer,
    isRunning,
    setupComplete,
-   convertTime,
    clickTimer,
    prepareConfirmModal,
 }) => {
@@ -16,7 +15,7 @@ const ScoutingTimer = ({
             <button
                className={isRunning ? classes.on : classes.timer}
                onClick={clickTimer}>
-               {setupComplete || isRunning ? convertTime(time) : "! ! ! ! !"}
+               {setupComplete || isRunning ? time : "! ! ! ! !"}
             </button>
          ) : (
             <Fragment>

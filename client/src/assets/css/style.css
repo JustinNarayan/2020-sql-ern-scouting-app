@@ -14911,6 +14911,55 @@ body {
   border-bottom-right-radius: 20px;
 }
 
+.scoutingApp .userArea .misc {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  height: 336px;
+}
+
+.scoutingApp .userArea .misc textarea {
+  resize: none;
+  width: 720px;
+  height: 200px;
+  border-radius: 16px;
+  border: 0;
+  padding: 4px 8px;
+  font-size: 18px;
+}
+
+.scoutingApp .userArea .misc .buttonLine {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.scoutingApp .userArea .misc .buttonLine button {
+  border-radius: 0;
+  width: 144px;
+  height: 80px;
+}
+
+.scoutingApp .userArea .misc .buttonLine button:first-child {
+  border-top-left-radius: 24px;
+  border-bottom-left-radius: 24px;
+}
+
+.scoutingApp .userArea .misc .buttonLine button:last-child {
+  border-top-right-radius: 24px;
+  border-bottom-right-radius: 24px;
+}
+
 .scoutingApp .mode {
   display: -webkit-box;
   display: -ms-flexbox;

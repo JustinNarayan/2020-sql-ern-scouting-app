@@ -7,6 +7,7 @@ import ScoutingSetup from "./ScoutingSetup";
 import ScoutingState from "./ScoutingState";
 import ScoutingField from "./ScoutingField";
 import ScoutingScore from "./ScoutingScore";
+import ScoutingMisc from "./ScoutingMisc";
 import ScoutingMode from "./ScoutingMode";
 
 /**
@@ -47,6 +48,9 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const [malTimeInterval, setMalTimeInterval] = useState(0);
 
    const [endgame, setEndgame] = useState("");
+
+   const [comments, setComments] = useState("");
+   const [defenseQuality, setDefenseQuality] = useState(0);
 
    const [teamColor, setTeamColor] = useState("red");
    const [fieldFlipped, setFieldFlipped] = useState(false);
@@ -291,6 +295,13 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
                      incrementPickups={incrementPickups}
                   />
                </Fragment>
+            )}
+            {mode === "misc" && (
+               <ScoutingMisc
+                  setComments={setComments}
+                  setDefenseQuality={setDefenseQuality}
+                  defenseQuality={defenseQuality}
+               />
             )}
          </div>
          <ScoutingMode mode={mode} onChangeMode={onChangeMode} />

@@ -23,11 +23,6 @@ const ScoutingMode = ({ mode, onChangeMode }) => {
             TELE-OPERATED
          </button>
          <button
-            className={mode === "endgame" ? classes.buttons.endgame : ""}
-            onClick={() => onChangeMode("endgame")}>
-            ENDGAME
-         </button>
-         <button
             className={mode === "misc" ? classes.buttons.misc : ""}
             onClick={() => onChangeMode("misc")}>
             MISCELLANEOUS
@@ -42,7 +37,6 @@ const classes = {
    buttons: {
       auto: "auto",
       teleop: "teleop",
-      endgame: "endgame",
       misc: "misc",
    },
 };

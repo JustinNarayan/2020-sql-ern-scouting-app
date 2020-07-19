@@ -1,7 +1,14 @@
 /// Modules
 import React, { useEffect, useState, Fragment } from "react";
 import { useStoreActions } from "easy-peasy";
-import { Modal, ModalHeader, ModalBody, Alert, Button } from "reactstrap";
+import {
+   Modal,
+   ModalHeader,
+   ModalBody,
+   Alert,
+   Button,
+   Spinner,
+} from "reactstrap";
 import QueryString from "query-string";
 import PropTypes from "prop-types";
 
@@ -19,8 +26,9 @@ const Scouting = ({ query }) => {
     */
    const compID = QueryString.parse(query).compID;
 
+   const [loading, setLoading] = useState(false);
    const [redirectModal, setRedirectModal] = useState(false);
-   const [showRedirectClose, setShowRedirectClose] = useState(false);
+   const [showRedirectClose] = useState(false);
    const [messages, setMessages] = useState([]);
    const [confirmModal, setConfirmModal] = useState(false);
    const [confirmModalHeader, setConfirmModalHeader] = useState("");
@@ -60,7 +68,10 @@ const Scouting = ({ query }) => {
    const toggleRedirectModal = () => setRedirectModal(!redirectModal);
 
    /// Toggle showing the confirm modal
-   const toggleConfirmModal = () => setConfirmModal(!confirmModal);
+   const toggleConfirmModal = () => {
+      setConfirmModal(!confirmModal);
+      setMessages([]);
+   };
 
    /// Prepare the confirm modal for either submitting or going home
    const prepareConfirmModal = (action) => {
@@ -88,8 +99,12 @@ const Scouting = ({ query }) => {
 
    /// Handle submit
    const onSubmit = async () => {
+      if (loading) return;
+
+      setLoading(true);
       const res = await addPending({ id: comp.ID, ...matchData });
-      console.log(res);
+      setMessages([{ text: res.message, type: res.type }]);
+      setLoading(false);
    };
 
    const onGoHome = () => redirect();
@@ -169,6 +184,18 @@ const Scouting = ({ query }) => {
                </Button>
             </ModalHeader>
             <ModalBody>
+               {messages.map((message) => (
+                  <Alert
+                     key={message.text}
+                     color={
+                        message.type === "good"
+                           ? "message-good"
+                           : "message-error"
+                     }
+                     className={classes.alert}>
+                     {message.text}
+                  </Alert>
+               ))}
                {confirmModalBody}
                <br />
                <Button
@@ -180,7 +207,15 @@ const Scouting = ({ query }) => {
                   onClick={() =>
                      confirmModalHeader === "Go Home" ? onGoHome() : onSubmit()
                   }>
-                  Yes
+                  {loading ? (
+                     <Spinner
+                        className={classes.spinner}
+                        style={styles.spinner}
+                        color='back'
+                     />
+                  ) : (
+                     "Yes"
+                  )}
                </Button>
                <Button
                   color='message-error'
@@ -206,6 +241,7 @@ const classes = {
    alert: "mb-4 py-2 text-center",
    modalSubmit: "modalSubmit",
    modalOption: "modalSubmit mt-3",
+   spinner: "bg-comp-table-head",
 };
 
 /// Inline style manager
@@ -235,6 +271,10 @@ const styles = {
          width: "48%",
          marginLeft: "2%",
       },
+   },
+   spinner: {
+      width: "1.25rem",
+      height: "1.25rem",
    },
 };
 

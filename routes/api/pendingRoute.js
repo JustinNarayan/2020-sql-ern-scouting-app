@@ -106,7 +106,7 @@ module.exports = (pool) => {
 
          // First, send an UPDATE in case the match had been generated previously (Robot Station excluded)
          sql = `UPDATE pendingMatchData SET Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, BottomAll = ?, OuterAll = ?, InnerAll = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, EndgameScore = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
-         errMessage = "Failed to attempt updating existing match data";
+         errMessage = "Failed to attempt updating existing pending match data";
          const [updateResult] = await pool.execute(sql, [
             events,
             outerHeatmap,
@@ -136,7 +136,7 @@ module.exports = (pool) => {
          errMessage = "Found no competition to update";
          if (!updateResult.affectedRows) {
             sql = `INSERT INTO pendingMatchData (CompetitionID, TeamNumber, MatchNumber, RobotStation, Events, OuterHeatmap, InnerHeatmap, PickupHeatmap, CrossLine, BottomAuto, OuterAuto, InnerAuto, BottomAll, OuterAll, InnerAll, Pickups, TimeDefended, TimeDefending, DefenseQuality, TimeMal, EndgameScore, Comments, ScoutName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            errMessage = "Failed to post new match data";
+            errMessage = "Failed to post new pending match data";
             const [insertResult] = await pool.execute(sql, [
                id,
                teamNumber,
@@ -165,13 +165,13 @@ module.exports = (pool) => {
 
             // Success!
             res.status(201).send({
-               message: "Successfully posted new match data",
+               message: "Successfully posted new pending match data",
                type: "good",
             });
          } else {
             // Success!
             res.status(201).send({
-               message: "Successfully updated existing match data",
+               message: "Successfully updated existing pending match data",
                type: "good",
             });
          }

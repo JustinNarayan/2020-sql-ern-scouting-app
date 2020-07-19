@@ -103,6 +103,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
          toggleState("defending", true);
          toggleState("mal", true);
       }
+      // eslint-disable-next-line
    }, [time]);
 
    /**
@@ -318,6 +319,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
    /**
     * Handle event creation calls during scouting upon changes to particular state variables
     */
+   /* eslint-disable */
    useEffect(() => eventCrossLine(), [crossLine]);
    useEffect(() => eventState(), [
       defendedTimeInterval,
@@ -325,9 +327,10 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
       malTimeInterval,
    ]);
    useEffect(() => eventEndgame(), [endgame]);
-   useEffect(() => eventZoneChange(), [activeZone, timeInterval]); // timeInterval adds an initialization location
+   useEffect(() => eventZoneChange(), [activeZone, timeInterval]); // timeInterval adds entry at start
    useEffect(() => eventScore(), [inner, outer, bottom]);
    useEffect(() => eventPickup(), [pickups]);
+   /* eslint-enable */
 
    /// Create a new event object
    const newRawEvent = (action, value = "") => {

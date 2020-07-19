@@ -7,6 +7,8 @@ const ScoutingSetup = ({
    setTeamNumber,
    setTeamColor,
    toggleFieldFlipped,
+   crossLine,
+   toggleCrossLine,
 }) => {
    return (
       <div className={classes.sidebar}>
@@ -57,7 +59,11 @@ const ScoutingSetup = ({
                BLUE
             </button>
          </div>
-         <button className={classes.crossLine}>CROSS LINE</button>
+         <button
+            className={crossLine ? classes.on : classes.crossLine}
+            onClick={toggleCrossLine}>
+            CROSS LINE
+         </button>
       </div>
    );
 };
@@ -73,6 +79,7 @@ const classes = {
    },
    flipRed: "flipRed",
    flipBlue: "flipBlue",
+   on: "crossLine on",
    crossLine: "crossLine",
 };
 

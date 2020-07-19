@@ -5,6 +5,7 @@ const ScoutingTimer = ({
    time,
    showTimer,
    isRunning,
+   mustChange,
    setupComplete,
    clickTimer,
    prepareConfirmModal,
@@ -13,9 +14,21 @@ const ScoutingTimer = ({
       <div className={classes.timerButtons}>
          {showTimer ? (
             <button
-               className={isRunning ? classes.on : classes.timer}
+               className={
+                  mustChange
+                     ? parseInt(time.slice(-1)) % 2
+                        ? classes.mustChangeRed
+                        : classes.mustChangeBlue
+                     : isRunning
+                     ? classes.on
+                     : classes.timer
+               }
                onClick={clickTimer}>
-               {setupComplete || isRunning ? time : "! ! ! ! !"}
+               {mustChange
+                  ? "TELE-OP"
+                  : setupComplete || isRunning
+                  ? time
+                  : "! ! ! ! !"}
             </button>
          ) : (
             <Fragment>
@@ -37,6 +50,8 @@ const ScoutingTimer = ({
 
 const classes = {
    timerButtons: "timerButtons",
+   mustChangeRed: "mustChange red",
+   mustChangeBlue: "mustChange blue",
    timer: "timer",
    on: "timer on",
    options: "options",

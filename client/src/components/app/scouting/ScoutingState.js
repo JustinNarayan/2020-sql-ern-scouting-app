@@ -37,13 +37,13 @@ const ScoutingState = ({
          </button>
          <div className={classes.buttonSet}>
             <button
-               className={endgame === "parked" ? classes.on : ""}
-               onClick={() => toggleEndgame("parked")}>
+               className={endgame === "Parked" ? classes.on : ""}
+               onClick={() => toggleEndgame("Parked")}>
                PARKED
             </button>
             <button
-               className={endgame === "hanged" ? classes.on : ""}
-               onClick={() => toggleEndgame("hanged")}>
+               className={endgame === "Hanged" ? classes.on : ""}
+               onClick={() => toggleEndgame("Hanged")}>
                HANGED
             </button>
          </div>

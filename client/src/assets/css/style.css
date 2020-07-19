@@ -14596,6 +14596,18 @@ body {
   margin: 20px 0;
 }
 
+.scoutingApp .timerButtons button.mustChange {
+  font-size: 32px;
+}
+
+.scoutingApp .timerButtons button.mustChange.red {
+  background-color: #e80028;
+}
+
+.scoutingApp .timerButtons button.mustChange.blue {
+  background-color: #2878f0;
+}
+
 .scoutingApp .timerButtons .options {
   background-color: #ff7300;
   font-size: 32px;

@@ -1,3 +1,4 @@
+//eslint-disable
 /// Modules
 import React, { useEffect, useState, Fragment } from "react";
 
@@ -24,6 +25,8 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const [matchNumber, setMatchNumber] = useState("");
    const [teamNumber, setTeamNumber] = useState(0);
 
+   const [crossLine, setCrossLine] = useState(false);
+
    const [inner, setInner] = useState(0);
    const [outer, setOuter] = useState(0);
    const [bottom, setBottom] = useState(0);
@@ -35,10 +38,12 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const [outerHeatmap, setOuterHeatmap] = useState(new Array(13).fill(0));
    const [pickupHeatmap, setPickupHeatmap] = useState(new Array(13).fill(0));
 
-   const [time, setTime] = useState(150);
+   const [time, setTime] = useState(20);
    const [timeInterval, setTimeInterval] = useState(0);
    const [showTimer, setShowTimer] = useState(true);
-   const timeTick = 50; // Should always be 1 second in ms
+   const timeTick = 50; // Should always be 1/10 second in ms
+   const timeIncrement = 1 / 10;
+   const autoThreshold = 135;
 
    const [defendedTime, setDefendedTime] = useState(0);
    const [defendedTimeInterval, setDefendedTimeInterval] = useState(0);
@@ -63,6 +68,11 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const [pickupDisabledTimer, setPickupDisabledTimer] = useState(null);
    const pickupDisabledTime = 1000;
 
+   const [rawEvents, setRawEvents] = useState([]);
+   const [compiledEvents, setCompiledEvents] = useState([]);
+   const updateThresholdState = 2;
+   const updateThresholdScore = 2;
+
    useEffect(() => {
       // Handle timer end
       if (time <= 0) {
@@ -75,19 +85,261 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
          toggleState("defended", true);
          toggleState("defending", true);
          toggleState("mal", true);
+
+         compileEvents();
       }
    }, [time]);
 
+   /// Handle event array
+   useEffect(() => eventCrossLine(), [crossLine]);
+   useEffect(() => eventState(), [
+      defendedTimeInterval,
+      defendingTimeInterval,
+      malTimeInterval,
+   ]);
+   useEffect(() => eventEndgame(), [endgame]);
+   useEffect(() => eventZoneChange(), [activeZone, timeInterval]);
+   useEffect(() => eventScore(), [inner, outer, bottom]);
+   useEffect(() => eventPickup(), [pickups]);
+
+   const newRawEvent = (action, value = "") => {
+      return {
+         action,
+         value,
+         zone: activeZone,
+         time,
+      };
+   };
+
+   const eventCrossLine = () => {
+      if (!timeInterval) return;
+      setRawEvents([...rawEvents, newRawEvent("cross", crossLine)]);
+   };
+
+   const eventState = () => {
+      if (!timeInterval) return;
+      setRawEvents([
+         ...rawEvents,
+         newRawEvent("state", {
+            defended: defendedTimeInterval ? 1 : 0,
+            defending: defendingTimeInterval ? 1 : 0,
+            mal: malTimeInterval ? 1 : 0,
+         }),
+      ]);
+   };
+
+   const eventEndgame = () => {
+      if (!timeInterval) return;
+      setRawEvents([...rawEvents, newRawEvent("endgame", endgame)]);
+   };
+
+   const eventZoneChange = () => {
+      if (!timeInterval) return;
+      setRawEvents([...rawEvents, newRawEvent("zone")]);
+   };
+
+   const eventScore = () => {
+      if (!timeInterval) return;
+      setRawEvents([
+         ...rawEvents,
+         newRawEvent("score", {
+            inner,
+            outer,
+            bottom,
+         }),
+      ]);
+   };
+
+   const eventPickup = () => {
+      if (!timeInterval) return;
+      setRawEvents([...rawEvents, newRawEvent("pickup")]);
+   };
+
+   const compileEvents = () => {
+      let newEvents = [];
+
+      /// Tracking values
+      let indexCrossLine = -1;
+      let indexEndgame = -1;
+      let prevTime = 150;
+      let eventTime = 150;
+      let prevZone = 6;
+      let trackingState = false;
+      let prevState = { defended: 0, defending: 0, mal: 0 };
+      let currentState = prevState;
+      let trackingScore = false;
+      let prevScore = { inner: 0, outer: 0, bottom: 0 };
+      let currentScore = prevScore;
+
+      /// Utility methods
+      const pushStateMessage = () => {
+         let stateMessage = `${
+            prevState.defended === currentState.defended
+               ? ""
+               : currentState.defended
+               ? "Start Defended; "
+               : "End Defended; "
+         }${
+            prevState.defending === currentState.defending
+               ? ""
+               : currentState.defending
+               ? "Start Defending; "
+               : "End Defending; "
+         }${
+            prevState.mal === currentState.mal
+               ? ""
+               : currentState.mal
+               ? "Start Mal; "
+               : "End Mal; "
+         }`;
+
+         // Push Message
+         if (stateMessage)
+            newEvents.push({
+               text: stateMessage,
+               zone: prevZone,
+               time: eventTime,
+            });
+      };
+
+      const pushScoreMessage = () => {
+         let scoreMessage = "";
+         let innerScore = Math.max(0, currentScore.inner - prevScore.inner);
+         let outerScore = Math.max(0, currentScore.outer - prevScore.outer);
+         let bottomScore = Math.max(0, currentScore.bottom - prevScore.bottom);
+         if (innerScore) scoreMessage += `Inner x ${innerScore}; `;
+         if (outerScore) scoreMessage += `Outer x ${outerScore}; `;
+         if (bottomScore) scoreMessage += `Bottom x ${bottomScore}; `;
+
+         // Push Message
+         if (scoreMessage)
+            newEvents.push({
+               text: scoreMessage,
+               zone: prevZone,
+               time: eventTime,
+            });
+      };
+
+      for (let i = 0; i < rawEvents.length; i++) {
+         const current = rawEvents[i];
+
+         /// Cross Line
+         if (current.action === "cross") {
+            if (indexCrossLine > -1) newEvents.splice(indexCrossLine, 1);
+            indexCrossLine = newEvents.length;
+            newEvents.push({
+               text: "Cross Line",
+               zone: current.zone,
+               time: current.time,
+            });
+         }
+
+         /// State
+         if (current.action === "state") {
+            /// If was tracking state but time has passed or zone has changed, set new previous state and push message
+            if (trackingState) {
+               if (
+                  prevZone !== current.zone ||
+                  prevTime - current.time > updateThresholdState
+               ) {
+                  pushStateMessage();
+                  prevState = currentState;
+                  eventTime = current.time;
+               }
+            } else {
+               eventTime = current.time;
+            }
+
+            currentState = current.value;
+            trackingState = true;
+         } else {
+            /// If end of string of state calls, set new previous state and push message
+            if (trackingState) {
+               trackingState = false;
+               pushStateMessage();
+               prevState = currentState;
+            }
+         }
+
+         /// Endgame
+         if (current.action === "endgame") {
+            if (indexEndgame > -1) newEvents.splice(indexEndgame, 1);
+            indexEndgame = newEvents.length;
+            newEvents.push({
+               text: current.value,
+               zone: current.zone,
+               time: current.time,
+            });
+         }
+
+         /// Zone Changes
+         if (current.action === "zone")
+            newEvents.push({
+               text: "",
+               zone: current.zone,
+               time: current.time,
+            });
+
+         /// Score
+         if (current.action === "score") {
+            /// If was tracking score but time has passed or zone has changed, set new previous score and push message
+            if (trackingScore) {
+               if (
+                  prevZone !== current.zone ||
+                  prevTime - current.time > updateThresholdScore
+               ) {
+                  pushScoreMessage();
+                  prevScore = currentScore;
+                  eventTime = current.time;
+               }
+            } else {
+               eventTime = current.time;
+            }
+
+            currentScore = current.value;
+            trackingScore = true;
+         } else {
+            /// If end of string of state calls, set new previous state and push message
+            if (trackingScore) {
+               trackingScore = false;
+               pushScoreMessage();
+               prevScore = currentScore;
+            }
+         }
+
+         /// Pickups
+         if (current.action === "pickup")
+            newEvents.push({
+               text: "Pickup",
+               zone: current.zone,
+               time: current.time,
+            });
+
+         /// Keep reference variables up to date
+         prevZone = current.zone;
+         prevTime = current.time;
+      }
+
+      /// Account for final messages if the game ended while still tracking
+      if (trackingState) pushStateMessage();
+      if (trackingScore) pushScoreMessage();
+
+      // let stringifiedObjects = newEvents.map(
+      //    (obj) => `${obj.text}/${obj.zone}/${obj.time}`
+      // );
+      // console.log(stringifiedObjects.toString());
+      setCompiledEvents(newEvents);
+   };
+
    // Methods
    const convertTime = (val) =>
-      `${Math.floor(val / 60)}:${String(val % 60).padStart(2, "0")}`;
+      `${Math.floor(val / 60)}:${String(Math.ceil(val) % 60).padStart(2, "0")}`;
 
    const clickTimer = () => {
       if (mode === "auto" && !timeInterval) {
          /// useState can not directly hold a setInterval ID
          const interval = setInterval(() => {
-            setTime((time) => time - 1);
-            console.log("helo");
+            setTime((time) => +(time - timeIncrement).toFixed(2));
          }, timeTick);
          setTimeInterval(interval);
       }
@@ -97,6 +349,11 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
          setTime(150);
          setShowTimer(false);
       }
+   };
+
+   const toggleCrossLine = () => {
+      if (!timeInterval || time < autoThreshold) return;
+      else setCrossLine(!crossLine);
    };
 
    const toggleState = (which, timerOff = !timeInterval) => {
@@ -126,9 +383,18 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
       if (!stateInterval) {
          if (timerOff) return; // Can't toggle state if timer has run out
 
+         // Handle inter-state logic
+         if (which !== "mal" && malTimeInterval) {
+            toggleState("mal");
+         }
+         if (which === "mal") {
+            if (defendedTimeInterval) toggleState("defended");
+            if (defendingTimeInterval) toggleState("defending");
+         }
+
          /// useState can not directly hold a setInterval ID
          const interval = setInterval(() => {
-            setState((value) => value + 1);
+            setState((value) => value + timeIncrement);
          }, timeTick);
          setStateInterval(interval);
       } else {
@@ -148,6 +414,8 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
 
    const changeZone = (newZone) => {
       setActiveZone(newZone);
+      if (!crossLine) toggleCrossLine(); /// If still in auto (in called method), will set crossLine to true
+      if (malTimeInterval) toggleState("mal");
    };
 
    const incrementScore = (where, amount) => {
@@ -221,8 +489,6 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
             }, pickupDisabledTime)
          );
       }
-
-      console.log(pickupHeatmap);
    };
 
    const newClickTarget = (what) => {
@@ -249,6 +515,7 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
             time={convertTime(time)}
             showTimer={showTimer}
             isRunning={timeInterval}
+            mustChange={mode === "auto" && time < autoThreshold}
             setupComplete={scoutName && matchNumber && teamNumber}
             clickTimer={clickTimer}
             prepareConfirmModal={prepareConfirmModal}
@@ -261,6 +528,8 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
                   setTeamNumber={setTeamNumber}
                   setTeamColor={setTeamColor}
                   toggleFieldFlipped={toggleFieldFlipped}
+                  crossLine={crossLine}
+                  toggleCrossLine={toggleCrossLine}
                />
             )}
             {mode === "teleop" && (

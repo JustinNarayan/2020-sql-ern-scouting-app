@@ -161,6 +161,17 @@ body {
          font-size: 48px;
          line-height: 0;
          margin: 20px 0;
+
+         &.mustChange {
+            font-size: 32px;
+
+            &.red {
+               background-color: map-get($theme-colors, "dark-red");
+            }
+            &.blue {
+               background-color: map-get($theme-colors, "dark-blue");
+            }
+         }
       }
 
       .options {

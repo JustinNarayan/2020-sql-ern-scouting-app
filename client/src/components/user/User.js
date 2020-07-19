@@ -182,8 +182,8 @@ const User = ({ mode, query }) => {
       const auth = await login(user);
       /// SET AUTHORIZATION TOKEN IN SESSION STORAGE
       if (auth.token) {
-         sessionStorage.setItem("username", user.username);
-         sessionStorage.setItem("token", auth.token);
+         localStorage.setItem("username", user.username);
+         localStorage.setItem("token", auth.token);
          setTimeout(() => (window.location.href = "/home"), timeBeforeRedirect);
       }
       return { text: auth.message, type: auth.type };

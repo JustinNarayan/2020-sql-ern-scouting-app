@@ -1,6 +1,6 @@
-//eslint-disable
 /// Modules
 import React, { useEffect, useState, Fragment } from "react";
+import PropTypes from "prop-types";
 
 /// Components
 import ScoutingTimer from "./ScoutingTimer";
@@ -20,13 +20,16 @@ import ScoutingMode from "./ScoutingMode";
  * Bundles scouting data before submission.
  */
 const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
-   // State
+   /**
+    * Set match data dynamic state variables
+    */
+   /// Setup
    const [scoutName, setScoutName] = useState("");
    const [matchNumber, setMatchNumber] = useState("");
    const [teamNumber, setTeamNumber] = useState(0);
-
    const [crossLine, setCrossLine] = useState(false);
 
+   /// Scoring
    const [inner, setInner] = useState(0);
    const [outer, setOuter] = useState(0);
    const [bottom, setBottom] = useState(0);
@@ -38,85 +41,120 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
    const [outerHeatmap, setOuterHeatmap] = useState(new Array(13).fill(0));
    const [pickupHeatmap, setPickupHeatmap] = useState(new Array(13).fill(0));
 
-   const [time, setTime] = useState(150);
-   const [timeInterval, setTimeInterval] = useState(0);
-   const [showTimer, setShowTimer] = useState(true);
-   const timeTick = 50; // Should always be 1/10 second in ms
-   const timeIncrement = 1 / 10;
-   const autoThreshold = 135;
-
+   /// State
    const [defendedTime, setDefendedTime] = useState(0);
-   const [defendedTimeInterval, setDefendedTimeInterval] = useState(0);
    const [defendingTime, setDefendingTime] = useState(0);
-   const [defendingTimeInterval, setDefendingTimeInterval] = useState(0);
    const [malTime, setMalTime] = useState(0);
-   const [malTimeInterval, setMalTimeInterval] = useState(0);
-
    const [endgame, setEndgame] = useState("");
 
+   /// Misc
    const [comments, setComments] = useState("");
    const [defenseQuality, setDefenseQuality] = useState(0);
 
+   /**
+    * Set utility static and dynamic state variables
+    */
+   /// Timing
+   const [time, setTime] = useState(150);
+   const [timeInterval, setTimeInterval] = useState(0);
+   const [showTimer, setShowTimer] = useState(true);
+   const timeTick = 100; // Should always be timeIncrement second(s) in ms
+   const timeIncrement = 1 / 10; // Portion of a second to count by
+   const autoThreshold = 135; // Seconds elapsed during teleop
+
+   /// State intervals
+   const [defendedTimeInterval, setDefendedTimeInterval] = useState(0);
+   const [defendingTimeInterval, setDefendingTimeInterval] = useState(0);
+   const [malTimeInterval, setMalTimeInterval] = useState(0);
+
+   ///  User interface
    const [teamColor, setTeamColor] = useState("red");
    const [fieldFlipped, setFieldFlipped] = useState(false);
    const [activeZone, setActiveZone] = useState(6); // Center zone
    const [mode, setMode] = useState("auto");
 
+   /// Score button flashes when clicked
    const [clickTarget, setClickTarget] = useState("");
    const [clickTargetTimer, setClickTargetTimer] = useState(null);
-   const clickTargetTime = 100;
+   const clickTargetTime = 100; // Time to flash button after clicking
+
+   /// Successive pickup disabling
    const [pickupDisabledTimer, setPickupDisabledTimer] = useState(null);
-   const pickupDisabledTime = 1000;
+   const pickupDisabledTime = 1000; // Min time between distinct pickups
 
+   /// Events
    const [rawEvents, setRawEvents] = useState([]);
-   const updateThresholdState = 2;
-   const updateThresholdScore = 2;
+   const updateThresholdState = 2; /// Max time threshold (in seconds) between state updates to group
+   const updateThresholdScore = 2; /// Max time threshold (in seconds) between score updates to group
 
+   /**
+    * Handle life-cycle for timer ending
+    */
    useEffect(() => {
-      // Handle timer end
       if (time <= 0) {
          // Turn off and reset timer
          clearInterval(timeInterval);
          setTimeInterval(null);
          setTime(150);
 
-         // Toggle all states to off (if they were off, they can't turn on)
+         // Toggle all states to off
+         // Second argument accounts for lagging useState timeInterval update (and can't toggle states on)
          toggleState("defended", true);
          toggleState("defending", true);
          toggleState("mal", true);
       }
    }, [time]);
 
-   // Methods
+   /**
+    * Define multi-purpose utility methods
+    */
+   /// Convert time (in seconds) to formatted string
    const convertTime = (val) =>
       `${Math.floor(val / 60)}:${String(Math.ceil(val) % 60).padStart(2, "0")}`;
 
+   /**
+    * Define Timer component methods
+    */
+   /// Handle timer clicks
    const clickTimer = () => {
+      /// Turn on timer
       if (mode === "auto" && !timeInterval) {
-         /// useState can not directly hold a setInterval ID
+         /// Store timing interval
          const interval = setInterval(() => {
             setTime((time) => +(time - timeIncrement).toFixed(2));
          }, timeTick);
-         setTimeInterval(interval);
+         setTimeInterval(interval); /// useState can't directly hold setInterval value
       }
+
+      // Turn off timer
       if (mode === "misc") {
-         clearInterval(timeInterval);
-         setTimeInterval(null);
-         setTime(150);
+         setTime(0);
          setShowTimer(false);
       }
    };
 
+   /**
+    * Define Setup component methods
+    */
+   /// Toggle field orientation
+   const toggleFieldFlipped = () => setFieldFlipped(!fieldFlipped);
+
+   /// Toggle crossLine
    const toggleCrossLine = () => {
+      // Check timer validity
       if (!timeInterval || time < autoThreshold) return;
       else setCrossLine(!crossLine);
    };
 
+   /**
+    * Define State component methods
+    */
+   /// Toggle a time-based state
    const toggleState = (which, timerOff = !timeInterval) => {
-      // Set variables for state toggling
+      // Set variables for general state adjustment statement
       let stateInterval, setState, setStateInterval;
 
-      // Determine set of variables for toggling
+      // Allocate particular variables based on which state is toggling
       switch (which) {
          case "defended":
             stateInterval = defendedTimeInterval;
@@ -137,7 +175,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
 
       // Generalized toggle statement
       if (!stateInterval) {
-         if (timerOff) return; // Can't toggle state if timer has run out
+         if (timerOff) return; // Check if timer off
 
          // Handle inter-state logic
          if (which !== "mal" && malTimeInterval) {
@@ -148,34 +186,41 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
             if (defendingTimeInterval) toggleState("defending");
          }
 
-         /// useState can not directly hold a setInterval ID
+         /// Store timing interval
          const interval = setInterval(() => {
             setState((value) => +(value + timeIncrement).toFixed(2));
          }, timeTick);
-         setStateInterval(interval);
+         setStateInterval(interval); /// useState can't directly hold setInterval value
       } else {
          clearInterval(stateInterval);
          setStateInterval(null);
       }
    };
 
+   /// Toggle endgame to new state (or nothing)
    const toggleEndgame = (what) => {
-      if (!timeInterval) return;
+      if (!timeInterval) return; // Check if timer off
 
       if (endgame === what) setEndgame("");
       else setEndgame(what);
    };
 
-   const toggleFieldFlipped = () => setFieldFlipped(!fieldFlipped);
-
+   /**
+    * Define Field component methods
+    */
+   /// Set a new active zone
    const changeZone = (newZone) => {
       setActiveZone(newZone);
-      if (!crossLine) toggleCrossLine(); /// If still in auto (in called method), will set crossLine to true
-      if (malTimeInterval) toggleState("mal");
+      if (!crossLine) toggleCrossLine(); /// Called method toggles crossLine upon movement during auto
+      if (malTimeInterval) toggleState("mal"); /// Turn off mal state upon movement
    };
 
+   /**
+    * Define Score component methods
+    */
+   /// Increment or decrement appropriate score values
    const incrementScore = (where, amount) => {
-      if (!timeInterval) return;
+      if (!timeInterval) return; // Check if timer off
 
       // Set variables for general score adjustment statement below
       let score, scoreAuto, setScore, setScoreAuto, heatmap, setHeatmap;
@@ -206,8 +251,8 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
             break;
       }
 
-      // Adjust score if valid
       if (score + amount >= 0) {
+         // Check if the value would become negative
          // Adjust score
          setScore(score + amount);
          if (mode === "auto") setScoreAuto(Math.max(0, scoreAuto + amount));
@@ -223,8 +268,9 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
       }
    };
 
+   /// Increment pickup count
    const incrementPickups = () => {
-      if (!timeInterval) return;
+      if (!timeInterval) return; // Check if timer off
 
       if (!pickupDisabledTimer) {
          // Adjust pickups
@@ -238,7 +284,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
          // Send target to flash the clicked button
          newClickTarget("pickup");
 
-         // Disable pickup shortly
+         // Disable pickup for a short amount of time
          setPickupDisabledTimer(
             setTimeout(() => {
                setPickupDisabledTimer(null);
@@ -247,6 +293,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
       }
    };
 
+   /// Handle a visual effect when a score button is clicked
    const newClickTarget = (what) => {
       setClickTarget(what);
       if (clickTargetTimer) clearTimeout(clickTarget);
@@ -258,13 +305,286 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
       );
    };
 
+   /**
+    * Define Mode component methods
+    */
+   /// Handle mode changing
    const onChangeMode = (newMode) => {
       if (mode === newMode) return;
       setMode(newMode);
-      setShowTimer(true); /// For after the timer has been clicked to show 'SUBMIT' and 'HOME'
+      setShowTimer(true); /// For after the timer has been clicked in Misc to show 'SUBMIT' and 'HOME'
    };
 
-   // Compile for submit
+   /**
+    * Handle event creation calls during scouting upon changes to particular state variables
+    */
+   useEffect(() => eventCrossLine(), [crossLine]);
+   useEffect(() => eventState(), [
+      defendedTimeInterval,
+      defendingTimeInterval,
+      malTimeInterval,
+   ]);
+   useEffect(() => eventEndgame(), [endgame]);
+   useEffect(() => eventZoneChange(), [activeZone, timeInterval]); // timeInterval adds an initialization location
+   useEffect(() => eventScore(), [inner, outer, bottom]);
+   useEffect(() => eventPickup(), [pickups]);
+
+   /// Create a new event object
+   const newRawEvent = (action, value = "") => {
+      return {
+         action,
+         value,
+         zone: activeZone,
+         time,
+      };
+   };
+
+   /// Generate event for updated crossLine value
+   const eventCrossLine = () => {
+      if (!timeInterval) return; // Check if timer off
+      setRawEvents([...rawEvents, newRawEvent("cross", crossLine)]);
+   };
+
+   /// Generate event upon a time-based state change containing current values
+   const eventState = () => {
+      if (!timeInterval) return; // Check if timer off
+      setRawEvents([
+         ...rawEvents,
+         newRawEvent("state", {
+            defended: defendedTimeInterval ? 1 : 0,
+            defending: defendingTimeInterval ? 1 : 0,
+            mal: malTimeInterval ? 1 : 0,
+         }),
+      ]);
+   };
+
+   /// Generate event upon endgame state change
+   const eventEndgame = () => {
+      if (!timeInterval) return; // Check if timer off
+      setRawEvents([...rawEvents, newRawEvent("endgame", endgame)]);
+   };
+
+   /// Generate event upon zone change
+   const eventZoneChange = () => {
+      if (!timeInterval) return; // Check if timer off
+      setRawEvents([...rawEvents, newRawEvent("zone")]);
+   };
+
+   /// Generate event upon score change containing current values
+   const eventScore = () => {
+      if (!timeInterval) return; // Check if timer off
+      setRawEvents([
+         ...rawEvents,
+         newRawEvent("score", {
+            inner,
+            outer,
+            bottom,
+         }),
+      ]);
+   };
+
+   /// Generate event upon pickup
+   const eventPickup = () => {
+      if (!timeInterval) return; // Check if timer off
+      setRawEvents([...rawEvents, newRawEvent("pickup")]);
+   };
+
+   /**
+    * Define method to compile and simplify all raw events
+    */
+   const compileEvents = () => {
+      let newEvents = [];
+
+      /// Define values to track state of all events
+      let indexCrossLine = -1;
+      let indexEndgame = -1;
+      let prevTime = 150; // Time of last-checked event
+      let eventTime = 150; // Earliest time in string of similar events
+      let prevZone = 6; // Zone of last-checked event
+
+      let trackingState = false;
+      let prevState = { defended: 0, defending: 0, mal: 0 };
+      let currentState = prevState;
+
+      let trackingScore = false;
+      let prevScore = { inner: 0, outer: 0, bottom: 0 };
+      let currentScore = prevScore;
+
+      /// Define utility methods to generated messages for complicated events
+      const pushStateMessage = () => {
+         let stateMessage = `${
+            prevState.defended === currentState.defended
+               ? ""
+               : currentState.defended
+               ? "Start Defended; "
+               : "End Defended; "
+         }${
+            prevState.defending === currentState.defending
+               ? ""
+               : currentState.defending
+               ? "Start Defending; "
+               : "End Defending; "
+         }${
+            prevState.mal === currentState.mal
+               ? ""
+               : currentState.mal
+               ? "Start Mal; "
+               : "End Mal; "
+         }`;
+
+         // Push event to array if valid update
+         if (stateMessage)
+            newEvents.push({
+               text: stateMessage,
+               zone: prevZone,
+               time: eventTime,
+            });
+      };
+
+      const pushScoreMessage = () => {
+         let scoreMessage = "";
+         /// In case more subtractions than additions are made in a string events, record as net zero (not negative) and don't push to array
+         let innerScore = Math.max(0, currentScore.inner - prevScore.inner);
+         let outerScore = Math.max(0, currentScore.outer - prevScore.outer);
+         let bottomScore = Math.max(0, currentScore.bottom - prevScore.bottom);
+         if (innerScore) scoreMessage += `Inner x ${innerScore}; `;
+         if (outerScore) scoreMessage += `Outer x ${outerScore}; `;
+         if (bottomScore) scoreMessage += `Bottom x ${bottomScore}; `;
+
+         // Push event to array if valid update
+         if (scoreMessage)
+            newEvents.push({
+               text: scoreMessage,
+               zone: prevZone,
+               time: eventTime,
+            });
+      };
+
+      /**
+       * Parse all raw events into new form
+       */
+      for (let i = 0; i < rawEvents.length; i++) {
+         const current = rawEvents[i];
+
+         /// Cross Line
+         if (current.action === "cross") {
+            // Remove previous crossLine events and track this one
+            if (indexCrossLine > -1) newEvents.splice(indexCrossLine, 1);
+            indexCrossLine = newEvents.length;
+
+            // Push event to array
+            newEvents.push({
+               text: "Cross Line",
+               zone: current.zone,
+               time: current.time,
+            });
+         }
+
+         /// State
+         if (current.action === "state") {
+            // Record time of first update, or first after zone change / long elapsed time
+            if (!trackingState) {
+               eventTime = current.time;
+            } else {
+               if (
+                  prevZone !== current.zone ||
+                  prevTime - current.time > updateThresholdState
+               ) {
+                  pushStateMessage();
+                  prevState = currentState;
+                  eventTime = current.time;
+               }
+            }
+
+            // Track current state
+            currentState = current.value;
+            trackingState = true;
+         } else {
+            // If end of string of state calls, set new previous state and push message
+            if (trackingState) {
+               trackingState = false;
+               pushStateMessage();
+               prevState = currentState;
+            }
+         }
+
+         /// Endgame
+         if (current.action === "endgame") {
+            // Remove previous endgame events and track this one
+            if (indexEndgame > -1) newEvents.splice(indexEndgame, 1);
+            indexEndgame = newEvents.length;
+
+            // Push event to array
+            newEvents.push({
+               text: current.value,
+               zone: current.zone,
+               time: current.time,
+            });
+         }
+
+         /// Zone Changes
+         if (current.action === "zone") {
+            // Push event to array
+            newEvents.push({
+               text: "",
+               zone: current.zone,
+               time: current.time,
+            });
+         }
+
+         /// Score
+         if (current.action === "score") {
+            // Record time of first update, or first after zone change / long elapsed time
+            if (!trackingScore) {
+               eventTime = current.time;
+            } else {
+               if (
+                  prevZone !== current.zone ||
+                  prevTime - current.time > updateThresholdScore
+               ) {
+                  pushScoreMessage();
+                  prevScore = currentScore;
+                  eventTime = current.time;
+               }
+            }
+
+            // Track current state
+            currentScore = current.value;
+            trackingScore = true;
+         } else {
+            // If end of string of state calls, set new previous state and push message
+            if (trackingScore) {
+               trackingScore = false;
+               pushScoreMessage();
+               prevScore = currentScore;
+            }
+         }
+
+         /// Pickups
+         if (current.action === "pickup") {
+            // Push event to array
+            newEvents.push({
+               text: "Pickup",
+               zone: current.zone,
+               time: current.time,
+            });
+         }
+
+         /// Keep reference variables up to date
+         prevZone = current.zone;
+         prevTime = current.time;
+      }
+
+      /// Account for final messages if the game ended while still tracking state or score
+      if (trackingState) pushStateMessage();
+      if (trackingScore) pushScoreMessage();
+
+      return newEvents;
+   };
+
+   /**
+    * Compile all recorded scouting data and prepare modal for submission or go home
+    */
    const compileForConfirm = (modalOption) => {
       setMatchData({
          updated: 1,
@@ -296,250 +616,12 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
       prepareConfirmModal(modalOption);
    };
 
-   /// Handle event array
-   useEffect(() => eventCrossLine(), [crossLine]);
-   useEffect(() => eventState(), [
-      defendedTimeInterval,
-      defendingTimeInterval,
-      malTimeInterval,
-   ]);
-   useEffect(() => eventEndgame(), [endgame]);
-   useEffect(() => eventZoneChange(), [activeZone, timeInterval]);
-   useEffect(() => eventScore(), [inner, outer, bottom]);
-   useEffect(() => eventPickup(), [pickups]);
-
-   const newRawEvent = (action, value = "") => {
-      return {
-         action,
-         value,
-         zone: activeZone,
-         time,
-      };
-   };
-
-   const eventCrossLine = () => {
-      if (!timeInterval) return;
-      setRawEvents([...rawEvents, newRawEvent("cross", crossLine)]);
-   };
-
-   const eventState = () => {
-      if (!timeInterval) return;
-      setRawEvents([
-         ...rawEvents,
-         newRawEvent("state", {
-            defended: defendedTimeInterval ? 1 : 0,
-            defending: defendingTimeInterval ? 1 : 0,
-            mal: malTimeInterval ? 1 : 0,
-         }),
-      ]);
-   };
-
-   const eventEndgame = () => {
-      if (!timeInterval) return;
-      setRawEvents([...rawEvents, newRawEvent("endgame", endgame)]);
-   };
-
-   const eventZoneChange = () => {
-      if (!timeInterval) return;
-      setRawEvents([...rawEvents, newRawEvent("zone")]);
-   };
-
-   const eventScore = () => {
-      if (!timeInterval) return;
-      setRawEvents([
-         ...rawEvents,
-         newRawEvent("score", {
-            inner,
-            outer,
-            bottom,
-         }),
-      ]);
-   };
-
-   const eventPickup = () => {
-      if (!timeInterval) return;
-      setRawEvents([...rawEvents, newRawEvent("pickup")]);
-   };
-
-   const compileEvents = () => {
-      let newEvents = [];
-
-      /// Tracking values
-      let indexCrossLine = -1;
-      let indexEndgame = -1;
-      let prevTime = 150;
-      let eventTime = 150;
-      let prevZone = 6;
-      let trackingState = false;
-      let prevState = { defended: 0, defending: 0, mal: 0 };
-      let currentState = prevState;
-      let trackingScore = false;
-      let prevScore = { inner: 0, outer: 0, bottom: 0 };
-      let currentScore = prevScore;
-
-      /// Utility methods
-      const pushStateMessage = () => {
-         let stateMessage = `${
-            prevState.defended === currentState.defended
-               ? ""
-               : currentState.defended
-               ? "Start Defended; "
-               : "End Defended; "
-         }${
-            prevState.defending === currentState.defending
-               ? ""
-               : currentState.defending
-               ? "Start Defending; "
-               : "End Defending; "
-         }${
-            prevState.mal === currentState.mal
-               ? ""
-               : currentState.mal
-               ? "Start Mal; "
-               : "End Mal; "
-         }`;
-
-         // Push Message
-         if (stateMessage)
-            newEvents.push({
-               text: stateMessage,
-               zone: prevZone,
-               time: eventTime,
-            });
-      };
-
-      const pushScoreMessage = () => {
-         let scoreMessage = "";
-         let innerScore = Math.max(0, currentScore.inner - prevScore.inner);
-         let outerScore = Math.max(0, currentScore.outer - prevScore.outer);
-         let bottomScore = Math.max(0, currentScore.bottom - prevScore.bottom);
-         if (innerScore) scoreMessage += `Inner x ${innerScore}; `;
-         if (outerScore) scoreMessage += `Outer x ${outerScore}; `;
-         if (bottomScore) scoreMessage += `Bottom x ${bottomScore}; `;
-
-         // Push Message
-         if (scoreMessage)
-            newEvents.push({
-               text: scoreMessage,
-               zone: prevZone,
-               time: eventTime,
-            });
-      };
-
-      for (let i = 0; i < rawEvents.length; i++) {
-         const current = rawEvents[i];
-
-         /// Cross Line
-         if (current.action === "cross") {
-            if (indexCrossLine > -1) newEvents.splice(indexCrossLine, 1);
-            indexCrossLine = newEvents.length;
-            newEvents.push({
-               text: "Cross Line",
-               zone: current.zone,
-               time: current.time,
-            });
-         }
-
-         /// State
-         if (current.action === "state") {
-            /// If was tracking state but time has passed or zone has changed, set new previous state and push message
-            if (trackingState) {
-               if (
-                  prevZone !== current.zone ||
-                  prevTime - current.time > updateThresholdState
-               ) {
-                  pushStateMessage();
-                  prevState = currentState;
-                  eventTime = current.time;
-               }
-            } else {
-               eventTime = current.time;
-            }
-
-            currentState = current.value;
-            trackingState = true;
-         } else {
-            /// If end of string of state calls, set new previous state and push message
-            if (trackingState) {
-               trackingState = false;
-               pushStateMessage();
-               prevState = currentState;
-            }
-         }
-
-         /// Endgame
-         if (current.action === "endgame") {
-            if (indexEndgame > -1) newEvents.splice(indexEndgame, 1);
-            indexEndgame = newEvents.length;
-            newEvents.push({
-               text: current.value,
-               zone: current.zone,
-               time: current.time,
-            });
-         }
-
-         /// Zone Changes
-         if (current.action === "zone")
-            newEvents.push({
-               text: "",
-               zone: current.zone,
-               time: current.time,
-            });
-
-         /// Score
-         if (current.action === "score") {
-            /// If was tracking score but time has passed or zone has changed, set new previous score and push message
-            if (trackingScore) {
-               if (
-                  prevZone !== current.zone ||
-                  prevTime - current.time > updateThresholdScore
-               ) {
-                  pushScoreMessage();
-                  prevScore = currentScore;
-                  eventTime = current.time;
-               }
-            } else {
-               eventTime = current.time;
-            }
-
-            currentScore = current.value;
-            trackingScore = true;
-         } else {
-            /// If end of string of state calls, set new previous state and push message
-            if (trackingScore) {
-               trackingScore = false;
-               pushScoreMessage();
-               prevScore = currentScore;
-            }
-         }
-
-         /// Pickups
-         if (current.action === "pickup")
-            newEvents.push({
-               text: "Pickup",
-               zone: current.zone,
-               time: current.time,
-            });
-
-         /// Keep reference variables up to date
-         prevZone = current.zone;
-         prevTime = current.time;
-      }
-
-      /// Account for final messages if the game ended while still tracking
-      if (trackingState) pushStateMessage();
-      if (trackingScore) pushScoreMessage();
-
-      // let stringifiedObjects = newEvents.map(
-      //    (obj) => `${obj.text}/${obj.zone}/${obj.time}`
-      // );
-      // console.log(stringifiedObjects.toString());
-      return newEvents;
-   };
-
-   // Render
+   /**
+    * Render Component
+    */
    return (
       <Fragment>
+         {/* Timer Component */}
          <ScoutingTimer
             time={convertTime(time)}
             showTimer={showTimer}
@@ -549,7 +631,10 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
             clickTimer={clickTimer}
             compileForConfirm={compileForConfirm}
          />
+
+         {/* User Area */}
          <div className={classes.userArea}>
+            {/* Setup Component - Left Sidebar Auto */}
             {mode === "auto" && (
                <ScoutingSetup
                   setScoutName={setScoutName}
@@ -561,6 +646,8 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
                   toggleCrossLine={toggleCrossLine}
                />
             )}
+
+            {/* State Component - Left Sidebar Teleop */}
             {mode === "teleop" && (
                <ScoutingState
                   toggleState={toggleState}
@@ -576,6 +663,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
             )}
             {(mode === "auto" || mode === "teleop") && (
                <Fragment>
+                  {/* Field Component - Center Auto and Teleop */}
                   <ScoutingField
                      fieldFlipped={fieldFlipped}
                      active={activeZone}
@@ -583,6 +671,8 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
                      teamNumber={teamNumber}
                      teamColor={teamColor}
                   />
+
+                  {/* Score Component - Right Sidebar Auto and Teleop */}
                   <ScoutingScore
                      clickTarget={clickTarget}
                      bottom={bottom}
@@ -594,6 +684,8 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
                   />
                </Fragment>
             )}
+
+            {/* Misc Component */}
             {mode === "misc" && (
                <ScoutingMisc
                   setComments={setComments}
@@ -602,13 +694,22 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
                />
             )}
          </div>
+
+         {/* Mode Component */}
          <ScoutingMode mode={mode} onChangeMode={onChangeMode} />
       </Fragment>
    );
 };
 
+/// Inline class manager
 const classes = {
    userArea: "userArea",
+};
+
+/// Prop Types
+ScoutingControl.propTypes = {
+   prepareConfirmModal: PropTypes.func, // Function to prepare the modal to confirm Submit or Go Home actions
+   setMatchData: PropTypes.func, // Function to allocate scouting data values to matchData object
 };
 
 /// Export

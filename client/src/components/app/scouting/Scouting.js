@@ -14,6 +14,7 @@ import PropTypes from "prop-types";
 
 /// Components
 import ScoutingControl from "./ScoutingControl";
+import RedirectModal from "../../utils/RedirectModal";
 
 /**
  * Scouting Component
@@ -28,7 +29,6 @@ const Scouting = ({ query }) => {
 
    const [loading, setLoading] = useState(false);
    const [redirectModal, setRedirectModal] = useState(false);
-   const [showRedirectClose] = useState(false);
    const [messages, setMessages] = useState([]);
    const [confirmModal, setConfirmModal] = useState(false);
    const [confirmModalHeader, setConfirmModalHeader] = useState("");
@@ -110,10 +110,7 @@ const Scouting = ({ query }) => {
    };
 
    /// Handle a go home request
-   const onGoHome = () => redirect();
-
-   /// Redirect the page
-   const redirect = (link = "/home") => (window.location.href = link);
+   const onGoHome = () => (window.location.href = "/home");
 
    /**
     * Render component
@@ -127,49 +124,7 @@ const Scouting = ({ query }) => {
          />
 
          {/* Modal for redirects */}
-         <Modal isOpen={redirectModal} size='md'>
-            <ModalHeader
-               className={classes.modalHeader}
-               style={styles.modalHeader}>
-               Redirect
-               {/* Custom close button for certain situations*/}
-               {showRedirectClose && (
-                  <Button
-                     color='transparent'
-                     className={classes.modalClose}
-                     style={styles.modalClose}
-                     onClick={toggleRedirectModal}>
-                     &times;
-                  </Button>
-               )}
-            </ModalHeader>
-            <ModalBody>
-               {messages.map((message) => (
-                  <Alert
-                     key={message.text}
-                     color={
-                        message.type === "good"
-                           ? "message-good"
-                           : "message-error"
-                     }
-                     className={classes.alert}>
-                     {message.text}
-                  </Alert>
-               ))}
-
-               {/* Redirect button */}
-               <Button
-                  color='comp-table-head'
-                  className={classes.modalSubmit}
-                  style={styles.button}
-                  block
-                  outline
-                  size='md'
-                  onClick={() => redirect("/")}>
-                  Go
-               </Button>
-            </ModalBody>
-         </Modal>
+         <RedirectModal modal={redirectModal} messages={messages} />
 
          {/* Modal for confirming voluntary actions like going home or submitting */}
          <Modal isOpen={confirmModal} size='md'>

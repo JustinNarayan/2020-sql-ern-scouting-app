@@ -14,6 +14,7 @@ import {
 import Admin from "./Admin";
 import AddComp from "./AddComp";
 import Comp from "./Comp";
+import RedirectModal from "../../utils/RedirectModal";
 
 /**
  * Home Component
@@ -244,36 +245,11 @@ const Home = () => {
          </Modal>
 
          {/* Modal for redirects */}
-         <Modal isOpen={redirectModal} size='md'>
-            <ModalHeader
-               className={classes.modalHeader}
-               style={styles.modalHeader}>
-               Redirect
-            </ModalHeader>
-            <ModalBody>
-               {redirectMessages.map((message) => (
-                  <Alert
-                     key={message.text}
-                     color='message-error'
-                     className={classes.alert}>
-                     {message.text}
-                  </Alert>
-               ))}
-
-               {/* Redirect button */}
-               <Button
-                  color='comp-table-head'
-                  className={classes.modalSubmit}
-                  style={styles.button}
-                  block
-                  outline
-                  size='md'
-                  onClick={() => redirect()}>
-                  {/* Arrow function so it doesn't send (e) as a parameter to overwrite the link */}
-                  Go
-               </Button>
-            </ModalBody>
-         </Modal>
+         <RedirectModal
+            modal={redirectModal}
+            messages={redirectMessages}
+            redirectTo='/'
+         />
       </div>
    );
 };
@@ -286,7 +262,6 @@ const classes = {
    table: "compTable p-0 text-back",
    tableHead: "bg-comp-table-head",
    modalHeaderDelete: "bg-message-error text-back",
-   modalHeader: "bg-comp-table-head text-back",
    modalClose: "text-back",
    modalBody: "bg-back",
    alert: "mb-4 py-2 text-center",

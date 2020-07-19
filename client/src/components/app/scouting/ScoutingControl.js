@@ -19,7 +19,7 @@ import ScoutingMode from "./ScoutingMode";
  * Contains all scouting app components and handles connective functionality.
  * Bundles scouting data before submission.
  */
-const ScoutingControl = ({ prepareConfirmModal }) => {
+const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
    // State
    const [scoutName, setScoutName] = useState("");
    const [matchNumber, setMatchNumber] = useState("");
@@ -38,7 +38,7 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const [outerHeatmap, setOuterHeatmap] = useState(new Array(13).fill(0));
    const [pickupHeatmap, setPickupHeatmap] = useState(new Array(13).fill(0));
 
-   const [time, setTime] = useState(20);
+   const [time, setTime] = useState(150);
    const [timeInterval, setTimeInterval] = useState(0);
    const [showTimer, setShowTimer] = useState(true);
    const timeTick = 50; // Should always be 1/10 second in ms
@@ -69,7 +69,6 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
    const pickupDisabledTime = 1000;
 
    const [rawEvents, setRawEvents] = useState([]);
-   const [compiledEvents, setCompiledEvents] = useState([]);
    const updateThresholdState = 2;
    const updateThresholdScore = 2;
 
@@ -85,13 +84,221 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
          toggleState("defended", true);
          toggleState("defending", true);
          toggleState("mal", true);
-
-         compileEvents();
       }
    }, [time]);
 
+   // Methods
+   const convertTime = (val) =>
+      `${Math.floor(val / 60)}:${String(Math.ceil(val) % 60).padStart(2, "0")}`;
+
+   const clickTimer = () => {
+      if (mode === "auto" && !timeInterval) {
+         /// useState can not directly hold a setInterval ID
+         const interval = setInterval(() => {
+            setTime((time) => +(time - timeIncrement).toFixed(2));
+         }, timeTick);
+         setTimeInterval(interval);
+      }
+      if (mode === "misc") {
+         clearInterval(timeInterval);
+         setTimeInterval(null);
+         setTime(150);
+         setShowTimer(false);
+      }
+   };
+
+   const toggleCrossLine = () => {
+      if (!timeInterval || time < autoThreshold) return;
+      else {
+         setCrossLine(!crossLine);
+         eventCrossLine();
+      }
+   };
+
+   const toggleState = (which, timerOff = !timeInterval) => {
+      // Set variables for state toggling
+      let stateInterval, setState, setStateInterval;
+
+      // Determine set of variables for toggling
+      switch (which) {
+         case "defended":
+            stateInterval = defendedTimeInterval;
+            setState = setDefendedTime;
+            setStateInterval = setDefendedTimeInterval;
+            break;
+         case "defending":
+            stateInterval = defendingTimeInterval;
+            setState = setDefendingTime;
+            setStateInterval = setDefendingTimeInterval;
+            break;
+         default:
+            stateInterval = malTimeInterval;
+            setState = setMalTime;
+            setStateInterval = setMalTimeInterval;
+            break;
+      }
+
+      // Generalized toggle statement
+      if (!stateInterval) {
+         if (timerOff) return; // Can't toggle state if timer has run out
+
+         // Handle inter-state logic
+         if (which !== "mal" && malTimeInterval) {
+            toggleState("mal");
+         }
+         if (which === "mal") {
+            if (defendedTimeInterval) toggleState("defended");
+            if (defendingTimeInterval) toggleState("defending");
+         }
+
+         /// useState can not directly hold a setInterval ID
+         const interval = setInterval(() => {
+            setState((value) => +(value + timeIncrement).toFixed(2));
+         }, timeTick);
+         setStateInterval(interval);
+      } else {
+         clearInterval(stateInterval);
+         setStateInterval(null);
+      }
+   };
+
+   const toggleEndgame = (what) => {
+      if (!timeInterval) return;
+
+      if (endgame === what) setEndgame("");
+      else setEndgame(what);
+   };
+
+   const toggleFieldFlipped = () => setFieldFlipped(!fieldFlipped);
+
+   const changeZone = (newZone) => {
+      setActiveZone(newZone);
+      if (!crossLine) toggleCrossLine(); /// If still in auto (in called method), will set crossLine to true
+      if (malTimeInterval) toggleState("mal");
+   };
+
+   const incrementScore = (where, amount) => {
+      if (!timeInterval) return;
+
+      // Set variables for general score adjustment statement below
+      let score, scoreAuto, setScore, setScoreAuto, heatmap, setHeatmap;
+
+      // Determine set of variables for score adjustment
+      switch (where) {
+         case "inner":
+            score = inner;
+            scoreAuto = innerAuto;
+            heatmap = innerHeatmap;
+            setScore = setInner;
+            setScoreAuto = setInnerAuto;
+            setHeatmap = setInnerHeatmap;
+            break;
+         case "outer":
+            score = outer;
+            scoreAuto = outerAuto;
+            heatmap = outerHeatmap;
+            setScore = setOuter;
+            setScoreAuto = setOuterAuto;
+            setHeatmap = setOuterHeatmap;
+            break;
+         default:
+            score = bottom;
+            scoreAuto = bottomAuto;
+            setScore = setBottom;
+            setScoreAuto = setBottomAuto;
+            break;
+      }
+
+      // Adjust score if valid
+      if (score + amount >= 0) {
+         // Adjust score
+         setScore(score + amount);
+         if (mode === "auto") setScoreAuto(Math.max(0, scoreAuto + amount));
+
+         // Adjust heatmap if not bottom
+         if (heatmap) {
+            heatmap[activeZone] = Math.max(0, heatmap[activeZone] + amount);
+            setHeatmap(heatmap);
+         }
+
+         // Send target to flash the clicked button
+         newClickTarget(`${where}_${amount}`);
+      }
+   };
+
+   const incrementPickups = () => {
+      if (!timeInterval) return;
+
+      if (!pickupDisabledTimer) {
+         // Adjust pickups
+         setPickups(pickups + 1);
+
+         // Adjust heatmap
+         let heatmap = pickupHeatmap;
+         heatmap[activeZone]++;
+         setPickupHeatmap(heatmap);
+
+         // Send target to flash the clicked button
+         newClickTarget("pickup");
+
+         // Disable pickup shortly
+         setPickupDisabledTimer(
+            setTimeout(() => {
+               setPickupDisabledTimer(null);
+            }, pickupDisabledTime)
+         );
+      }
+   };
+
+   const newClickTarget = (what) => {
+      setClickTarget(what);
+      if (clickTargetTimer) clearTimeout(clickTarget);
+      setClickTargetTimer(
+         setTimeout(() => {
+            setClickTarget("");
+            setClickTargetTimer(null);
+         }, clickTargetTime)
+      );
+   };
+
+   const onChangeMode = (newMode) => {
+      if (mode === newMode) return;
+      setMode(newMode);
+      setShowTimer(true); /// For after the timer has been clicked to show 'SUBMIT' and 'HOME'
+   };
+
+   // Compile for submit
+   const compileForSubmit = () => {
+      setMatchData({
+         updated: 1,
+         teamNumber,
+         matchNumber,
+         robotStation: teamColor === "red" ? "R1" : "B1",
+         events: JSON.stringify(compileEvents()),
+         outerHeatmap: JSON.stringify(outerHeatmap),
+         innerHeatmap: JSON.stringify(innerHeatmap),
+         pickupHeatmap: JSON.stringify(pickupHeatmap),
+         crossLine,
+         bottomAuto,
+         outerAuto,
+         innerAuto,
+         bottom,
+         outer,
+         inner,
+         pickups,
+         timeDefended: defendedTime,
+         timeDefending: defendingTime,
+         defenseQuality: defendingTime > 0 ? Math.max(1, defenseQuality) : 0,
+         timeMal: malTime,
+         endgameScore: endgame === "Hanged" ? 2 : endgame === "Parked" ? 1 : 0,
+         score: 0,
+         comments,
+         scoutName,
+      });
+   };
+
    /// Handle event array
-   useEffect(() => eventCrossLine(), [crossLine]);
+   // Due to strange issues with the toggling of crossLine, eventCrossLine is called from the toggle command above
    useEffect(() => eventState(), [
       defendedTimeInterval,
       defendingTimeInterval,
@@ -328,184 +535,7 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
       //    (obj) => `${obj.text}/${obj.zone}/${obj.time}`
       // );
       // console.log(stringifiedObjects.toString());
-      setCompiledEvents(newEvents);
-   };
-
-   // Methods
-   const convertTime = (val) =>
-      `${Math.floor(val / 60)}:${String(Math.ceil(val) % 60).padStart(2, "0")}`;
-
-   const clickTimer = () => {
-      if (mode === "auto" && !timeInterval) {
-         /// useState can not directly hold a setInterval ID
-         const interval = setInterval(() => {
-            setTime((time) => +(time - timeIncrement).toFixed(2));
-         }, timeTick);
-         setTimeInterval(interval);
-      }
-      if (mode === "misc") {
-         clearInterval(timeInterval);
-         setTimeInterval(null);
-         setTime(150);
-         setShowTimer(false);
-      }
-   };
-
-   const toggleCrossLine = () => {
-      if (!timeInterval || time < autoThreshold) return;
-      else setCrossLine(!crossLine);
-   };
-
-   const toggleState = (which, timerOff = !timeInterval) => {
-      // Set variables for state toggling
-      let stateInterval, setState, setStateInterval;
-
-      // Determine set of variables for toggling
-      switch (which) {
-         case "defended":
-            stateInterval = defendedTimeInterval;
-            setState = setDefendedTime;
-            setStateInterval = setDefendedTimeInterval;
-            break;
-         case "defending":
-            stateInterval = defendingTimeInterval;
-            setState = setDefendingTime;
-            setStateInterval = setDefendingTimeInterval;
-            break;
-         default:
-            stateInterval = malTimeInterval;
-            setState = setMalTime;
-            setStateInterval = setMalTimeInterval;
-            break;
-      }
-
-      // Generalized toggle statement
-      if (!stateInterval) {
-         if (timerOff) return; // Can't toggle state if timer has run out
-
-         // Handle inter-state logic
-         if (which !== "mal" && malTimeInterval) {
-            toggleState("mal");
-         }
-         if (which === "mal") {
-            if (defendedTimeInterval) toggleState("defended");
-            if (defendingTimeInterval) toggleState("defending");
-         }
-
-         /// useState can not directly hold a setInterval ID
-         const interval = setInterval(() => {
-            setState((value) => value + timeIncrement);
-         }, timeTick);
-         setStateInterval(interval);
-      } else {
-         clearInterval(stateInterval);
-         setStateInterval(null);
-      }
-   };
-
-   const toggleEndgame = (what) => {
-      if (!timeInterval) return;
-
-      if (endgame === what) setEndgame("");
-      else setEndgame(what);
-   };
-
-   const toggleFieldFlipped = () => setFieldFlipped(!fieldFlipped);
-
-   const changeZone = (newZone) => {
-      setActiveZone(newZone);
-      if (!crossLine) toggleCrossLine(); /// If still in auto (in called method), will set crossLine to true
-      if (malTimeInterval) toggleState("mal");
-   };
-
-   const incrementScore = (where, amount) => {
-      if (!timeInterval) return;
-
-      // Set variables for general score adjustment statement below
-      let score, scoreAuto, setScore, setScoreAuto, heatmap, setHeatmap;
-
-      // Determine set of variables for score adjustment
-      switch (where) {
-         case "inner":
-            score = inner;
-            scoreAuto = innerAuto;
-            heatmap = innerHeatmap;
-            setScore = setInner;
-            setScoreAuto = setInnerAuto;
-            setHeatmap = setInnerHeatmap;
-            break;
-         case "outer":
-            score = outer;
-            scoreAuto = outerAuto;
-            heatmap = outerHeatmap;
-            setScore = setOuter;
-            setScoreAuto = setOuterAuto;
-            setHeatmap = setOuterHeatmap;
-            break;
-         default:
-            score = bottom;
-            scoreAuto = bottomAuto;
-            setScore = setBottom;
-            setScoreAuto = setBottomAuto;
-            break;
-      }
-
-      // Adjust score if valid
-      if (score + amount >= 0) {
-         // Adjust score
-         setScore(score + amount);
-         if (mode === "auto") setScoreAuto(Math.max(0, scoreAuto + amount));
-
-         // Adjust heatmap if not bottom
-         if (heatmap) {
-            heatmap[activeZone] = Math.max(0, heatmap[activeZone] + amount);
-            setHeatmap(heatmap);
-         }
-
-         // Send target to flash the clicked button
-         newClickTarget(`${where}_${amount}`);
-      }
-   };
-
-   const incrementPickups = () => {
-      if (!timeInterval) return;
-
-      if (!pickupDisabledTimer) {
-         // Adjust pickups
-         setPickups(pickups + 1);
-
-         // Adjust heatmap
-         let heatmap = pickupHeatmap;
-         heatmap[activeZone]++;
-         setPickupHeatmap(heatmap);
-
-         // Send target to flash the clicked button
-         newClickTarget("pickup");
-
-         // Disable pickup shortly
-         setPickupDisabledTimer(
-            setTimeout(() => {
-               setPickupDisabledTimer(null);
-            }, pickupDisabledTime)
-         );
-      }
-   };
-
-   const newClickTarget = (what) => {
-      setClickTarget(what);
-      if (clickTargetTimer) clearTimeout(clickTarget);
-      setClickTargetTimer(
-         setTimeout(() => {
-            setClickTarget("");
-            setClickTargetTimer(null);
-         }, clickTargetTime)
-      );
-   };
-
-   const onChangeMode = (newMode) => {
-      if (mode === newMode) return;
-      setMode(newMode);
-      setShowTimer(true); /// For after the timer has been clicked to show 'SUBMIT' and 'HOME'
+      return newEvents;
    };
 
    // Render
@@ -519,6 +549,7 @@ const ScoutingControl = ({ prepareConfirmModal }) => {
             setupComplete={scoutName && matchNumber && teamNumber}
             clickTimer={clickTimer}
             prepareConfirmModal={prepareConfirmModal}
+            compileForSubmit={compileForSubmit}
          />
          <div className={classes.userArea}>
             {mode === "auto" && (

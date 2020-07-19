@@ -1,7 +1,8 @@
 /// Model for all state actions
 import userModel from "./userModel";
 import compModel from "./compModel";
-//import dataModel from "./dataModel";
+import pendingModel from "./pendingModel";
+import dataModel from "./dataModel";
 const { login, register, verify, appearAdmin } = userModel;
 const {
    comps,
@@ -12,6 +13,8 @@ const {
    deleteComp,
    setComps,
 } = compModel;
+const { addPending } = pendingModel;
+const { addData } = dataModel;
 
 export default {
    // State
@@ -28,6 +31,10 @@ export default {
    addComp,
    editComp,
    deleteComp,
+
+   addPending,
+
+   addData,
 
    // Actions
    setComps,

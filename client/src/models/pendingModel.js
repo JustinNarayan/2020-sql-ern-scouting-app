@@ -2,13 +2,13 @@ import { thunk } from "easy-peasy";
 import axios from "axios";
 import authHeader from "../utils/authHeader";
 
-const url = "/api/data/";
+const url = "/api/pending/";
 
 export default {
    // Thunks
-   addData: thunk(async (actions, data) => {
+   addPending: thunk(async (actions, data) => {
       // Handle WS Call
-      const res = await axios.post(url, data, authHeader);
+      const res = await axios.post(`${url}${data.id}`, data, authHeader);
       const out = res.data; // Message || Forbidden
 
       // Log error

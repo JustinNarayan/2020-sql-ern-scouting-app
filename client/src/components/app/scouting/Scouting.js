@@ -25,13 +25,14 @@ const Scouting = ({ query }) => {
    const [confirmModal, setConfirmModal] = useState(false);
    const [confirmModalHeader, setConfirmModalHeader] = useState("");
    const [confirmModalBody, setConfirmModalBody] = useState("");
-   const [confirmModalAction, setConfirmModalAction] = useState(() => () => 0);
    const [comp, setComp] = useState({});
+   const [matchData, setMatchData] = useState({});
 
    /**
     * Bring in easy-peasy thunks/actions
     */
    const getComp = useStoreActions((actions) => actions.getComp);
+   const addPending = useStoreActions((actions) => actions.addPending);
 
    /**
     * Handle life-cycle
@@ -72,7 +73,6 @@ const Scouting = ({ query }) => {
                for review by your team admin.
             </Fragment>
          );
-         setConfirmModalAction(() => () => alert("Submit WIP"));
       } else {
          setConfirmModalHeader("Go Home");
          setConfirmModalBody(
@@ -82,12 +82,17 @@ const Scouting = ({ query }) => {
                pending match data screen for review by your team admin.
             </Fragment>
          );
-         setConfirmModalAction(() => () => {
-            redirect();
-         });
       }
       toggleConfirmModal();
    };
+
+   /// Handle submit
+   const onSubmit = async () => {
+      const res = await addPending({ id: comp.ID, ...matchData });
+      console.log(res);
+   };
+
+   const onGoHome = () => redirect();
 
    /// Redirect the page
    const redirect = (link = "/home") => (window.location.href = link);
@@ -98,7 +103,10 @@ const Scouting = ({ query }) => {
    return (
       <div className={classes.container}>
          {/* ScoutingControl Component contains all scouting app functionality */}
-         <ScoutingControl prepareConfirmModal={prepareConfirmModal} />
+         <ScoutingControl
+            prepareConfirmModal={prepareConfirmModal}
+            setMatchData={setMatchData}
+         />
 
          {/* Modal for redirects */}
          <Modal isOpen={redirectModal} size='md'>
@@ -169,7 +177,9 @@ const Scouting = ({ query }) => {
                   style={styles.modalOption.left}
                   outline
                   size='md'
-                  onClick={() => confirmModalAction()}>
+                  onClick={() =>
+                     confirmModalHeader === "Go Home" ? onGoHome() : onSubmit()
+                  }>
                   Yes
                </Button>
                <Button

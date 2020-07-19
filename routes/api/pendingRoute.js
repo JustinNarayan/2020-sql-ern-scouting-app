@@ -2,7 +2,6 @@
 
 const express = require("express");
 const router = express.Router();
-const { format } = require("fecha");
 const verifyToken = require("./verifyToken");
 
 // Create small utility functions
@@ -23,14 +22,15 @@ const hasPrivileges = (isAdmin, res) => {
 
 module.exports = (pool) => {
    /**
-    * Retrieve an array of all matches from a specific competition
+    * Retrieve an array of all pending matches from a specific competition
     * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     */
    router.get("/:id", verifyToken, async (req, res) => {
       // Analyze request
-      const { username } = req.auth.user;
+      const { username, isAdmin } = req.auth.user;
       const { id } = req.params;
+      if (!hasPrivileges(isAdmin, res)) return;
 
       // Handle response and track error source locations
       let errMessage;
@@ -45,8 +45,8 @@ module.exports = (pool) => {
          /* */
 
          // Query database for matches in this competition
-         sql = `SELECT * FROM matchData WHERE CompetitionID = ? ORDER BY ID ASC`;
-         errMessage = "Failed to get match data";
+         sql = `SELECT * FROM pendingMatchData WHERE CompetitionID = ? ORDER BY ID ASC`;
+         errMessage = "Failed to get pending match data";
          const [result] = await pool.execute(sql, [id]);
 
          // Success!
@@ -58,17 +58,16 @@ module.exports = (pool) => {
    });
 
    /**
-    * Post a piece of match data to a specific competition
+    * Post a piece of pending match data to a specific competition
     * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     * @auth isAdmin (token must contain affirmative isAdmin property)
     */
    router.post("/:id", verifyToken, async (req, res) => {
       // Analyze request
-      const { username, isAdmin } = req.auth.user;
+      const { username } = req.auth.user;
       const { id } = req.params;
       const {
-         updated,
          teamNumber,
          matchNumber,
          robotStation,
@@ -89,11 +88,9 @@ module.exports = (pool) => {
          defenseQuality,
          timeMal,
          endgameScore,
-         score,
          comments,
          scoutName,
       } = req.body;
-      if (!hasPrivileges(isAdmin, res)) return;
 
       // Handle response and track error source locations
       let errMessage;
@@ -108,11 +105,9 @@ module.exports = (pool) => {
          /* */
 
          // First, send an UPDATE in case the match had been generated previously (Robot Station excluded)
-         sql = `UPDATE matchData SET DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, Bottom = ?, Outer = ?, Inner = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, EndgameScore = ?, Score = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+         sql = `UPDATE pendingMatchData SET Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, BottomAll = ?, OuterAll = ?, InnerAll = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, EndgameScore = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
          errMessage = "Failed to attempt updating existing match data";
          const [updateResult] = await pool.execute(sql, [
-            format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
-            updated,
             events,
             outerHeatmap,
             innerHeatmap,
@@ -130,7 +125,6 @@ module.exports = (pool) => {
             defenseQuality,
             timeMal,
             endgameScore,
-            score,
             fix(comments),
             fix(scoutName),
             id, // Identify where to update
@@ -141,14 +135,12 @@ module.exports = (pool) => {
          // Next, if no data was updated (match data was not preloaded), INSERT new data
          errMessage = "Found no competition to update";
          if (!updateResult.affectedRows) {
-            sql = `INSERT INTO matchData (DateTime, Updated, CompetitionID, TeamNumber, MatchNumber, RobotStation, Events, OuterHeatmap, InnerHeatmap, PickupHeatmap, CrossLine, BottomAuto, OuterAuto, InnerAuto, Bottom, Outer, Inner, Pickups, TimeDefended, TimeDefending, DefenseQuality, TimeMal, EndgameScore, Score, Comments, ScoutName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            sql = `INSERT INTO pendingMatchData (CompetitionID, TeamNumber, MatchNumber, RobotStation, Events, OuterHeatmap, InnerHeatmap, PickupHeatmap, CrossLine, BottomAuto, OuterAuto, InnerAuto, BottomAll, OuterAll, InnerAll, Pickups, TimeDefended, TimeDefending, DefenseQuality, TimeMal, EndgameScore, Comments, ScoutName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             errMessage = "Failed to post new match data";
             const [insertResult] = await pool.execute(sql, [
-               format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
-               updated,
                id,
                teamNumber,
-               fix(matchNumber),
+               matchNumber,
                robotStation,
                events,
                outerHeatmap,
@@ -167,7 +159,6 @@ module.exports = (pool) => {
                defenseQuality,
                timeMal,
                endgameScore,
-               score,
                fix(comments),
                fix(scoutName),
             ]);

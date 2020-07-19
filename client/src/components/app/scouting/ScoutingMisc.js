@@ -4,9 +4,7 @@ import React from "react";
 const ScoutingMisc = ({ setComments, setDefenseQuality, defenseQuality }) => {
    return (
       <div className={classes.misc}>
-         <textarea
-            name='comments'
-            onChange={(e) => setComments(e.target.value)}></textarea>
+         <textarea onChange={(e) => setComments(e.target.value)}></textarea>
          <div className={classes.buttonLine}>
             <button
                className={defenseQuality === 0 ? classes.on : ""}

@@ -18,7 +18,6 @@ const ScoutingSetup = ({
                   <label htmlFor='scoutName'>SCOUT NAME</label>
                   <input
                      type='text'
-                     name='scoutName'
                      id='scoutName'
                      onChange={(e) => setScoutName(e.target.value)}
                   />
@@ -28,7 +27,6 @@ const ScoutingSetup = ({
                      <label htmlFor='matchNumber'>MATCH</label>
                      <input
                         type='text'
-                        name='matchNumber'
                         id='matchNumber'
                         onChange={(e) => setMatchNumber(e.target.value)}
                      />
@@ -38,7 +36,6 @@ const ScoutingSetup = ({
                      <input
                         type='number'
                         min='0'
-                        name='teamNumber'
                         id='teamNumber'
                         onChange={(e) => setTeamNumber(e.target.value)}
                      />

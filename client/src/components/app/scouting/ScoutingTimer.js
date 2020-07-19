@@ -9,6 +9,7 @@ const ScoutingTimer = ({
    setupComplete,
    clickTimer,
    prepareConfirmModal,
+   compileForSubmit,
 }) => {
    return (
       <div className={classes.timerButtons}>
@@ -34,7 +35,10 @@ const ScoutingTimer = ({
             <Fragment>
                <button
                   className={classes.options}
-                  onClick={() => prepareConfirmModal("Submit")}>
+                  onClick={() => {
+                     prepareConfirmModal("Submit");
+                     compileForSubmit();
+                  }}>
                   SUBMIT
                </button>
                <button

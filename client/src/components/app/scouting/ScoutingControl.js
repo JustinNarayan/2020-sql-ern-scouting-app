@@ -109,10 +109,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
 
    const toggleCrossLine = () => {
       if (!timeInterval || time < autoThreshold) return;
-      else {
-         setCrossLine(!crossLine);
-         eventCrossLine();
-      }
+      else setCrossLine(!crossLine);
    };
 
    const toggleState = (which, timerOff = !timeInterval) => {
@@ -268,7 +265,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
    };
 
    // Compile for submit
-   const compileForSubmit = () => {
+   const compileForConfirm = (modalOption) => {
       setMatchData({
          updated: 1,
          teamNumber,
@@ -295,10 +292,12 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
          comments,
          scoutName,
       });
+
+      prepareConfirmModal(modalOption);
    };
 
    /// Handle event array
-   // Due to strange issues with the toggling of crossLine, eventCrossLine is called from the toggle command above
+   useEffect(() => eventCrossLine(), [crossLine]);
    useEffect(() => eventState(), [
       defendedTimeInterval,
       defendingTimeInterval,
@@ -548,8 +547,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
             mustChange={mode === "auto" && time < autoThreshold}
             setupComplete={scoutName && matchNumber && teamNumber}
             clickTimer={clickTimer}
-            prepareConfirmModal={prepareConfirmModal}
-            compileForSubmit={compileForSubmit}
+            compileForConfirm={compileForConfirm}
          />
          <div className={classes.userArea}>
             {mode === "auto" && (

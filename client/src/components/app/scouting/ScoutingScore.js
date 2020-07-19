@@ -1,6 +1,12 @@
 /// Modules
 import React from "react";
+import PropTypes from "prop-types";
 
+/**
+ * ScoutingScore Component
+ * -----------------------
+ * Allows user to record robot's scoring and pickups.
+ */
 const ScoutingScore = ({
    clickTarget,
    inner,
@@ -10,8 +16,12 @@ const ScoutingScore = ({
    incrementScore,
    incrementPickups,
 }) => {
+   /**
+    * Render component
+    */
    return (
       <div className={classes.sidebar}>
+         {/* Inner Score Row */}
          <div className={classes.buttonRow}>
             <button
                className={
@@ -33,6 +43,8 @@ const ScoutingScore = ({
                +
             </button>
          </div>
+
+         {/* Outer Score Row */}
          <div className={classes.buttonRow}>
             <button
                className={
@@ -54,6 +66,8 @@ const ScoutingScore = ({
                +
             </button>
          </div>
+
+         {/* Bottom Score Row */}
          <div className={classes.buttonRow}>
             <button
                className={
@@ -75,6 +89,8 @@ const ScoutingScore = ({
                +
             </button>
          </div>
+
+         {/* Pickup Button */}
          <button
             className={clickTarget === "pickup" ? classes.activePickup : ""}
             onClick={incrementPickups}>
@@ -86,6 +102,7 @@ const ScoutingScore = ({
    );
 };
 
+/// Inline class manager
 const classes = {
    sidebar: "sidebar",
    buttonRow: "buttonRow",
@@ -95,4 +112,16 @@ const classes = {
    red: "text-danger",
 };
 
+/// Prop Types
+ScoutingScore.propTypes = {
+   clickTarget: PropTypes.string, // Which, if any, button was last clicked to highlight temporarily
+   inner: PropTypes.number, // How many inner shots have been scored
+   outer: PropTypes.number, // How many outer shots have been scored
+   bottom: PropTypes.number, // How many bottom shots have been scored
+   pickups: PropTypes.number, // How many pickups have happened
+   incrementScore: PropTypes.func, // Function to add (or subtract) from scores
+   incrementPickups: PropTypes.func, // Function to add new pickup
+};
+
+/// Export
 export default ScoutingScore;

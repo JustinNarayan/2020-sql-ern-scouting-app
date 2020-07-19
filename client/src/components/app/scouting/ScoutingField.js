@@ -1,6 +1,12 @@
 /// Modules
 import React from "react";
+import PropTypes from "prop-types";
 
+/**
+ * ScoutingField Component
+ * -----------------------
+ * Display zone buttons and manage input for zone-switching.
+ */
 const ScoutingField = ({
    fieldFlipped,
    active,
@@ -8,7 +14,9 @@ const ScoutingField = ({
    teamNumber,
    teamColor,
 }) => {
-   // Methods
+   /**
+    * Define all component methods
+    */
    /// Determine zone colour
    const zoneCol = (def) => {
       switch (fieldFlipped) {
@@ -19,11 +27,15 @@ const ScoutingField = ({
       }
    };
 
+   /// Return if a zone button is active
    const isOn = (num) => (active === num ? " active" : "");
 
-   // Render
+   /**
+    * Render component
+    */
    return (
       <div className={classes.field}>
+         {/* Left-side sector zones */}
          <div className={classes.zone.group}>
             <button
                className={classes.zone._0 + zoneCol("red") + isOn(0)}
@@ -38,6 +50,8 @@ const ScoutingField = ({
                onClick={() => setActive(2)}
             />
          </div>
+
+         {/* Left-side free zones */}
          <div className={classes.zone.group}>
             <button
                className={classes.zone._3 + zoneCol("red") + isOn(3)}
@@ -48,6 +62,8 @@ const ScoutingField = ({
                onClick={() => setActive(4)}
             />
          </div>
+
+         {/* Trenches and rendezvous zone */}
          <div className={classes.zone.group}>
             <button
                className={classes.zone._5 + zoneCol("blue") + isOn(5)}
@@ -65,6 +81,8 @@ const ScoutingField = ({
                onClick={() => setActive(7)}
             />
          </div>
+
+         {/* Right-side free zones */}
          <div className={classes.zone.group}>
             <button
                className={classes.zone._8 + zoneCol("blue") + isOn(8)}
@@ -75,6 +93,8 @@ const ScoutingField = ({
                onClick={() => setActive(9)}
             />
          </div>
+
+         {/* Right-side sector zones */}
          <div className={classes.zone.group}>
             <button
                className={classes.zone._10 + zoneCol("blue") + isOn(10)}
@@ -111,8 +131,17 @@ const classes = {
       _10: "_10",
       _11: "_11",
       _12: "_12",
-      teamNumber: "teamNumber ", // Extra space for teamColor
+      teamNumber: "teamNumber ", // Extra space left on end for teamColor
    },
+};
+
+/// Prop Types
+ScoutingField.propTypes = {
+   fieldFlipped: PropTypes.bool, // If the field has been flipped (false: red on left, true: blue on left)
+   active: PropTypes.number, // Which zone is currently clicked
+   setActive: PropTypes.func, // Set a new active zone
+   teamNumber: PropTypes.number, // Team number to display in middle of field
+   teamColor: PropTypes.string, // Color for team number
 };
 
 /// Export

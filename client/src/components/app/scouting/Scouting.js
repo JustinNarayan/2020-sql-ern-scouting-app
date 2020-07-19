@@ -12,7 +12,7 @@ import {
 import QueryString from "query-string";
 import PropTypes from "prop-types";
 
-/// Assets
+/// Components
 import ScoutingControl from "./ScoutingControl";
 
 /**
@@ -34,6 +34,8 @@ const Scouting = ({ query }) => {
    const [confirmModalHeader, setConfirmModalHeader] = useState("");
    const [confirmModalBody, setConfirmModalBody] = useState("");
    const [comp, setComp] = useState({});
+
+   /// This object will hold all scouting data that is used in the WS call
    const [matchData, setMatchData] = useState({});
 
    /**
@@ -97,7 +99,7 @@ const Scouting = ({ query }) => {
       toggleConfirmModal();
    };
 
-   /// Handle submit
+   /// Handle data submission
    const onSubmit = async () => {
       if (loading) return;
 
@@ -107,6 +109,7 @@ const Scouting = ({ query }) => {
       setLoading(false);
    };
 
+   /// Handle a go home request
    const onGoHome = () => redirect();
 
    /// Redirect the page

@@ -19,7 +19,7 @@ import plus from "bootstrap-icons/icons/plus-circle-fill.svg";
 /**
  * AddComp Component
  * -----------------
- * Allows comp creation
+ * Allows comp creation.
  */
 const AddComp = ({ onSubmit, clearMessages, loading, messages }) => {
    /**

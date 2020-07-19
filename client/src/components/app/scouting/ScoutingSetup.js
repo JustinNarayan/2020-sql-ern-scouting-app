@@ -1,6 +1,12 @@
 /// Modules
 import React from "react";
+import PropTypes from "prop-types";
 
+/**
+ * ScoutingSetup Component
+ * -----------------------
+ * Allow scouts to handle setup and autonomous movement scouting data
+ */
 const ScoutingSetup = ({
    setScoutName,
    setMatchNumber,
@@ -10,9 +16,13 @@ const ScoutingSetup = ({
    crossLine,
    toggleCrossLine,
 }) => {
+   /**
+    * Render component
+    */
    return (
       <div className={classes.sidebar}>
          <div className={classes.buttonRow}>
+            {/* ScoutName, MatchNumber, and TeamNumber info */}
             <button className={classes.info.button}>
                <div className={classes.info.longGroup}>
                   <label htmlFor='scoutName'>SCOUT NAME</label>
@@ -43,6 +53,8 @@ const ScoutingSetup = ({
                </div>
             </button>
          </div>
+
+         {/* Field orientation and Team color */}
          <div className={classes.buttonRow}>
             <button
                className={classes.flipRed}
@@ -56,6 +68,8 @@ const ScoutingSetup = ({
                BLUE
             </button>
          </div>
+
+         {/* Cross Line */}
          <button
             className={crossLine ? classes.on : classes.crossLine}
             onClick={toggleCrossLine}>
@@ -65,6 +79,7 @@ const ScoutingSetup = ({
    );
 };
 
+/// Inline class manager
 const classes = {
    sidebar: "sidebar",
    buttonRow: "buttonRow",
@@ -80,4 +95,16 @@ const classes = {
    crossLine: "crossLine",
 };
 
+/// Prop Types
+ScoutingSetup.propTypes = {
+   setScoutName: PropTypes.func, // Set scoutName field
+   setMatchNumber: PropTypes.func, // Set matchNumber field
+   setTeamNumber: PropTypes.func, // Set teamNumber field
+   setTeamColor: PropTypes.func, // Set teamColor for team number in field
+   toggleFieldFlipped: PropTypes.func, // Switch the orientation (colors) on field
+   crossLine: PropTypes.bool, // If the initiation line has been crossed
+   toggleCrossLine: PropTypes.func, // Toggle initiation line crossing
+};
+
+/// Export
 export default ScoutingSetup;

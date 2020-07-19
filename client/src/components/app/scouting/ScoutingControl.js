@@ -595,9 +595,15 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
          matchNumber,
          robotStation: teamColor === "red" ? "R1" : "B1",
          events: JSON.stringify(compileEvents()),
-         outerHeatmap: JSON.stringify(outerHeatmap),
-         innerHeatmap: JSON.stringify(innerHeatmap),
-         pickupHeatmap: JSON.stringify(pickupHeatmap),
+         outerHeatmap: JSON.stringify(
+            fieldFlipped ? outerHeatmap.reverse() : outerHeatmap // Normalize for averaging later
+         ),
+         innerHeatmap: JSON.stringify(
+            fieldFlipped ? innerHeatmap.reverse() : innerHeatmap // Normalize for averaging later
+         ),
+         pickupHeatmap: JSON.stringify(
+            fieldFlipped ? pickupHeatmap.reverse() : pickupHeatmap // Normalize for averaging later
+         ),
          crossLine,
          bottomAuto,
          outerAuto,

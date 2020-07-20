@@ -142,19 +142,16 @@ const Home = () => {
       setDeleteSuccessModal(!deleteSuccessModal);
    };
 
-   /// Redirect
-   const redirect = (link = "/") => (window.location.href = link);
-
    /**
     * Render component
     */
    return (
-      <div className={classes.container} style={styles.container}>
+      <div className={classes.container}>
          {/* Landing page text */}
          <h1 className={classes.title}>
             Welcome, {sessionStorage.getItem("username")}!
          </h1>
-         <p className={classes.subtitle} style={styles.subtitle}>
+         <p className={classes.subtitle}>
             If you need help, please visit <b>team7558.com/scouting</b> for
             tutorials and contact info for Alt-F4's Scouting Department! Thanks
             for using our app and have fun scouting!

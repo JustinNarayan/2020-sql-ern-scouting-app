@@ -48,6 +48,9 @@ const Comp = ({
          case "scout":
             window.location.href = `/scout?compID=${comp.ID}`;
             break;
+         case "pending":
+            window.location.href = `/pending?compID=${comp.ID}`;
+            break;
          default:
             alert("Error in navigation");
             break;
@@ -84,7 +87,9 @@ const Comp = ({
                Scout
             </td>
             <td className={classes.link}>Pit Scout</td>
-            <td className={classes.link}>Pending Data</td>
+            <td className={classes.link} onClick={() => navigate("pending")}>
+               Pending Data
+            </td>
             <td className={classes.link} onClick={toggleModal}>
                Actions
             </td>

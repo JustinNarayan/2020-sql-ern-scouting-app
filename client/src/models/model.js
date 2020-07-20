@@ -13,12 +13,13 @@ const {
    deleteComp,
    setComps,
 } = compModel;
-const { addPending } = pendingModel;
+const { pending, getPending, addPending, setPending } = pendingModel;
 const { addData } = dataModel;
 
 export default {
    // State
    comps,
+   pending,
 
    // Thunks
    login,
@@ -32,10 +33,12 @@ export default {
    editComp,
    deleteComp,
 
+   getPending,
    addPending,
 
    addData,
 
    // Actions
    setComps,
+   setPending,
 };

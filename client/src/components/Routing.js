@@ -6,6 +6,7 @@ import { Switch, Route } from "react-router-dom";
 import User from "./user/User";
 
 import Home from "./data/home/Home";
+import Pending from "./data/pending/Pending";
 
 import Scouting from "./app/scouting/Scouting";
 
@@ -38,6 +39,11 @@ const Routing = () => {
 
             {/* Data Routes */}
             <Route exact path='/home' render={() => <Home />} />
+            <Route
+               exact
+               path='/pending'
+               render={({ location: { search } }) => <Pending query={search} />}
+            />
 
             {/* App Routes */}
             <Route

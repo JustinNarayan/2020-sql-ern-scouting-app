@@ -88,7 +88,7 @@ const Comp = ({
             </td>
             <td className={classes.link}>Pit Scout</td>
             <td className={classes.link} onClick={() => navigate("pending")}>
-               Pending Data
+               Pending
             </td>
             <td className={classes.link} onClick={toggleModal}>
                Actions

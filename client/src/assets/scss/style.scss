@@ -9,20 +9,20 @@ body {
 }
 
 /*
-   Data Tables
+   Main Comp Tables and Data tables
 */
-.compTable {
+.compTable,
+.dataTable {
    text-align: center;
    $rounding: 6px;
 
+   $border-width: 1px;
+
    thead {
       tr {
-         border-bottom: 2px solid map-get($theme-colors, "back");
-
          th {
             font-weight: 500;
             font-size: 22px;
-            border-right: 2px solid map-get($theme-colors, "back");
             padding: 10px;
             color: map-get($theme-colors, "back");
 
@@ -62,8 +62,6 @@ body {
    }
    tbody {
       tr {
-         border-bottom: 2px solid map-get($theme-colors, "back");
-
          background-color: map-get($theme-colors, "comp-table-row-light");
          &:nth-child(even) {
             background-color: map-get($theme-colors, "comp-table-row-dark");
@@ -71,16 +69,16 @@ body {
 
          td {
             font-weight: 400;
-            font-size: 16px;
+            font-size: 18px;
             color: map-get($theme-colors, "table-text");
-            border-right: 2px solid map-get($theme-colors, "back");
-            padding: 16px 8px;
+            border-right: $border-width solid map-get($theme-colors, "back");
+            padding: 16px 4px;
             vertical-align: middle;
 
-            width: 11%;
+            width: 9%;
 
             &.compName {
-               width: 34%;
+               width: 46%;
             }
 
             &:last-child {
@@ -109,6 +107,83 @@ body {
    }
 }
 
+/*
+   Data Table specifics
+*/
+.dataTable {
+   thead {
+      tr {
+         th {
+            font-size: 18px;
+            padding: 8px;
+            vertical-align: middle;
+
+            .clock {
+               filter: invert(100%);
+               width: 20px;
+            }
+         }
+      }
+   }
+   tbody {
+      tr {
+         background-color: map-get($theme-colors, "data-table-row-light");
+         &:nth-child(even) {
+            background-color: map-get($theme-colors, "data-table-row-dark");
+         }
+
+         td {
+            padding: 8px 4px;
+         }
+      }
+   }
+
+   &.pending {
+      table-layout: fixed;
+
+      thead {
+         tr {
+            th {
+               border-right: 0;
+               width: 140px;
+
+               &.long {
+                  width: 300px;
+               }
+            }
+         }
+      }
+
+      tbody {
+         tr {
+            td {
+               border-right: 0;
+               .input {
+                  border: 0;
+                  width: 90%;
+                  margin-left: auto;
+                  margin-right: auto;
+                  background-color: white;
+                  color: map-get($theme-colors, "table-text");
+                  font-size: 18px;
+
+                  &[type="number"] {
+                     padding-right: 0.2em;
+                  }
+
+                  &.short {
+                     width: 60%;
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+/*
+   Modal Submit button specifics
+*/
 .modalSubmit {
    &:hover {
       font-weight: 600;

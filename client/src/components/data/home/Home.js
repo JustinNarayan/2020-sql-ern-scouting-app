@@ -149,13 +149,13 @@ const Home = () => {
       <div className={classes.container}>
          {/* Landing page text */}
          <h1 className={classes.title}>
-            Welcome, {sessionStorage.getItem("username")}!
+            Welcome, {localStorage.getItem("username")}!
          </h1>
-         <p className={classes.subtitle}>
+         <h5 className={classes.subtitle}>
             If you need help, please visit <b>team7558.com/scouting</b> for
             tutorials and contact info for Alt-F4's Scouting Department! Thanks
             for using our app and have fun scouting!
-         </p>
+         </h5>
 
          {/* Table of competitions */}
          <Table borderless className={classes.table}>
@@ -255,7 +255,7 @@ const Home = () => {
 const classes = {
    container: "p-0 mx-3",
    title: "mb-2 mt-2 text-table-text",
-   subtitle: "pl-1 mb-4 text-table-text",
+   subtitle: "pl-1 mb-4 font-weight-normal text-table-text",
    table: "compTable p-0 text-back",
    tableHead: "bg-comp-table-head",
    modalHeaderDelete: "bg-message-error text-back",

@@ -140,7 +140,7 @@ ScoutingField.propTypes = {
    fieldFlipped: PropTypes.bool, // If the field has been flipped (false: red on left, true: blue on left)
    active: PropTypes.number, // Which zone is currently clicked
    setActive: PropTypes.func, // Set a new active zone
-   teamNumber: PropTypes.number, // Team number to display in middle of field
+   teamNumber: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // Team number to display in middle of field
    teamColor: PropTypes.string, // Color for team number
 };
 

@@ -88,7 +88,7 @@ module.exports = (pool) => {
          timeDefending,
          defenseQuality,
          timeMal,
-         endgameScore,
+         endgame,
          comments,
          scoutName,
       } = req.body;
@@ -107,7 +107,7 @@ module.exports = (pool) => {
          /* */
 
          // First, send an UPDATE in case the match had been generated previously (Robot Station excluded)
-         sql = `UPDATE matchData SET DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, Bottom = ?, Outer = ?, Inner = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, EndgameScore = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+         sql = `UPDATE matchData SET DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, Bottom = ?, Outer = ?, Inner = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, Endgame = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
          errMessage = "Failed to attempt updating existing match data";
          const [updateResult] = await pool.execute(sql, [
             format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
@@ -128,7 +128,7 @@ module.exports = (pool) => {
             timeDefending,
             defenseQuality,
             timeMal,
-            endgameScore,
+            endgame,
             fix(comments),
             fix(scoutName),
             id, // Identify where to update
@@ -139,7 +139,7 @@ module.exports = (pool) => {
          // Next, if no data was updated (match data was not preloaded), INSERT new data
          errMessage = "Found no competition to update";
          if (!updateResult.affectedRows) {
-            sql = `INSERT INTO matchData (DateTime, Updated, CompetitionID, TeamNumber, MatchNumber, RobotStation, Events, OuterHeatmap, InnerHeatmap, PickupHeatmap, CrossLine, BottomAuto, OuterAuto, InnerAuto, Bottom, Outer, Inner, Pickups, TimeDefended, TimeDefending, DefenseQuality, TimeMal, EndgameScore, Comments, ScoutName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            sql = `INSERT INTO matchData (DateTime, Updated, CompetitionID, TeamNumber, MatchNumber, RobotStation, Events, OuterHeatmap, InnerHeatmap, PickupHeatmap, CrossLine, BottomAuto, OuterAuto, InnerAuto, Bottom, Outer, Inner, Pickups, TimeDefended, TimeDefending, DefenseQuality, TimeMal, Endgame, Comments, ScoutName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             errMessage = "Failed to post new match data";
             const [insertResult] = await pool.execute(sql, [
                format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
@@ -164,7 +164,7 @@ module.exports = (pool) => {
                timeDefending,
                defenseQuality,
                timeMal,
-               endgameScore,
+               endgame,
                fix(comments),
                fix(scoutName),
             ]);

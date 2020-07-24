@@ -76,7 +76,7 @@ ScoutingTimer.propTypes = {
    showTimer: PropTypes.bool, // Whether to show the timer or option buttons
    isRunning: PropTypes.number, // Whether the timer has begun running
    mustChange: PropTypes.bool, // Whether the user is on the auto screen during the teleop period
-   setupComplete: PropTypes.string, // (Treated as boolean) Whether the setup inputs have been filled out
+   setupComplete: PropTypes.oneOfType([PropTypes.string, PropTypes.number]), // (Treated as boolean) Whether the setup inputs have been filled out
    clickTimer: PropTypes.func, // Function to handle behaviour when clicking the timer
    compileForConfirm: PropTypes.func, // Function to compile data and prepareConfirmModal
 };

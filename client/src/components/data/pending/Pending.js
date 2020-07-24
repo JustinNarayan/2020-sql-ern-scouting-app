@@ -108,7 +108,7 @@ const Pending = ({ query }) => {
                            alt='Time Spent'
                         />
                         <br />
-                        Def'd
+                        Def'd (s)
                      </th>
                      <th>
                         <img
@@ -117,7 +117,7 @@ const Pending = ({ query }) => {
                            alt='Time Spent'
                         />
                         <br />
-                        Def'ing
+                        Def'ing (s)
                      </th>
                      <th>
                         Defense
@@ -131,7 +131,7 @@ const Pending = ({ query }) => {
                            alt='Time Spent'
                         />
                         <br />
-                        Mal
+                        Mal (s)
                      </th>
                      <th>Endgame</th>
                      <th className={classes.long}>Comments</th>

@@ -616,7 +616,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
          timeDefending: defendingTime,
          defenseQuality: defendingTime > 0 ? Math.max(1, defenseQuality) : 0,
          timeMal: malTime,
-         endgameScore: endgame === "Hanged" ? 2 : endgame === "Parked" ? 1 : 0,
+         endgame: endgame === "Hanged" ? 2 : endgame === "Parked" ? 1 : 0,
          score: 0,
          comments,
          scoutName,

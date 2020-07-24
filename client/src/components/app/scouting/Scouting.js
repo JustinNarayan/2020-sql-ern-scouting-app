@@ -182,7 +182,7 @@ const Scouting = ({ query }) => {
                   outline
                   size='md'
                   onClick={toggleConfirmModal}>
-                  No
+                  Back
                </Button>
             </ModalBody>
          </Modal>

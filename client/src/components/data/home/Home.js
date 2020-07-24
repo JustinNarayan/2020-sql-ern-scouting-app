@@ -153,8 +153,7 @@ const Home = () => {
          </h1>
          <h5 className={classes.subtitle}>
             If you need help, please visit <b>team7558.com/scouting</b> for
-            tutorials and contact info for Alt-F4's Scouting Department! Thanks
-            for using our app and have fun scouting!
+            tutorials and contact info for Alt-F4's Scouting Department!
          </h5>
 
          {/* Table of competitions */}

@@ -111,7 +111,9 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
     */
    /// Convert time (in seconds) to formatted string
    const convertTime = (val) =>
-      `${Math.floor(val / 60)}:${String(Math.ceil(val) % 60).padStart(2, "0")}`;
+      `${Math.floor(Math.ceil(val) / 60)}:${String(
+         Math.ceil(val) % 60
+      ).padStart(2, "0")}`;
 
    /**
     * Define Timer component methods

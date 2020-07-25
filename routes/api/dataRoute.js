@@ -65,7 +65,7 @@ module.exports = (pool) => {
     */
    router.post("/:id", verifyToken, async (req, res) => {
       // Analyze request
-      const { username, isAdmin } = req.auth.user;
+      const { username } = req.auth.user;
       const { id } = req.params;
       const {
          updated,
@@ -92,7 +92,7 @@ module.exports = (pool) => {
          comments,
          scoutName,
       } = req.body;
-      if (!hasPrivileges(isAdmin, res)) return;
+      // if (!hasPrivileges(isAdmin, res)) return;
 
       // Handle response and track error source locations
       let errMessage;
@@ -107,7 +107,7 @@ module.exports = (pool) => {
          /* */
 
          // First, send an UPDATE in case the match had been generated previously (Robot Station excluded)
-         sql = `UPDATE matchData SET DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, Bottom = ?, Outer = ?, Inner = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, Endgame = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+         sql = `UPDATE matchData SET DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, BottomAll = ?, OuterAll = ?, InnerAll = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, Endgame = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
          errMessage = "Failed to attempt updating existing match data";
          const [updateResult] = await pool.execute(sql, [
             format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
@@ -139,7 +139,7 @@ module.exports = (pool) => {
          // Next, if no data was updated (match data was not preloaded), INSERT new data
          errMessage = "Found no competition to update";
          if (!updateResult.affectedRows) {
-            sql = `INSERT INTO matchData (DateTime, Updated, CompetitionID, TeamNumber, MatchNumber, RobotStation, Events, OuterHeatmap, InnerHeatmap, PickupHeatmap, CrossLine, BottomAuto, OuterAuto, InnerAuto, Bottom, Outer, Inner, Pickups, TimeDefended, TimeDefending, DefenseQuality, TimeMal, Endgame, Comments, ScoutName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            sql = `INSERT INTO matchData (DateTime, Updated, CompetitionID, TeamNumber, MatchNumber, RobotStation, Events, OuterHeatmap, InnerHeatmap, PickupHeatmap, CrossLine, BottomAuto, OuterAuto, InnerAuto, BottomAll, OuterAll, InnerAll, Pickups, TimeDefended, TimeDefending, DefenseQuality, TimeMal, Endgame, Comments, ScoutName) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             errMessage = "Failed to post new match data";
             const [insertResult] = await pool.execute(sql, [
                format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
@@ -181,6 +181,116 @@ module.exports = (pool) => {
                type: "good",
             });
          }
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
+      }
+   });
+
+   /**
+    * Switch the competitionID of a piece of match data
+    * @params id (competition ID int)
+    * @auth Bearer <token> (token received from login)
+    * @auth isAdmin (token must contain affirmative isAdmin property)
+    */
+   router.patch("/:id", verifyToken, async (req, res) => {
+      // Analyze request
+      const { username, isAdmin } = req.auth.user;
+      const { id } = req.params;
+      const { teamNumber, matchNumber, newCompetitionID } = req.body;
+      if (!hasPrivileges(isAdmin, res)) return;
+
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         /* Check if this competition is valid for this user
+          */
+         let sql = `SELECT * FROM competitions WHERE ID = ? AND Username = ?`;
+         errMessage = "Failed to get competitions";
+         const [userComp] = await pool.execute(sql, [id, username]);
+         errMessage = "Invalid competition for this user";
+         if (!userComp.length) throw "";
+         /* */
+
+         // Check if new competition is valid for this user
+         sql = `SELECT * FROM competitions WHERE ID = ? AND Username = ?`;
+         errMessage = "Failed to get competitions";
+         const [newComp] = await pool.execute(sql, [
+            newCompetitionID,
+            username,
+         ]);
+         errMessage = "Invalid competition to switch to for this user";
+         if (!newComp.length) throw "";
+
+         // Update CompetitionID variable
+         sql = `UPDATE matchData SET CompetitionID = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+         errMessage = "Failed to attempt updating existing match data";
+         const [result] = await pool.execute(sql, [
+            newCompetitionID,
+            id,
+            teamNumber,
+            matchNumber,
+         ]);
+
+         // May have found no data
+         errMessage = "Found no match data to switch competitions for";
+         if (!result.affectedRows) throw "";
+
+         // Success!
+         res.send({
+            message: "Successfully switched competitions",
+            type: "good",
+         });
+      } catch (err) {
+         // Send error message
+         res.send({ message: errMessage, type: "bad", err });
+      }
+   });
+
+   /**
+    * Remove the updated status of a piece of match data
+    * @params id (competition ID int)
+    * @auth Bearer <token> (token received from login)
+    * @auth isAdmin (token must contain affirmative isAdmin property)
+    */
+   router.delete("/:id", verifyToken, async (req, res) => {
+      // Analyze request
+      const { username, isAdmin } = req.auth.user;
+      const { id } = req.params;
+      const { teamNumber, matchNumber } = req.body;
+      if (!hasPrivileges(isAdmin, res)) return;
+
+      // Handle response and track error source locations
+      let errMessage;
+      try {
+         /* Check if this competition is valid for this user
+          */
+         let sql = `SELECT * FROM competitions WHERE ID = ? AND Username = ?`;
+         errMessage = "Failed to get competitions";
+         const [userComp] = await pool.execute(sql, [id, username]);
+         errMessage = "Invalid competition for this user";
+         if (!userComp.length) throw "";
+         /* */
+
+         // Update Updated variable
+         sql = `UPDATE matchData SET Updated = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+         errMessage = "Failed to attempt clearing match data";
+         const [result] = await pool.execute(sql, [
+            0,
+            id,
+            teamNumber,
+            matchNumber,
+         ]);
+
+         // May have found no data
+         errMessage = "Found no match data to clear";
+         if (!result.affectedRows) throw "";
+
+         // Success!
+         res.send({
+            message: "Successfully cleared match data",
+            type: "good",
+         });
       } catch (err) {
          // Send error message
          res.send({ message: errMessage, type: "bad", err });

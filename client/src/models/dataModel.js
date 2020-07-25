@@ -8,7 +8,7 @@ export default {
    // Thunks
    addData: thunk(async (actions, data) => {
       // Handle WS Call
-      const res = await axios.post(url, data, authHeader);
+      const res = await axios.post(`${url}${data.id}`, data, authHeader);
       const out = res.data; // Message || Forbidden
 
       // Log error

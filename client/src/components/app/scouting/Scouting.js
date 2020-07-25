@@ -42,7 +42,7 @@ const Scouting = ({ query }) => {
     * Bring in easy-peasy thunks/actions
     */
    const getComp = useStoreActions((actions) => actions.getComp);
-   const addPending = useStoreActions((actions) => actions.addPending);
+   const addData = useStoreActions((actions) => actions.addData);
 
    /**
     * Handle life-cycle
@@ -82,8 +82,8 @@ const Scouting = ({ query }) => {
          setConfirmModalBody(
             <Fragment>
                Are you <b>sure</b> you want to <b>submit</b> all of your data{" "}
-               <b>right now?</b> Submitted data is sent to the Pending screen
-               for review by your team admin.
+               <b>right now?</b> Some of your data will be editable by your
+               admin after submission.
             </Fragment>
          );
       } else {
@@ -91,8 +91,7 @@ const Scouting = ({ query }) => {
          setConfirmModalBody(
             <Fragment>
                Are you <b>sure</b> you want to <b>go home</b>? If you haven't
-               submitted, all this data wille be lost. This will be sent to the
-               pending match data screen for review by your team admin.
+               submitted, all this data will be lost.
             </Fragment>
          );
       }
@@ -104,7 +103,7 @@ const Scouting = ({ query }) => {
       if (loading) return;
 
       setLoading(true);
-      const res = await addPending({ id: comp.ID, ...matchData });
+      const res = await addData({ id: comp.ID, ...matchData });
       setMessages([{ text: res.message, type: res.type }]);
       setLoading(false);
    };

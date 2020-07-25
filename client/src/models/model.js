@@ -13,7 +13,14 @@ const {
    deleteComp,
    setComps,
 } = compModel;
-const { pending, getPending, addPending, setPending } = pendingModel;
+const {
+   pending,
+   getPending,
+   addPending,
+   switchPendingCompetition,
+   deletePending,
+   setPending,
+} = pendingModel;
 const { addData } = dataModel;
 
 export default {
@@ -35,6 +42,8 @@ export default {
 
    getPending,
    addPending,
+   switchPendingCompetition,
+   deletePending,
 
    addData,
 

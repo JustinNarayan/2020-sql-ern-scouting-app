@@ -37,6 +37,43 @@ export default {
       return out;
    }),
 
+   switchPendingCompetition: thunk(async (actions, data) => {
+      // Handle WS Call
+      const res = await axios.patch(
+         `${url}${data.compID}/${data.dataID}`,
+         data,
+         authHeader
+      );
+      const out = res.data; // Message || Forbidden
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
+
+      // Call to getComps
+      authCommand(out, () => actions.getPending(data.compID));
+
+      // Return api response to display to user
+      return out;
+   }),
+
+   deletePending: thunk(async (actions, data) => {
+      // Handle WS Call
+      const res = await axios.delete(
+         `${url}${data.compID}/${data.dataID}`,
+         authHeader
+      );
+      const out = res.data; // Message || Forbidden
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
+
+      // Call to getComps
+      authCommand(out, () => actions.getPending(data.compID));
+
+      // Return api response to display to user
+      return out;
+   }),
+
    // Actions
    setPending: action((state, pending) => {
       // Only set to value if correct type

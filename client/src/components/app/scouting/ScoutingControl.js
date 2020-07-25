@@ -189,7 +189,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
 
          /// Store timing interval
          const interval = setInterval(() => {
-            setState((value) => +(value + timeIncrement).toFixed(2));
+            setState((value) => value + timeIncrement);
          }, timeTick);
          setStateInterval(interval); /// useState can't directly hold setInterval value
       } else {

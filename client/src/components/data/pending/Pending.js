@@ -1,7 +1,14 @@
 /// Modules
 import React, { useEffect, useState } from "react";
 import { useStoreActions, useStoreState } from "easy-peasy";
-import { Table } from "reactstrap";
+import {
+   Table,
+   Modal,
+   ModalHeader,
+   ModalBody,
+   Alert,
+   Button,
+} from "reactstrap";
 import QueryString from "query-string";
 
 /// Components
@@ -15,8 +22,13 @@ const Pending = ({ query }) => {
    /// State
    const compID = QueryString.parse(query).compID;
    const [loading, setLoading] = useState(false);
+
+   const [confirmModalHeader, setConfirmModalHeader] = useState("");
+   const [confirmMessages, setConfirmMessages] = useState([]);
+   const [actionMessages, setActionMessages] = useState([]);
    const [redirectModal, setRedirectModal] = useState(false);
    const [redirectMessages, setRedirectMessages] = useState([]);
+
    const [comp, setComp] = useState({});
    const pending = useStoreState((state) => state.pending);
    const comps = useStoreState((state) => state.comps);
@@ -25,6 +37,10 @@ const Pending = ({ query }) => {
    const getComp = useStoreActions((actions) => actions.getComp);
    const getPending = useStoreActions((actions) => actions.getPending);
    const getComps = useStoreActions((actions) => actions.getComps);
+   const switchPendingCompetition = useStoreActions(
+      (actions) => actions.switchPendingCompetition
+   );
+   const deletePending = useStoreActions((actions) => actions.deletePending);
 
    /// Life cycle
    useEffect(() => {
@@ -62,6 +78,44 @@ const Pending = ({ query }) => {
          setRedirectModal(true);
       }
    };
+
+   const onSwitchPendingCompetition = async (newCompetitionName, dataID) => {
+      if (loading) return;
+
+      const [newCompetitionID] = comps
+         .filter((comp) => comp.CompetitionName === newCompetitionName)
+         .map((comp) => comp.ID);
+
+      setLoading(true);
+      const res = await switchPendingCompetition({
+         compID,
+         dataID,
+         newCompetitionID,
+      });
+      setConfirmModalHeader("Switch Competition");
+      if (res.type === "bad")
+         setActionMessages([{ text: res.message, type: res.type }]);
+      else setConfirmMessages([{ text: res.message, type: res.type }]);
+      setLoading(false);
+   };
+
+   const onDeletePending = async (dataID) => {
+      if (loading) return;
+
+      setLoading(true);
+      const res = await deletePending({
+         compID,
+         dataID,
+      });
+      setConfirmModalHeader("Delete Competition");
+      if (res.type === "bad")
+         setActionMessages([{ text: res.message, type: res.type }]);
+      else setConfirmMessages([{ text: res.message, type: res.type }]);
+      setLoading(false);
+   };
+
+   /// Toggle showing the confirm modal
+   const clearConfirmModal = () => setConfirmMessages([]);
 
    /// Toggle showing the redirect modal
    const toggleRedirectModal = () => setRedirectModal(!redirectModal);
@@ -148,14 +202,62 @@ const Pending = ({ query }) => {
                   {pending.map((data) => (
                      <PendingRow
                         key={data.ID}
+                        loading={loading}
                         comps={comps}
-                        comp={comp}
+                        thisComp={comp}
                         data={data}
+                        onSwitch={onSwitchPendingCompetition}
+                        onDelete={onDeletePending}
+                        messages={actionMessages}
+                        clearMessages={() => setActionMessages([])}
+                        overwriteModal={confirmMessages.length ? true : false}
                      />
                   ))}
                </tbody>
             </Table>
          </div>
+
+         {/* Show confirmation messages for actions taken */}
+         <Modal isOpen={confirmMessages.length ? true : false} size='md'>
+            <ModalHeader
+               className={classes.modalHeader}
+               style={styles.modalHeader}>
+               {confirmModalHeader}
+               {/* Custom close button */}
+               <Button
+                  color='transparent'
+                  className={classes.modalClose}
+                  style={styles.modalClose}
+                  onClick={clearConfirmModal}>
+                  &times;
+               </Button>
+            </ModalHeader>
+            <ModalBody>
+               {confirmMessages.map((message) => (
+                  <Alert
+                     key={message.text}
+                     color={
+                        message.type === "good"
+                           ? "message-good"
+                           : "message-error"
+                     }
+                     className={classes.alert}>
+                     {message.text}
+                  </Alert>
+               ))}
+               {/* Submit button */}
+               <Button
+                  color='comp-table-head'
+                  className={classes.modalSubmit}
+                  style={styles.button}
+                  block
+                  outline
+                  size='md'
+                  onClick={clearConfirmModal}>
+                  OK
+               </Button>
+            </ModalBody>
+         </Modal>
 
          <RedirectModal modal={redirectModal} messages={redirectMessages} />
       </div>
@@ -171,12 +273,39 @@ const classes = {
    tableHead: "bg-data-table-head",
    clock: "clock",
    long: "long",
+   modalHeader: "bg-comp-table-head text-back",
+   modalClose: "text-back",
+   modalBody: "bg-back",
+   alert: "mb-4 py-2 text-center",
+   modalSubmit: "modalSubmit",
+   modalOption: "modalSubmit mt-3",
+   spinner: "bg-comp-table-head",
 };
 
 /// Inline style manager
 const styles = {
    overflow: {
       overflowX: "scroll",
+   },
+   modalHeader: {
+      paddingLeft: "22px",
+   },
+   modalClose: {
+      padding: "0px",
+      float: "right",
+      fontSize: "26px",
+      border: "0",
+      right: "20px",
+      top: "10px",
+      position: "absolute",
+      height: "40px",
+   },
+   button: {
+      fontWeight: "400",
+   },
+   spinner: {
+      width: "1.25rem",
+      height: "1.25rem",
    },
 };
 

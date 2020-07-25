@@ -1,9 +1,33 @@
 /// Modules
 import React, { useState, Fragment } from "react";
-import { Form, Input, Button } from "reactstrap";
+import {
+   Form,
+   Input,
+   Button,
+   Modal,
+   ModalHeader,
+   ModalBody,
+   Alert,
+   Spinner,
+} from "reactstrap";
 
-const PendingRow = ({ comps, comp, data }) => {
+const PendingRow = ({
+   loading,
+   comps,
+   thisComp,
+   data,
+   onSwitch,
+   onDelete,
+   messages,
+   clearMessages,
+   overwriteModal,
+}) => {
    // State
+   const [actionModal, setActionModal] = useState(false);
+   const [actionModalHeader, setActionModalHeader] = useState("");
+   const [actionModalBody, setActionModalBody] = useState("");
+   const [switchName, setSwitchName] = useState(thisComp.CompetitionName);
+
    const [teamNumber, setTeamNumber] = useState(data.TeamNumber);
    const [matchNumber, setMatchNumber] = useState(data.MatchNumber);
    const [robotStation, setRobotStation] = useState(data.RobotStation);
@@ -27,11 +51,62 @@ const PendingRow = ({ comps, comp, data }) => {
    const [comments, setComments] = useState(data.Comments);
    const [scoutName, setScoutName] = useState(data.ScoutName);
 
+   /// Methods
+   const handleSwitch = (newName) => {
+      setSwitchName(newName);
+      setActionModalHeader("Switch Competition");
+      setActionModalBody(
+         "Are you sure you want to switch the Competition of this Pending Match Data? It will be moved to the Pending screen of the corresponding Competition."
+      );
+      toggleActionModal();
+   };
+
+   const handleDelete = () => {
+      setActionModalHeader("Delete Pending Match Data");
+      setActionModalBody(
+         "Are you sure you want to delete this Pending Match Data? It cannot be retrieved and will be gone forever."
+      );
+      toggleActionModal();
+   };
+
+   const handlePost = () => {
+      setActionModalHeader("Post Pending Match Data");
+      setActionModalBody(
+         "Are you sure you want to post this Pending Match Data? It cannot be edited or deleted from this point forward."
+      );
+      toggleActionModal();
+
+      const matchDataObject = {
+         updated: 1,
+      };
+   };
+
+   const onActionModalClick = () => {
+      switch (actionModalHeader) {
+         case "Switch Competition":
+            onSwitch(switchName, data.ID);
+            break;
+         case "Delete Pending Match Data":
+            onDelete(data.ID);
+            break;
+      }
+   };
+
+   /// Toggle showing the switchModal
+   const toggleActionModal = () => {
+      setActionModal(!actionModal);
+      clearMessages();
+   };
+
    return (
       <Fragment>
          <Form tag='tr'>
             <td>
-               <Input type='select' className={classes.input}>
+               <Input
+                  type='select'
+                  className={classes.input}
+                  value={thisComp.CompetitionName}
+                  onChange={(e) => handleSwitch(e.target.value)}>
                   {comps.map((comp) => (
                      <option key={comp.ID}>{comp.CompetitionName}</option>
                   ))}
@@ -199,10 +274,73 @@ const PendingRow = ({ comps, comp, data }) => {
                />
             </td>
             <td>
-               <Button className={classes.post}>POST</Button>
-               <Button className={classes.erase}>ERASE</Button>
+               <Button className={classes.post} onClick={() => handlePost()}>
+                  POST
+               </Button>
+               <Button className={classes.erase} onClick={() => handleDelete()}>
+                  ERASE
+               </Button>
             </td>
          </Form>
+
+         <Modal isOpen={actionModal && !overwriteModal} size='md'>
+            <ModalHeader
+               className={classes.modalHeader}
+               style={styles.modalHeader}>
+               {actionModalHeader}
+               {/* Custom close button */}
+               <Button
+                  color='transparent'
+                  className={classes.modalClose}
+                  style={styles.modalClose}
+                  onClick={toggleActionModal}>
+                  &times;
+               </Button>
+            </ModalHeader>
+            <ModalBody>
+               {messages.map((message) => (
+                  <Alert
+                     key={message.text}
+                     color={
+                        message.type === "good"
+                           ? "message-good"
+                           : "message-error"
+                     }
+                     className={classes.alert}>
+                     {message.text}
+                  </Alert>
+               ))}
+
+               {actionModalBody}
+               <br />
+               <Button
+                  color='comp-table-head'
+                  className={classes.modalOption}
+                  style={styles.modalOption.left}
+                  outline
+                  size='md'
+                  onClick={() => onActionModalClick()}>
+                  {loading ? (
+                     <Spinner
+                        className={classes.spinner}
+                        style={styles.spinner}
+                        color='back'
+                     />
+                  ) : (
+                     "Yes"
+                  )}
+               </Button>
+               <Button
+                  color='message-error'
+                  className={classes.modalOption}
+                  style={styles.modalOption.right}
+                  outline
+                  size='md'
+                  onClick={toggleActionModal}>
+                  Back
+               </Button>
+            </ModalBody>
+         </Modal>
       </Fragment>
    );
 };
@@ -216,6 +354,46 @@ const classes = {
    blue: "bg-light-blue",
    post: "bg-message-good",
    erase: "bg-message-error",
+   modalHeader: "bg-comp-table-head text-back",
+   modalClose: "text-back",
+   modalBody: "bg-back",
+   alert: "mb-4 py-2 text-center",
+   modalSubmit: "modalSubmit",
+   modalOption: "modalSubmit mt-3",
+   spinner: "bg-comp-table-head",
+};
+
+const styles = {
+   modalHeader: {
+      paddingLeft: "22px",
+   },
+   modalClose: {
+      padding: "0px",
+      float: "right",
+      fontSize: "26px",
+      border: "0",
+      right: "20px",
+      top: "10px",
+      position: "absolute",
+      height: "40px",
+   },
+   button: {
+      fontWeight: "400",
+   },
+   modalOption: {
+      left: {
+         width: "48%",
+         marginRight: "2%",
+      },
+      right: {
+         width: "48%",
+         marginLeft: "2%",
+      },
+   },
+   spinner: {
+      width: "1.25rem",
+      height: "1.25rem",
+   },
 };
 
 export default PendingRow;

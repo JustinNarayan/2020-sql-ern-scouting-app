@@ -75,10 +75,6 @@ const PendingRow = ({
          "Are you sure you want to post this Pending Match Data? It cannot be edited or deleted from this point forward."
       );
       toggleActionModal();
-
-      const matchDataObject = {
-         updated: 1,
-      };
    };
 
    const onActionModalClick = () => {

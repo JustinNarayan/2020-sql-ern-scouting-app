@@ -8,6 +8,7 @@ const url = "/api/comps/";
 export default {
    // State
    comps: [],
+   comp: {},
 
    // Thunks
    getComps: thunk(async (actions) => {
@@ -32,6 +33,9 @@ export default {
 
       // Log error
       if (out.err) console.log({ message: out.message, error: out.err });
+
+      // Handle state control
+      authCommand(out, () => actions.setComp(out.comp));
 
       // Send response
       return out;
@@ -94,5 +98,10 @@ export default {
          // Issue with database
          alert("Error: see console for details");
       }
+   }),
+
+   setComp: action((state, comp) => {
+      // Only set to value if correct type -- otherwise, the response was bad
+      if (typeof comp === "object" && comp !== null) state.comp = comp;
    }),
 };

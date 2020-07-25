@@ -6,12 +6,14 @@ import dataModel from "./dataModel";
 const { login, register, verify, appearAdmin } = userModel;
 const {
    comps,
+   comp,
    getComps,
    getComp,
    addComp,
    editComp,
    deleteComp,
    setComps,
+   setComp,
 } = compModel;
 const {
    pending,
@@ -21,12 +23,14 @@ const {
    deletePending,
    setPending,
 } = pendingModel;
-const { addData } = dataModel;
+const { data, getData, addData, setData } = dataModel;
 
 export default {
    // State
    comps,
+   comp,
    pending,
+   data,
 
    // Thunks
    login,
@@ -45,9 +49,12 @@ export default {
    switchPendingCompetition,
    deletePending,
 
+   getData,
    addData,
 
    // Actions
    setComps,
+   setComp,
    setPending,
+   setData,
 };

@@ -1,6 +1,6 @@
 /// Modules
 import React, { useEffect, useState, Fragment } from "react";
-import { useStoreActions } from "easy-peasy";
+import { useStoreState, useStoreActions } from "easy-peasy";
 import {
    Modal,
    ModalHeader,
@@ -33,7 +33,7 @@ const Scouting = ({ query }) => {
    const [confirmModal, setConfirmModal] = useState(false);
    const [confirmModalHeader, setConfirmModalHeader] = useState("");
    const [confirmModalBody, setConfirmModalBody] = useState("");
-   const [comp, setComp] = useState({});
+   const comp = useStoreState((state) => state.comp);
 
    /// This object will hold all scouting data that is used in the WS call
    const [matchData, setMatchData] = useState({});
@@ -63,7 +63,6 @@ const Scouting = ({ query }) => {
          setMessages([{ text: res.message, type: res.type }]);
          toggleRedirectModal();
       }
-      setComp(res.comp);
    };
 
    /// Toggle showing the redirect modal

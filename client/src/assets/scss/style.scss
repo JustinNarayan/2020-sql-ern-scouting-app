@@ -75,8 +75,6 @@ body {
             padding: 16px 4px;
             vertical-align: middle;
 
-            width: 9%;
-
             &.compName {
                width: 46%;
             }
@@ -108,15 +106,35 @@ body {
 }
 
 /*
+   Comp Table specifics
+*/
+
+.compTable {
+   tbody {
+      tr {
+         td {
+            width: 9%;
+         }
+      }
+   }
+}
+
+/*
    Data Table specifics
 */
 .dataTable {
+   table-layout: fixed;
    thead {
       tr {
          th {
-            font-size: 18px;
-            padding: 8px;
+            font-size: 15px;
+            padding: 8px 0;
             vertical-align: middle;
+            width: 4%;
+
+            &.long {
+               width: 12%;
+            }
 
             .clock {
                filter: invert(100%);
@@ -127,13 +145,49 @@ body {
    }
    tbody {
       tr {
-         background-color: map-get($theme-colors, "data-table-row-light");
-         &:nth-child(even) {
-            background-color: map-get($theme-colors, "data-table-row-dark");
-         }
+         background-color: map-get($theme-colors, "back");
 
          td {
             padding: 8px 4px;
+            font-size: 14px;
+            font-weight: 500;
+
+            .icons {
+               width: 32px;
+            }
+         }
+
+         &.updated {
+            background-color: map-get($theme-colors, "data-table-row-light");
+            &:nth-child(even) {
+               background-color: map-get($theme-colors, "data-table-row-dark");
+            }
+
+            .def {
+               &1,
+               &2,
+               &3,
+               &4 {
+                  color: white;
+               }
+               &1 {
+                  background-color: map-get($theme-colors, "def1");
+               }
+               &2 {
+                  background-color: map-get($theme-colors, "def2");
+               }
+               &3 {
+                  background-color: map-get($theme-colors, "def3");
+               }
+               &4 {
+                  background-color: map-get($theme-colors, "def4");
+               }
+            }
+         }
+
+         // Heatmap Modal
+         .heatmapButtons {
+            background-color: yellow;
          }
       }
    }

@@ -197,7 +197,6 @@ module.exports = (pool) => {
     */
    router.patch("/:id", verifyToken, async (req, res) => {
       // Analyze request
-      console.log(req.body);
       const { username, isAdmin } = req.auth.user;
       const { id } = req.params;
       const { teamNumber, matchNumber, newCompetitionID } = req.body;

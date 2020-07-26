@@ -13,9 +13,6 @@ try {
 const uuid = require("uuid");
 const verifyToken = require("./verifyToken");
 
-// Create small utility functions
-const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
-
 // Set up mail client
 const nodemailer = require("nodemailer");
 const smtpTransport = require("nodemailer-smtp-transport");
@@ -235,7 +232,7 @@ module.exports = (pool) => {
          // Find user in database
          let sql = `SELECT Username, AdminPassword, TeamNumber, Verified from users WHERE Username = ? AND VerifyID = ?`;
          errMessage = "Failed to contact database";
-         const [result] = await pool.execute(sql, [username, fix(id)]);
+         const [result] = await pool.execute(sql, [username, id]);
 
          // User may not exist
          errMessage = "Invalid username and/or verification link";

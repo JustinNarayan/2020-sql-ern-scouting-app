@@ -5,7 +5,6 @@ const router = express.Router();
 const verifyToken = require("./verifyToken");
 
 // Create small utility functions
-const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
 const hasPrivileges = (isAdmin, res) => {
    if (!isAdmin) {
       res.send({
@@ -97,10 +96,7 @@ module.exports = (pool) => {
          // Check if this name is taken
          let sql = `SELECT * FROM competitions WHERE Username = ? AND CompetitionName = ?`;
          errMessage = "Failed to get competitions";
-         const [result] = await pool.execute(sql, [
-            username,
-            fix(competitionName),
-         ]);
+         const [result] = await pool.execute(sql, [username, competitionName]);
 
          // Name may be taken
          errMessage = "That competition name is taken";
@@ -109,7 +105,7 @@ module.exports = (pool) => {
          // Insert Comp
          sql = `INSERT INTO competitions (Username, CompetitionName) VALUES (?, ?)`;
          errMessage = "Failed to create competition";
-         await pool.execute(sql, [username, fix(competitionName)]);
+         await pool.execute(sql, [username, competitionName]);
 
          // Success!
          res.status(201).send({
@@ -143,7 +139,7 @@ module.exports = (pool) => {
          errMessage = "Failed to get competitions";
          const [existsResult] = await pool.execute(sql, [
             username,
-            fix(competitionName),
+            competitionName,
          ]);
 
          // Name may be taken
@@ -154,8 +150,8 @@ module.exports = (pool) => {
          sql = `UPDATE competitions SET CompetitionName = ? WHERE ID = ? AND Username = ?`;
          errMessage = "Failed to update competition";
          const [updateResult] = await pool.execute(sql, [
-            fix(competitionName),
-            fix(id),
+            competitionName,
+            id,
             username,
          ]);
 
@@ -192,7 +188,7 @@ module.exports = (pool) => {
          // Delete data
          let sql = `DELETE FROM competitions WHERE ID = ? AND Username = ?`;
          errMessage = "Delete aborted; failed to delete competition";
-         const [result] = await pool.execute(sql, [fix(id), username]);
+         const [result] = await pool.execute(sql, [id, username]);
 
          // May have found no data
          errMessage = "Delete aborted; found no competition to delete";

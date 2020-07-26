@@ -6,7 +6,6 @@ const { format } = require("fecha");
 const verifyToken = require("./verifyToken");
 
 // Create small utility functions
-const fix = (str) => str.replace(/['",`\\;]/g, "\\$&");
 const hasPrivileges = (isAdmin, res) => {
    if (!isAdmin) {
       res.send({
@@ -109,7 +108,7 @@ module.exports = (pool) => {
          // First, send an UPDATE in case the match had been generated previously (Robot Station excluded)
          sql = `UPDATE matchData SET DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, BottomAll = ?, OuterAll = ?, InnerAll = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, Endgame = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
          errMessage = "Failed to attempt updating existing match data";
-         const [updateResult, x] = await pool.execute(sql, [
+         const [updateResult] = await pool.execute(sql, [
             format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
             updated,
             events,
@@ -135,8 +134,6 @@ module.exports = (pool) => {
             teamNumber, // Identify where to update
             matchNumber, // Identify where to update
          ]);
-
-         console.log(x);
 
          // Next, if no data was updated (match data was not preloaded), INSERT new data
          errMessage = "Found no competition to update";

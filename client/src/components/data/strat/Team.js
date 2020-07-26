@@ -4,8 +4,8 @@ import { useStoreState, useStoreActions } from "easy-peasy";
 import QueryString from "query-string";
 
 /// Components
-import DataTable from "./DataTable";
-import RedirectModal from "../utils/RedirectModal";
+import DataTable from "../../utils/DataTable";
+import RedirectModal from "../../utils/RedirectModal";
 
 const Team = ({ query }) => {
    // State

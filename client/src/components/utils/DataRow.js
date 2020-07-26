@@ -7,6 +7,7 @@ import HeatmapModal from "./HeatmapModal";
 /// Assets
 import playback from "bootstrap-icons/icons/play-fill.svg";
 import heatmap from "bootstrap-icons/icons/bullseye.svg";
+import actions from "bootstrap-icons/icons/clipboard-data.svg";
 
 const DataRow = ({ row, exclude }) => {
    const [heatmapModal, setHeatmapModal] = useState(false);
@@ -56,7 +57,11 @@ const DataRow = ({ row, exclude }) => {
             <td>{+row.Endgame.toFixed(2)}</td>
             {!exclude.comments && <td>{row.Comments}</td>}
             {!exclude.scoutName && <td>{row.ScoutName}</td>}
-            {!exclude.actions && <td>Actions</td>}
+            {!exclude.actions && (
+               <td>
+                  <img className={classes.icons} src={actions} alt='Actions' />
+               </td>
+            )}
          </tr>
 
          <HeatmapModal

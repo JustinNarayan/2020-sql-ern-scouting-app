@@ -7,7 +7,7 @@ import User from "./user/User";
 
 import Home from "./data/home/Home";
 import Pending from "./data/pending/Pending";
-import Team from "./data/Team";
+import Team from "./data/strat/Team";
 
 import Scouting from "./app/scouting/Scouting";
 

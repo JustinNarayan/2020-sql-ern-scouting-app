@@ -134,7 +134,7 @@ body {
    thead {
       tr {
          th {
-            font-size: 15px;
+            font-size: 14px;
             padding: 8px 0;
             vertical-align: middle;
             width: 4%;
@@ -194,7 +194,7 @@ body {
       }
    }
 
-   &.pending {
+   &.update {
       table-layout: fixed;
 
       thead {
@@ -212,6 +212,8 @@ body {
 
       tbody {
          tr {
+            background-color: map-get($theme-colors, "data-table-row-light");
+
             td {
                border-right: 0;
 

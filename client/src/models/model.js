@@ -23,7 +23,7 @@ const {
    deletePending,
    setPending,
 } = pendingModel;
-const { data, getData, addData, switchDataCompetition, setData } = dataModel;
+const { data, getData, addData, patchData, setData } = dataModel;
 
 export default {
    // State
@@ -51,7 +51,7 @@ export default {
 
    getData,
    addData,
-   switchDataCompetition,
+   patchData,
 
    // Actions
    setComps,

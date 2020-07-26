@@ -12,6 +12,9 @@ import {
    Spinner,
 } from "reactstrap";
 
+/// Components
+import UpdateModal from "./UpdateModal";
+
 const ActionsModal = ({
    modal,
    toggleModal,
@@ -24,12 +27,12 @@ const ActionsModal = ({
    const [switchCompName, setSwitchCompName] = useState(
       comps.filter((comp) => comp.ID === row.CompetitionID)[0].CompetitionName
    );
+   const [updateModal, setUpdateModal] = useState(false);
+
+   const toggleUpdateModal = () => setUpdateModal(!updateModal);
 
    return (
-      <Modal
-         isOpen={modal} // Closes when the deleteSuccessModal is up
-         toggle={toggleModal}
-         size='md'>
+      <Modal isOpen={modal} toggle={toggleModal} size='md'>
          <ModalHeader
             className={classes.modalHeader}
             style={styles.modalHeader}>
@@ -54,7 +57,6 @@ const ActionsModal = ({
                   {message.text}
                </Alert>
             ))}
-
             {/* Switch form */}
             <Form
                onSubmit={(e) =>
@@ -77,7 +79,6 @@ const ActionsModal = ({
                      ))}
                   </Input>
                </FormGroup>
-               {/* Submit button to Open Confirm Modal */}
                <Button
                   color='data-table-head'
                   className={classes.modalSubmit}
@@ -87,12 +88,68 @@ const ActionsModal = ({
                   size='md'>
                   {loading ? (
                      <Spinner
-                        className={classes.spinner}
+                        className={classes.spinnerSwitch}
                         style={styles.spinner}
                         color='back'
                      />
                   ) : (
                      "Switch Competition"
+                  )}
+               </Button>
+            </Form>
+         </ModalBody>
+         <hr />
+         <ModalBody>
+            <Button
+               color='comp-table-head'
+               className={classes.modalSubmit}
+               style={styles.button}
+               block
+               outline
+               size='md'
+               onClick={toggleUpdateModal}>
+               Update Data
+            </Button>
+
+            <UpdateModal
+               modal={updateModal}
+               toggleModal={toggleUpdateModal}
+               row={row}
+               loading={loading}
+               onSubmit={onSubmit}
+            />
+         </ModalBody>
+         <hr />
+         <ModalBody>
+            <Form
+               onSubmit={(e) =>
+                  onSubmit("ClearReinstate", e, {
+                     matchNumber: row.MatchNumber,
+                     teamNumber: row.TeamNumber,
+                     updated: !row.Updated,
+                  })
+               }>
+               <Button
+                  color={row.Updated ? "message-error" : "message-good"}
+                  className={classes.modalSubmit}
+                  style={styles.button}
+                  block
+                  outline
+                  size='md'>
+                  {loading ? (
+                     <Spinner
+                        className={
+                           row.Updated
+                              ? classes.spinnerClear
+                              : classes.spinnerReinstate
+                        }
+                        style={styles.spinner}
+                        color='back'
+                     />
+                  ) : row.Updated ? (
+                     "Clear Match Data"
+                  ) : (
+                     "Reinstate Match Data"
                   )}
                </Button>
             </Form>
@@ -112,7 +169,9 @@ const classes = {
    input: "m-0 bg-back text-table-text",
    hr: "border-data-table-head p-0 w-100 mx-0",
    modalSubmit: "modalSubmit",
-   spinner: "bg-data-table-head",
+   spinnerSwitch: "bg-data-table-head",
+   spinnerClear: "bg-message-error",
+   spinnerReinstate: "bg-message-good",
 };
 
 /// Inline style manager

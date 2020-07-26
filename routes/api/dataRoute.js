@@ -187,7 +187,7 @@ module.exports = (pool) => {
    });
 
    /**
-    * Switch the competitionID of a piece of match data
+    * Switch the competitionID of a piece of match data or changed its updated status
     * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     * @auth isAdmin (token must contain affirmative isAdmin property)
@@ -196,7 +196,7 @@ module.exports = (pool) => {
       // Analyze request
       const { username, isAdmin } = req.auth.user;
       const { id } = req.params;
-      const { teamNumber, matchNumber, newCompetitionID } = req.body;
+      const { teamNumber, matchNumber, newCompetitionID, updated } = req.body;
       if (!hasPrivileges(isAdmin, res)) return;
 
       // Handle response and track error source locations
@@ -211,35 +211,62 @@ module.exports = (pool) => {
          if (!userComp.length) throw "";
          /* */
 
-         // Check if new competition is valid for this user
-         sql = `SELECT * FROM competitions WHERE ID = ? AND Username = ?`;
-         errMessage = "Failed to get competitions";
-         const [newComp] = await pool.execute(sql, [
-            newCompetitionID,
-            username,
-         ]);
-         errMessage = "Invalid competition to switch to for this user";
-         if (!newComp.length) throw "";
+         /// Check the type of patch requested
+         if (newCompetitionID) {
+            // Check if new competition is valid for this user
+            sql = `SELECT * FROM competitions WHERE ID = ? AND Username = ?`;
+            errMessage = "Failed to get competitions";
+            const [newComp] = await pool.execute(sql, [
+               newCompetitionID,
+               username,
+            ]);
+            errMessage = "Invalid competition to switch to for this user";
+            if (!newComp.length) throw "";
 
-         // Update CompetitionID variable
-         sql = `UPDATE matchData SET CompetitionID = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
-         errMessage = "Failed to attempt updating existing match data";
-         const [result] = await pool.execute(sql, [
-            newCompetitionID,
-            id,
-            teamNumber,
-            matchNumber,
-         ]);
+            // Update CompetitionID variable
+            sql = `UPDATE matchData SET CompetitionID = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+            errMessage = "Failed to attempt updating existing match data";
+            const [result] = await pool.execute(sql, [
+               newCompetitionID,
+               id,
+               teamNumber,
+               matchNumber,
+            ]);
 
-         // May have found no data
-         errMessage = "Found no match data to switch competitions for";
-         if (!result.affectedRows) throw "";
+            // May have found no data
+            errMessage = "Found no match data to switch competitions for";
+            if (!result.affectedRows) throw "";
 
-         // Success!
-         res.send({
-            message: "Successfully switched competitions",
-            type: "good",
-         });
+            // Success!
+            res.send({
+               message: "Successfully switched competitions",
+               type: "good",
+            });
+         } else {
+            // Update Updated status
+            sql = `UPDATE matchData SET Updated = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+            errMessage = "Failed to attempt updating existing match data";
+            const [result] = await pool.execute(sql, [
+               updated,
+               id,
+               teamNumber,
+               matchNumber,
+            ]);
+
+            // May have found no data
+            errMessage = `Found no match data to ${
+               updated ? "reinstate" : "clear"
+            }`;
+            if (!result.affectedRows) throw "";
+
+            // Success!
+            res.send({
+               message: `Successfully ${
+                  updated ? "reinstated" : "cleared"
+               } match data`,
+               type: "good",
+            });
+         }
       } catch (err) {
          // Send error message
          res.send({ message: errMessage, type: "bad", err });

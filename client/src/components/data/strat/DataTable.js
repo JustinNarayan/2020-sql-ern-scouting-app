@@ -5,7 +5,7 @@ import { Table } from "reactstrap";
 
 /// Components
 import DataRow from "./DataRow";
-import RedirectModal from "./RedirectModal";
+import RedirectModal from "../../utils/RedirectModal";
 
 /// Assets
 import clock from "bootstrap-icons/icons/clock-history.svg";
@@ -26,9 +26,7 @@ const DataTable = ({ compID, filter, exclude }) => {
    const getComp = useStoreActions((actions) => actions.getComp);
    const getComps = useStoreActions((actions) => actions.getComps);
    const getData = useStoreActions((actions) => actions.getData);
-   const switchDataCompetition = useStoreActions(
-      (actions) => actions.switchDataCompetition
-   );
+   const patchData = useStoreActions((actions) => actions.patchData);
 
    // Life cycle
    useEffect(() => {
@@ -61,8 +59,12 @@ const DataTable = ({ compID, filter, exclude }) => {
       if (loading) return;
 
       switch (type) {
+         case "ClearReinstate":
+            onClearReinstate(data);
+            break;
          default:
             onSwitch(data);
+            break;
       }
    };
 
@@ -79,7 +81,7 @@ const DataTable = ({ compID, filter, exclude }) => {
             .map((comp) => comp.ID);
 
          setLoading(true);
-         const res = await switchDataCompetition({
+         const res = await patchData({
             id: compID,
             matchNumber,
             teamNumber,
@@ -88,6 +90,13 @@ const DataTable = ({ compID, filter, exclude }) => {
          setMessages([{ text: res.message, type: res.type }]);
          setLoading(false);
       }
+   };
+
+   const onClearReinstate = async (request) => {
+      setLoading(true);
+      const res = await patchData({ id: compID, ...request });
+      setMessages([{ text: res.message, type: res.type }]);
+      setLoading(false);
    };
 
    const clearMessages = () => setMessages([]);

@@ -37,7 +37,7 @@ export default {
       return out;
    }),
 
-   switchDataCompetition: thunk(async (actions, data) => {
+   patchData: thunk(async (actions, data) => {
       // Handle WS Call
       const res = await axios.patch(`${url}${data.id}`, data, authHeader);
       const out = res.data; // Message || Forbidden

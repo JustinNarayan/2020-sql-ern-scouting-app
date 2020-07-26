@@ -4,7 +4,7 @@ import { useStoreState } from "easy-peasy";
 import QueryString from "query-string";
 
 /// Components
-import DataTable from "../../utils/DataTable";
+import DataTable from "./DataTable";
 
 const Team = ({ query }) => {
    // State

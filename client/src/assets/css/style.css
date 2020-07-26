@@ -16376,7 +16376,7 @@ body {
 }
 
 .dataTable thead tr th {
-  font-size: 15px;
+  font-size: 14px;
   padding: 8px 0;
   vertical-align: middle;
   width: 4%;
@@ -16434,24 +16434,28 @@ body {
   background-color: #9a5ddf;
 }
 
-.dataTable.pending {
+.dataTable.update {
   table-layout: fixed;
 }
 
-.dataTable.pending thead tr th {
+.dataTable.update thead tr th {
   border-right: 0;
   width: 140px;
 }
 
-.dataTable.pending thead tr th.long {
+.dataTable.update thead tr th.long {
   width: 300px;
 }
 
-.dataTable.pending tbody tr td {
+.dataTable.update tbody tr {
+  background-color: #f3edfc;
+}
+
+.dataTable.update tbody tr td {
   border-right: 0;
 }
 
-.dataTable.pending tbody tr td .input {
+.dataTable.update tbody tr td .input {
   border: 0;
   width: 90%;
   margin-left: auto;
@@ -16461,35 +16465,35 @@ body {
   font-size: 18px;
 }
 
-.dataTable.pending tbody tr td .input[type="number"] {
+.dataTable.update tbody tr td .input[type="number"] {
   padding-right: 0.2em;
 }
 
-.dataTable.pending tbody tr td .input.short {
+.dataTable.update tbody tr td .input.short {
   width: 60%;
 }
 
-.dataTable.pending tbody tr td .input.tiny {
+.dataTable.update tbody tr td .input.tiny {
   width: 45%;
   margin-top: 6px;
   margin-bottom: 6px;
   display: block;
 }
 
-.dataTable.pending tbody tr td .input.tiny:first-child {
+.dataTable.update tbody tr td .input.tiny:first-child {
   margin-top: 0;
 }
 
-.dataTable.pending tbody tr td .input.tiny:last-child {
+.dataTable.update tbody tr td .input.tiny:last-child {
   margin-bottom: 0;
 }
 
-.dataTable.pending tbody tr td .input.textarea {
+.dataTable.update tbody tr td .input.textarea {
   resize: none;
   height: 140px;
 }
 
-.dataTable.pending tbody tr td button {
+.dataTable.update tbody tr td button {
   width: 256px;
   height: 48px;
   margin: 12px 0px;

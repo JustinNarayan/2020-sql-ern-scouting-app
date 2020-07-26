@@ -16245,6 +16245,13 @@ body {
 }
 
 /*
+   General Modal Style
+*/
+.modal-content {
+  border: 0;
+}
+
+/*
    Main Comp Tables and Data tables
 */
 .compTable,

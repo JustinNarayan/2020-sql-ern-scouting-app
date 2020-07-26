@@ -37,6 +37,21 @@ export default {
       return out;
    }),
 
+   switchDataCompetition: thunk(async (actions, data) => {
+      // Handle WS Call
+      const res = await axios.patch(`${url}${data.id}`, data, authHeader);
+      const out = res.data; // Message || Forbidden
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
+
+      // Call to getData
+      authCommand(out, () => actions.getData(data.id));
+
+      // Return api response to display to user
+      return out;
+   }),
+
    // Actions
    setData: action((state, data) => {
       // Only set to value if correct type

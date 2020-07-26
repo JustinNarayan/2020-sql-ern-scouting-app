@@ -3,14 +3,29 @@ import React, { Fragment, useState } from "react";
 
 /// Components
 import HeatmapModal from "./HeatmapModal";
+import ActionsModal from "./ActionsModal";
 
 /// Assets
 import playback from "bootstrap-icons/icons/play-fill.svg";
 import heatmap from "bootstrap-icons/icons/bullseye.svg";
 import actions from "bootstrap-icons/icons/clipboard-data.svg";
 
-const DataRow = ({ row, exclude }) => {
+const DataRow = ({
+   row,
+   exclude,
+   comps,
+   loading,
+   messages,
+   clearMessages,
+   onSubmit,
+}) => {
+   const [actionsModal, setActionsModal] = useState(false);
    const [heatmapModal, setHeatmapModal] = useState(false);
+
+   const toggleActionsModal = () => {
+      setActionsModal(!actionsModal);
+      clearMessages();
+   };
 
    const toggleHeatmapModal = () => setHeatmapModal(!heatmapModal);
 
@@ -58,11 +73,21 @@ const DataRow = ({ row, exclude }) => {
             {!exclude.comments && <td>{row.Comments}</td>}
             {!exclude.scoutName && <td>{row.ScoutName}</td>}
             {!exclude.actions && (
-               <td>
+               <td onClick={() => toggleActionsModal()}>
                   <img className={classes.icons} src={actions} alt='Actions' />
                </td>
             )}
          </tr>
+
+         <ActionsModal
+            modal={actionsModal}
+            toggleModal={toggleActionsModal}
+            messages={messages}
+            row={row}
+            comps={comps}
+            onSubmit={onSubmit}
+            loading={loading}
+         />
 
          <HeatmapModal
             modal={heatmapModal}

@@ -599,19 +599,19 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
          events: JSON.stringify(compileEvents()),
          outerHeatmap: JSON.stringify(
             (fieldFlipped && teamColor === "blue") ||
-               (!fieldFlipped && teamColor == "red")
+               (!fieldFlipped && teamColor === "red")
                ? outerHeatmap.reverse()
                : outerHeatmap // Normalize for averaging later
          ),
          innerHeatmap: JSON.stringify(
             (fieldFlipped && teamColor === "blue") ||
-               (!fieldFlipped && teamColor == "red")
+               (!fieldFlipped && teamColor === "red")
                ? innerHeatmap.reverse()
                : innerHeatmap // Normalize for averaging later
          ),
          pickupHeatmap: JSON.stringify(
             (fieldFlipped && teamColor === "blue") ||
-               (!fieldFlipped && teamColor == "red")
+               (!fieldFlipped && teamColor === "red")
                ? pickupHeatmap.reverse()
                : pickupHeatmap // Normalize for averaging later
          ),

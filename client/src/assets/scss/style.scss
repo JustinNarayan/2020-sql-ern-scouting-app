@@ -184,11 +184,6 @@ body {
                }
             }
          }
-
-         // Heatmap Modal
-         .heatmapButtons {
-            background-color: yellow;
-         }
       }
    }
 
@@ -271,6 +266,135 @@ body {
    &:hover {
       font-weight: 600;
       color: map-get($theme-colors, "back");
+   }
+}
+
+/*
+   Field Zone Buttons for modal and Scouting App
+*/
+.field,
+.heatmapField {
+   width: 560px;
+   height: 336px;
+   display: flex;
+   flex-direction: row;
+   padding: 0;
+
+   .group {
+      display: flex;
+      flex-direction: column;
+
+      // For zone buttons
+      $border-width: 1.5px;
+      $border-radius: 20px;
+
+      /// Default zone button style
+      button {
+         padding: 0;
+         margin: 0;
+         border: $border-width solid map-get($theme-colors, "button-white");
+         border-radius: 0px;
+
+         /// Colors
+         background-color: map-get($theme-colors, "light-grey");
+         &.active {
+            background-color: map-get($theme-colors, "dark-grey");
+         }
+         &.red {
+            background-color: map-get($theme-colors, "light-red");
+            &.active {
+               background-color: map-get($theme-colors, "dark-red");
+            }
+         }
+         &.blue {
+            background-color: map-get($theme-colors, "light-blue");
+            &.active {
+               background-color: map-get($theme-colors, "dark-blue");
+            }
+         }
+
+         /// Team Number
+         .teamNumber {
+            font-size: 62px;
+
+            &.red {
+               color: map-get($theme-colors, "dark-red");
+            }
+            &.blue {
+               color: map-get($theme-colors, "dark-blue");
+            }
+         }
+      }
+
+      /// Squares
+      ._0,
+      ._1,
+      ._2,
+      ._10,
+      ._11,
+      ._12 {
+         width: 112px;
+         height: 112px;
+      }
+      /// Tall rectangles
+      ._3,
+      ._4,
+      ._8,
+      ._9 {
+         width: 84px;
+         height: 168px;
+      }
+      /// Long rectangles
+      ._5,
+      ._7 {
+         width: 168px;
+         height: 84px;
+      }
+      /// Center
+      ._6 {
+         width: 168px;
+         height: 168px;
+      }
+
+      /// Thicker Outer Borders
+      ._0,
+      ._1,
+      ._2 {
+         border-left-width: $border-width * 2;
+      }
+      ._10,
+      ._11,
+      ._12 {
+         border-right-width: $border-width * 2;
+      }
+      ._0,
+      ._3,
+      ._5,
+      ._8,
+      ._10 {
+         border-top-width: $border-width * 2;
+      }
+      ._2,
+      ._4,
+      ._7,
+      ._9,
+      ._12 {
+         border-bottom-width: $border-width * 2;
+      }
+
+      /// Rounded borders
+      ._0 {
+         border-top-left-radius: $border-radius;
+      }
+      ._2 {
+         border-bottom-left-radius: $border-radius;
+      }
+      ._10 {
+         border-top-right-radius: $border-radius;
+      }
+      ._12 {
+         border-bottom-right-radius: $border-radius;
+      }
    }
 }
 
@@ -477,131 +601,7 @@ body {
          }
       }
 
-      /// Field zone buttons
-      .field {
-         width: 560px;
-         height: 336px;
-         display: flex;
-         flex-direction: row;
-         padding: 0;
-
-         .group {
-            display: flex;
-            flex-direction: column;
-
-            // For zone buttons
-            $border-width: 1.5px;
-            $border-radius: 20px;
-
-            /// Default zone button style
-            button {
-               padding: 0;
-               margin: 0;
-               border: $border-width solid map-get($theme-colors, "button-white");
-               border-radius: 0px;
-
-               /// Colors
-               background-color: map-get($theme-colors, "light-grey");
-               &.active {
-                  background-color: map-get($theme-colors, "dark-grey");
-               }
-               &.red {
-                  background-color: map-get($theme-colors, "light-red");
-                  &.active {
-                     background-color: map-get($theme-colors, "dark-red");
-                  }
-               }
-               &.blue {
-                  background-color: map-get($theme-colors, "light-blue");
-                  &.active {
-                     background-color: map-get($theme-colors, "dark-blue");
-                  }
-               }
-
-               /// Team Number
-               .teamNumber {
-                  font-size: 62px;
-
-                  &.red {
-                     color: map-get($theme-colors, "dark-red");
-                  }
-                  &.blue {
-                     color: map-get($theme-colors, "dark-blue");
-                  }
-               }
-            }
-
-            /// Squares
-            ._0,
-            ._1,
-            ._2,
-            ._10,
-            ._11,
-            ._12 {
-               width: 112px;
-               height: 112px;
-            }
-            /// Tall rectangles
-            ._3,
-            ._4,
-            ._8,
-            ._9 {
-               width: 84px;
-               height: 168px;
-            }
-            /// Long rectangles
-            ._5,
-            ._7 {
-               width: 168px;
-               height: 84px;
-            }
-            /// Center
-            ._6 {
-               width: 168px;
-               height: 168px;
-            }
-
-            /// Thicker Outer Borders
-            ._0,
-            ._1,
-            ._2 {
-               border-left-width: $border-width * 2;
-            }
-            ._10,
-            ._11,
-            ._12 {
-               border-right-width: $border-width * 2;
-            }
-            ._0,
-            ._3,
-            ._5,
-            ._8,
-            ._10 {
-               border-top-width: $border-width * 2;
-            }
-            ._2,
-            ._4,
-            ._7,
-            ._9,
-            ._12 {
-               border-bottom-width: $border-width * 2;
-            }
-
-            /// Rounded borders
-            ._0 {
-               border-top-left-radius: $border-radius;
-            }
-            ._2 {
-               border-bottom-left-radius: $border-radius;
-            }
-            ._10 {
-               border-top-right-radius: $border-radius;
-            }
-            ._12 {
-               border-bottom-right-radius: $border-radius;
-            }
-         }
-      }
+      /// Field is also applicable for heatmaps so it is outside above
 
       // Misc
       .misc {
@@ -679,6 +679,53 @@ body {
          &.misc {
             background-color: map-get($theme-colors, "misc");
             font-size: 24px;
+         }
+      }
+   }
+}
+
+// Heatmap Modal
+.heatmapButtons {
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+
+   width: 100%;
+
+   button {
+      width: 30%;
+   }
+}
+
+.heatmapField {
+   margin-left: auto;
+   margin-right: auto;
+
+   .group {
+      position: relative;
+
+      button {
+         background-color: map-get($theme-colors, "heatmap-grey");
+         font-size: 32px;
+         color: map-get($theme-colors, "back");
+      }
+
+      .arrow {
+         position: absolute;
+         top: 150px;
+
+         img {
+            filter: invert(100%);
+            width: 36px;
+            position: absolute;
+
+            &:first-child {
+               left: 4px;
+            }
+
+            &:last-child {
+               left: 128px;
+            }
          }
       }
    }

@@ -62,9 +62,9 @@ const DataRow = ({ row, exclude }) => {
          <HeatmapModal
             modal={heatmapModal}
             toggleModal={toggleHeatmapModal}
-            outerHeatmap={row.outerHeatmap}
-            innerHeatmap={row.innerHeatmap}
-            pickupHeatmap={row.pickupHeatmap}
+            outerHeatmap={JSON.parse(row.OuterHeatmap)}
+            innerHeatmap={JSON.parse(row.InnerHeatmap)}
+            pickupHeatmap={JSON.parse(row.PickupHeatmap)}
          />
       </Fragment>
    );

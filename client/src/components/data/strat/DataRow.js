@@ -11,6 +11,7 @@ import heatmap from "bootstrap-icons/icons/bullseye.svg";
 import actions from "bootstrap-icons/icons/clipboard-data.svg";
 
 const DataRow = ({
+   navigate,
    row,
    exclude,
    comps,
@@ -33,8 +34,20 @@ const DataRow = ({
    return (
       <Fragment>
          <tr className={row.Updated ? "updated" : ""}>
-            {!exclude.teamNumber && <td>{row.TeamNumber}</td>}
-            {!exclude.matchNumber && <td>{row.MatchNumber}</td>}
+            {!exclude.teamNumber && (
+               <td
+                  className={classes.link}
+                  onClick={() => navigate("team", row.TeamNumber)}>
+                  {row.TeamNumber}
+               </td>
+            )}
+            {!exclude.matchNumber && (
+               <td
+                  className={classes.link}
+                  onClick={() => navigate("match", row.MatchNumber)}>
+                  {row.MatchNumber}
+               </td>
+            )}
             {!exclude.robotStation && (
                <td
                   className={
@@ -116,6 +129,7 @@ const classes = {
    icons: "icons",
    red: "red",
    blue: "blue",
+   link: "link",
 };
 
 export default DataRow;

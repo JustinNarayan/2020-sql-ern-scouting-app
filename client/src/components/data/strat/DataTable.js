@@ -42,6 +42,20 @@ const DataTable = ({ compID, filter, exclude }) => {
       // eslint-disable-next-line
    }, []);
 
+   const navigate = (to, payload) => {
+      switch (to) {
+         case "team":
+            window.location.href = `/team?compID=${comp.ID}&teamNumber=${payload}`;
+            break;
+         case "match":
+            window.location.href = `/match?compID=${comp.ID}&matchNumber=${payload}`;
+            break;
+         default:
+            alert("Error in navigation");
+            break;
+      }
+   };
+
    const requestData = async () => {
       let res = await getComp(compID);
       if (!res.valid) {
@@ -226,6 +240,7 @@ const DataTable = ({ compID, filter, exclude }) => {
                {data.map((row) => (
                   <DataRow
                      key={row.ID || row.TeamNumber} // For averages, there will not be an ID, but Team Number will be unique
+                     navigate={navigate}
                      row={row}
                      exclude={exclude}
                      comps={comps}

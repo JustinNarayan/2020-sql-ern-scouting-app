@@ -16412,6 +16412,13 @@ body {
   width: 32px;
 }
 
+.dataTable tbody tr td.link:hover {
+  background-color: #fdfeff;
+  color: #9a5ddf;
+  font-weight: 400;
+  cursor: pointer;
+}
+
 .dataTable tbody tr.updated {
   background-color: #f3edfc;
 }

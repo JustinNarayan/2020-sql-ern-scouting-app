@@ -169,6 +169,13 @@ body {
             .icons {
                width: 32px;
             }
+
+            &.link:hover {
+               background-color: map-get($theme-colors, "back");
+               color: map-get($theme-colors, "data-table-head");
+               font-weight: 400;
+               cursor: pointer;
+            }
          }
 
          &.updated {

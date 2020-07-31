@@ -162,7 +162,7 @@ const UpdateModal = ({
                            </th>
                            <th>Endgame</th>
                            <th className={classes.long}>Comments</th>
-                           <th>
+                           <th className={classes.mid}>
                               Scout
                               <br />
                               Name
@@ -378,6 +378,7 @@ const classes = {
    tableHead: "bg-data-table-head",
    clock: "clock",
    long: "long",
+   mid: "mid",
    alert: "mb-4 py-2 text-center",
    input: "input",
    short: "input short",

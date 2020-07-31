@@ -227,7 +227,7 @@ const DataTable = ({ compID, filter, exclude }) => {
                      <th className={classes.long}>Comments</th>
                   )}
                   {!exclude.scoutName && (
-                     <th>
+                     <th className={classes.mid}>
                         Scout
                         <br />
                         Name
@@ -311,6 +311,7 @@ const classes = {
    table: "dataTable p-0 text-back",
    tableHead: "bg-data-table-head",
    long: "long",
+   mid: "mid",
    clock: "clock",
    modalHeaderDelete: "bg-message-error text-back",
    modalClose: "text-back",

@@ -125,7 +125,7 @@ const Scouting = ({ query }) => {
          <RedirectModal modal={redirectModal} messages={messages} />
 
          {/* Modal for confirming voluntary actions like going home or submitting */}
-         <Modal isOpen={confirmModal} size='md'>
+         <Modal isOpen={confirmModal} toggle={toggleConfirmModal} size='md'>
             <ModalHeader
                className={classes.modalHeader}
                style={styles.modalHeader}>

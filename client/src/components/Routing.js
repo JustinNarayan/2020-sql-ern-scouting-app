@@ -6,6 +6,7 @@ import { Switch, Route } from "react-router-dom";
 import User from "./user/User";
 
 import Home from "./data/home/Home";
+import Teams from "./data/strat/Teams";
 import Team from "./data/strat/Team";
 import Match from "./data/strat/Match";
 
@@ -40,6 +41,11 @@ const Routing = () => {
 
             {/* Data Routes */}
             <Route exact path='/home' render={() => <Home />} />
+            <Route
+               exact
+               path='/teams'
+               render={({ location: { search } }) => <Teams query={search} />}
+            />
             <Route
                exact
                path='/team'

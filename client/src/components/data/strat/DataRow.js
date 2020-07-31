@@ -70,7 +70,7 @@ const DataRow = ({
             <td onClick={() => toggleHeatmapModal()}>
                <img className={classes.icons} src={heatmap} alt='Heatmap' />
             </td>
-            <td>{row.CrossLine}</td>
+            <td>{+row.CrossLine.toFixed(2)}</td>
             <td>
                {+row.InnerAuto.toFixed(2)}
                <br />
@@ -117,9 +117,15 @@ const DataRow = ({
          <HeatmapModal
             modal={heatmapModal}
             toggleModal={toggleHeatmapModal}
-            outerHeatmap={JSON.parse(row.OuterHeatmap)}
-            innerHeatmap={JSON.parse(row.InnerHeatmap)}
-            pickupHeatmap={JSON.parse(row.PickupHeatmap)}
+            outerHeatmap={JSON.parse(row.OuterHeatmap).map(
+               (val) => +val.toFixed(2)
+            )}
+            innerHeatmap={JSON.parse(row.InnerHeatmap).map(
+               (val) => +val.toFixed(2)
+            )}
+            pickupHeatmap={JSON.parse(row.PickupHeatmap).map(
+               (val) => +val.toFixed(2)
+            )}
          />
       </Fragment>
    );

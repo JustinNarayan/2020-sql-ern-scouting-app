@@ -143,6 +143,10 @@ body {
                width: 12%;
             }
 
+            &.mid {
+               width: 6%;
+            }
+
             .clock {
                filter: invert(100%);
                width: 20px;
@@ -219,6 +223,10 @@ body {
 
                &.long {
                   width: 300px;
+               }
+
+               &.mid {
+                  width: 180px;
                }
             }
          }

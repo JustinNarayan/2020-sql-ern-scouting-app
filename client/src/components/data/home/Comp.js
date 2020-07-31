@@ -45,6 +45,9 @@ const Comp = ({
    /// Handle navigation
    const navigate = (to) => {
       switch (to) {
+         case "teams":
+            window.location.href = `/teams?compID=${comp.ID}`;
+            break;
          case "scout":
             window.location.href = `/scout?compID=${comp.ID}`;
             break;
@@ -81,7 +84,9 @@ const Comp = ({
          {/* Competition row with data, navigation links, and actions function */}
          <tr>
             <td className={classes.compName}>{comp.CompetitionName}</td>
-            <td className={classes.link}>Teams</td>
+            <td className={classes.link} onClick={() => navigate("teams")}>
+               Teams
+            </td>
             <td className={classes.link} onClick={() => navigate("scout")}>
                Scout
             </td>

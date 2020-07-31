@@ -28,7 +28,6 @@ const Team = ({ query }) => {
                teams.forEach((team) => {
                   const average = {
                      Updated: 1,
-                     ID: team,
                      CompetitionID: parseInt(compID),
                      TeamNumber: team,
                      OuterHeatmap: new Array(13).fill(0),

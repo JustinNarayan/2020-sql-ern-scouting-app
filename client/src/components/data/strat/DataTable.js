@@ -208,7 +208,7 @@ const DataTable = ({ compID, filter, exclude }) => {
                      <br />
                      D'ing (s)
                   </th>
-                  <th>
+                  <th className={classes.mid}>
                      Defense
                      <br />
                      Quality
@@ -222,7 +222,7 @@ const DataTable = ({ compID, filter, exclude }) => {
                      <br />
                      Mal (s)
                   </th>
-                  <th>Endgame</th>
+                  <th className={classes.mid}>Endgame</th>
                   {!exclude.comments && (
                      <th className={classes.long}>Comments</th>
                   )}

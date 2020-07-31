@@ -90,9 +90,31 @@ const DataRow = ({
             <td>{+row.TimeDefending.toFixed(2)}</td>
             <td className={`def${Math.floor(row.DefenseQuality + 0.5)}`}>
                {+row.DefenseQuality.toFixed(2)}
+               <br />
+               {row.ID
+                  ? row.DefenseQuality === 0
+                     ? "No Defense"
+                     : row.DefenseQuality === 1
+                     ? "Negligible"
+                     : row.DefenseQuality === 2
+                     ? "Weak"
+                     : row.DefenseQuality === 3
+                     ? "Effective"
+                     : "Unbreakable"
+                  : ""}
             </td>
             <td>{+row.TimeMal.toFixed(2)}</td>
-            <td>{+row.Endgame.toFixed(2)}</td>
+            <td>
+               {+row.Endgame.toFixed(2)}
+               <br />
+               {row.ID
+                  ? row.Endgame === 0
+                     ? "On Field"
+                     : row.Endgame === 1
+                     ? "Parked"
+                     : "Hanged"
+                  : ""}
+            </td>
             {!exclude.comments && <td>{row.Comments}</td>}
             {!exclude.scoutName && <td>{row.ScoutName}</td>}
             {!exclude.actions && (

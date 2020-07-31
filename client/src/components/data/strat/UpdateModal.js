@@ -4,6 +4,7 @@ import {
    Modal,
    ModalHeader,
    ModalBody,
+   Alert,
    Table,
    Form,
    Input,
@@ -14,7 +15,14 @@ import {
 /// Assets
 import clock from "bootstrap-icons/icons/clock-history.svg";
 
-const UpdateModal = ({ modal, toggleModal, row, loading, onSubmit }) => {
+const UpdateModal = ({
+   modal,
+   toggleModal,
+   messages,
+   row,
+   loading,
+   onSubmit,
+}) => {
    const [teamNumber, setTeamNumber] = useState(row.TeamNumber);
    const [matchNumber, setMatchNumber] = useState(row.MatchNumber);
    const [robotStation, setRobotStation] = useState(row.RobotStation);
@@ -55,244 +63,307 @@ const UpdateModal = ({ modal, toggleModal, row, loading, onSubmit }) => {
          </ModalHeader>
 
          <ModalBody>
-            {/* Table of competitions with overflow-control div */}
-            <div style={styles.overflow}>
-               <Table borderless className={classes.table}>
-                  <thead>
-                     <tr className={classes.tableHead}>
-                        <th>Team</th>
-                        <th>Match</th>
-                        <th>
-                           Robot
-                           <br />
-                           Station
-                        </th>
-                        <th>
-                           Cross
-                           <br />
-                           Line
-                        </th>
-                        <th>
-                           Auto
-                           <br />
-                           Score
-                        </th>
-                        <th>
-                           Total
-                           <br />
-                           Score
-                        </th>
-                        <th>Pickups</th>
-                        <th>
-                           <img
-                              className={classes.clock}
-                              src={clock}
-                              alt='Time Spent'
-                           />
-                           <br />
-                           Def'd (s)
-                        </th>
-                        <th>
-                           <img
-                              className={classes.clock}
-                              src={clock}
-                              alt='Time Spent'
-                           />
-                           <br />
-                           Def'ing (s)
-                        </th>
-                        <th>
-                           Defense
-                           <br />
-                           Quality
-                        </th>
-                        <th>
-                           <img
-                              className={classes.clock}
-                              src={clock}
-                              alt='Time Spent'
-                           />
-                           <br />
-                           Mal (s)
-                        </th>
-                        <th>Endgame</th>
-                        <th className={classes.long}>Comments</th>
-                        <th>
-                           Scout
-                           <br />
-                           Name
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <Form tag='tr'>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.short}
-                              min='0'
-                              value={teamNumber}
-                              onChange={(e) => setTeamNumber(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='text'
-                              className={classes.short}
-                              value={matchNumber}
-                              onChange={(e) => setMatchNumber(e.target.value)}
-                           />
-                        </td>
-                        <td
-                           className={
-                              row.RobotStation.slice(0, 1) === "R"
-                                 ? classes.red
-                                 : classes.blue
-                           }>
-                           <Input
-                              type='text'
-                              className={classes.tiny}
-                              value={robotStation}
-                              onChange={(e) => setRobotStation(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              max='1'
-                              value={crossLine}
-                              onChange={(e) => setCrossLine(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              value={innerAuto}
-                              onChange={(e) => setInnerAuto(e.target.value)}
-                           />
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              value={outerAuto}
-                              onChange={(e) => setOuterAuto(e.target.value)}
-                           />
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              value={bottomAuto}
-                              onChange={(e) => setBottomAuto(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              value={innerAll}
-                              onChange={(e) => setInnerAll(e.target.value)}
-                           />
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              value={outerAll}
-                              onChange={(e) => setOuterAll(e.target.value)}
-                           />
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              value={bottomAll}
-                              onChange={(e) => setBottomAll(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              value={pickups}
-                              onChange={(e) => setPickups(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.short}
-                              min='0'
-                              step='0.1'
-                              value={timeDefended}
-                              onChange={(e) => setTimeDefended(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.short}
-                              min='0'
-                              step='0.1'
-                              value={timeDefending}
-                              onChange={(e) => setTimeDefending(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              max='4'
-                              value={defenseQuality}
-                              onChange={(e) =>
-                                 setDefenseQuality(e.target.value)
-                              }
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.short}
-                              min='0'
-                              step='0.1'
-                              value={timeMal}
-                              onChange={(e) => setTimeMal(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='number'
-                              className={classes.tiny}
-                              min='0'
-                              max='2'
-                              value={endgame}
-                              onChange={(e) => setEndgame(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='textarea'
-                              className={classes.textarea}
-                              value={comments}
-                              onChange={(e) => setComments(e.target.value)}
-                           />
-                        </td>
-                        <td>
-                           <Input
-                              type='text'
-                              className={classes.input}
-                              value={scoutName}
-                              onChange={(e) => setScoutName(e.target.value)}
-                           />
-                        </td>
-                     </Form>
-                  </tbody>
-               </Table>
-            </div>
+            {messages.map((message) => (
+               <Alert
+                  key={message.text}
+                  color={
+                     message.type === "good" ? "message-good" : "message-error"
+                  }
+                  className={classes.alert}>
+                  {message.text}
+               </Alert>
+            ))}
+            <Form
+               onSubmit={(e) =>
+                  onSubmit("Update", e, {
+                     teamNumber,
+                     matchNumber,
+                     robotStation,
+                     crossLine,
+                     events: row.Events,
+                     outerHeatmap: row.OuterHeatmap,
+                     innerHeatmap: row.InnerHeatmap,
+                     pickupHeatmap: row.PickupHeatmap,
+                     bottomAuto,
+                     outerAuto,
+                     innerAuto,
+                     bottom: bottomAll,
+                     outer: outerAll,
+                     inner: innerAll,
+                     pickups,
+                     timeDefended,
+                     timeDefending,
+                     defenseQuality,
+                     timeMal,
+                     endgame,
+                     comments,
+                     scoutName,
+                  })
+               }>
+               {/* Table of competitions with overflow-control div */}
+               <div style={styles.overflow}>
+                  <Table borderless className={classes.table}>
+                     <thead>
+                        <tr className={classes.tableHead}>
+                           <th>Team</th>
+                           <th>Match</th>
+                           <th>
+                              Robot
+                              <br />
+                              Station
+                           </th>
+                           <th>
+                              Cross
+                              <br />
+                              Line
+                           </th>
+                           <th>
+                              Auto
+                              <br />
+                              Score
+                           </th>
+                           <th>
+                              Total
+                              <br />
+                              Score
+                           </th>
+                           <th>Pickups</th>
+                           <th>
+                              <img
+                                 className={classes.clock}
+                                 src={clock}
+                                 alt='Time Spent'
+                              />
+                              <br />
+                              Def'd (s)
+                           </th>
+                           <th>
+                              <img
+                                 className={classes.clock}
+                                 src={clock}
+                                 alt='Time Spent'
+                              />
+                              <br />
+                              Def'ing (s)
+                           </th>
+                           <th>
+                              Defense
+                              <br />
+                              Quality
+                           </th>
+                           <th>
+                              <img
+                                 className={classes.clock}
+                                 src={clock}
+                                 alt='Time Spent'
+                              />
+                              <br />
+                              Mal (s)
+                           </th>
+                           <th>Endgame</th>
+                           <th className={classes.long}>Comments</th>
+                           <th>
+                              Scout
+                              <br />
+                              Name
+                           </th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        <tr>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.short}
+                                 min='0'
+                                 value={teamNumber}
+                                 onChange={(e) => setTeamNumber(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='text'
+                                 className={classes.short}
+                                 value={matchNumber}
+                                 onChange={(e) =>
+                                    setMatchNumber(e.target.value)
+                                 }
+                              />
+                           </td>
+                           <td
+                              className={
+                                 row.RobotStation.slice(0, 1) === "R"
+                                    ? classes.red
+                                    : classes.blue
+                              }>
+                              <Input
+                                 type='text'
+                                 className={classes.tiny}
+                                 value={robotStation}
+                                 onChange={(e) =>
+                                    setRobotStation(e.target.value)
+                                 }
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 max='1'
+                                 value={crossLine}
+                                 onChange={(e) => setCrossLine(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 value={innerAuto}
+                                 onChange={(e) => setInnerAuto(e.target.value)}
+                              />
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 value={outerAuto}
+                                 onChange={(e) => setOuterAuto(e.target.value)}
+                              />
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 value={bottomAuto}
+                                 onChange={(e) => setBottomAuto(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 value={innerAll}
+                                 onChange={(e) => setInnerAll(e.target.value)}
+                              />
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 value={outerAll}
+                                 onChange={(e) => setOuterAll(e.target.value)}
+                              />
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 value={bottomAll}
+                                 onChange={(e) => setBottomAll(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 value={pickups}
+                                 onChange={(e) => setPickups(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.short}
+                                 min='0'
+                                 step='0.1'
+                                 value={timeDefended}
+                                 onChange={(e) =>
+                                    setTimeDefended(e.target.value)
+                                 }
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.short}
+                                 min='0'
+                                 step='0.1'
+                                 value={timeDefending}
+                                 onChange={(e) =>
+                                    setTimeDefending(e.target.value)
+                                 }
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 max='4'
+                                 value={defenseQuality}
+                                 onChange={(e) =>
+                                    setDefenseQuality(e.target.value)
+                                 }
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.short}
+                                 min='0'
+                                 step='0.1'
+                                 value={timeMal}
+                                 onChange={(e) => setTimeMal(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='number'
+                                 className={classes.tiny}
+                                 min='0'
+                                 max='2'
+                                 value={endgame}
+                                 onChange={(e) => setEndgame(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='textarea'
+                                 className={classes.textarea}
+                                 value={comments}
+                                 onChange={(e) => setComments(e.target.value)}
+                              />
+                           </td>
+                           <td>
+                              <Input
+                                 type='text'
+                                 className={classes.input}
+                                 value={scoutName}
+                                 onChange={(e) => setScoutName(e.target.value)}
+                              />
+                           </td>
+                        </tr>
+                     </tbody>
+                  </Table>
+               </div>
+               <Button
+                  color='data-table-head'
+                  className={classes.modalSubmit}
+                  style={styles.button}
+                  block
+                  outline
+                  size='md'>
+                  {loading ? (
+                     <Spinner
+                        className={classes.spinner}
+                        style={styles.spinner}
+                        color='back'
+                     />
+                  ) : (
+                     "Update Data"
+                  )}
+               </Button>
+            </Form>
          </ModalBody>
       </Modal>
    );
@@ -300,7 +371,7 @@ const UpdateModal = ({ modal, toggleModal, row, loading, onSubmit }) => {
 
 /// Inline class manager
 const classes = {
-   modalHeader: "bg-data-table-head text-back",
+   modalHeader: "bg-comp-table-head text-back",
    modalClose: "text-back",
    modalBody: "bg-back",
    table: "dataTable update p-0 text-back",
@@ -314,8 +385,8 @@ const classes = {
    textarea: "input textarea",
    red: "bg-light-red",
    blue: "bg-light-blue",
-   modalSubmit: "modalSubmit",
-   spinner: "bg-comp-table-head",
+   modalSubmit: "modalSubmit mt-4",
+   spinner: "bg-data-table-head",
 };
 
 /// Inline style manager

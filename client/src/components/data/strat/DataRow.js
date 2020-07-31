@@ -16,6 +16,7 @@ const DataRow = ({
    comps,
    loading,
    messages,
+   overwriteModals,
    clearMessages,
    onSubmit,
 }) => {
@@ -34,7 +35,16 @@ const DataRow = ({
          <tr className={row.Updated ? "updated" : ""}>
             {!exclude.teamNumber && <td>{row.TeamNumber}</td>}
             {!exclude.matchNumber && <td>{row.MatchNumber}</td>}
-            {!exclude.robotStation && <td>{row.RobotStation}</td>}
+            {!exclude.robotStation && (
+               <td
+                  className={
+                     row.RobotStation.slice(0, 1) === "R"
+                        ? classes.red
+                        : classes.blue
+                  }>
+                  {row.RobotStation}
+               </td>
+            )}
             {!exclude.playback && (
                <td>
                   <img
@@ -83,6 +93,8 @@ const DataRow = ({
             modal={actionsModal}
             toggleModal={toggleActionsModal}
             messages={messages}
+            overwriteModals={overwriteModals}
+            clearMessages={clearMessages}
             row={row}
             comps={comps}
             onSubmit={onSubmit}
@@ -102,6 +114,8 @@ const DataRow = ({
 
 const classes = {
    icons: "icons",
+   red: "red",
+   blue: "blue",
 };
 
 export default DataRow;

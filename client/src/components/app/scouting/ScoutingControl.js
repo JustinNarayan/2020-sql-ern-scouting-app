@@ -592,6 +592,7 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
     */
    const compileForConfirm = (modalOption) => {
       setMatchData({
+         needsAdmin: false,
          updated: 1,
          teamNumber,
          matchNumber,

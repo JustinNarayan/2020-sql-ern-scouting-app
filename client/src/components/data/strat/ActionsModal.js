@@ -1,5 +1,5 @@
 /// Modules
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import {
    Modal,
    ModalHeader,
@@ -19,6 +19,8 @@ const ActionsModal = ({
    modal,
    toggleModal,
    messages,
+   overwriteModals,
+   clearMessages,
    row,
    comps,
    onSubmit,
@@ -29,10 +31,13 @@ const ActionsModal = ({
    );
    const [updateModal, setUpdateModal] = useState(false);
 
-   const toggleUpdateModal = () => setUpdateModal(!updateModal);
+   const toggleUpdateModal = () => {
+      setUpdateModal(!updateModal);
+      clearMessages();
+   };
 
    return (
-      <Modal isOpen={modal} toggle={toggleModal} size='md'>
+      <Modal isOpen={!overwriteModals && modal} toggle={toggleModal} size='md'>
          <ModalHeader
             className={classes.modalHeader}
             style={styles.modalHeader}>
@@ -112,8 +117,10 @@ const ActionsModal = ({
             </Button>
 
             <UpdateModal
+               key={modal} // Component reloads when ActionsModal closes
                modal={updateModal}
                toggleModal={toggleUpdateModal}
+               messages={messages}
                row={row}
                loading={loading}
                onSubmit={onSubmit}
@@ -154,6 +161,38 @@ const ActionsModal = ({
                </Button>
             </Form>
          </ModalBody>
+         {!row.Updated && (
+            <Fragment>
+               <hr />
+               <ModalBody>
+                  <Form
+                     onSubmit={(e) =>
+                        onSubmit("Delete", e, {
+                           matchNumber: row.MatchNumber,
+                           teamNumber: row.TeamNumber,
+                        })
+                     }>
+                     <Button
+                        color='message-error'
+                        className={classes.modalSubmit}
+                        style={styles.button}
+                        block
+                        outline
+                        size='md'>
+                        {loading ? (
+                           <Spinner
+                              className={classes.spinnerClear}
+                              style={styles.spinner}
+                              color='back'
+                           />
+                        ) : (
+                           "Delete Forever"
+                        )}
+                     </Button>
+                  </Form>
+               </ModalBody>
+            </Fragment>
+         )}
       </Modal>
    );
 };

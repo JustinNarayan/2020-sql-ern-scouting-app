@@ -56,7 +56,7 @@ const HeatmapModal = ({
    };
 
    return (
-      <Modal isOpen={modal} size='lg'>
+      <Modal isOpen={modal} toggle={toggleModal} size='lg'>
          <ModalHeader
             className={classes.modalHeader}
             style={styles.modalHeader}>

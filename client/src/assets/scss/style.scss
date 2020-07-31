@@ -69,11 +69,6 @@ body {
    }
    tbody {
       tr {
-         background-color: map-get($theme-colors, "comp-table-row-light");
-         &:nth-child(even) {
-            background-color: map-get($theme-colors, "comp-table-row-dark");
-         }
-
          td {
             font-weight: 400;
             font-size: 18px;
@@ -119,6 +114,11 @@ body {
 .compTable {
    tbody {
       tr {
+         background-color: map-get($theme-colors, "comp-table-row-light");
+         &:nth-child(even) {
+            background-color: map-get($theme-colors, "comp-table-row-dark");
+         }
+
          td {
             width: 9%;
          }
@@ -158,6 +158,13 @@ body {
             padding: 8px 4px;
             font-size: 14px;
             font-weight: 500;
+
+            &.red {
+               background-color: map-get($theme-colors, "light-red");
+            }
+            &.blue {
+               background-color: map-get($theme-colors, "light-blue");
+            }
 
             .icons {
                width: 32px;

@@ -16308,16 +16308,6 @@ body {
   cursor: pointer;
 }
 
-.compTable tbody tr,
-.dataTable tbody tr {
-  background-color: #d0eeff;
-}
-
-.compTable tbody tr:nth-child(even),
-.dataTable tbody tr:nth-child(even) {
-  background-color: #ade2ff;
-}
-
 .compTable tbody tr td,
 .dataTable tbody tr td {
   font-weight: 400;
@@ -16364,6 +16354,14 @@ body {
 /*
    Comp Table specifics
 */
+.compTable tbody tr {
+  background-color: #d0eeff;
+}
+
+.compTable tbody tr:nth-child(even) {
+  background-color: #ade2ff;
+}
+
 .compTable tbody tr td {
   width: 9%;
 }
@@ -16400,6 +16398,14 @@ body {
   padding: 8px 4px;
   font-size: 14px;
   font-weight: 500;
+}
+
+.dataTable tbody tr td.red {
+  background-color: #edc0c8;
+}
+
+.dataTable tbody tr td.blue {
+  background-color: #c0d8ed;
 }
 
 .dataTable tbody tr td .icons {

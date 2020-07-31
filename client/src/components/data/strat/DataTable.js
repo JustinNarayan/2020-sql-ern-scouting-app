@@ -1,7 +1,14 @@
 /// Modules
 import React, { Fragment, useState, useEffect } from "react";
 import { useStoreState, useStoreActions } from "easy-peasy";
-import { Table } from "reactstrap";
+import {
+   Table,
+   Modal,
+   ModalHeader,
+   ModalBody,
+   Alert,
+   Button,
+} from "reactstrap";
 
 /// Components
 import DataRow from "./DataRow";
@@ -11,6 +18,7 @@ import RedirectModal from "../../utils/RedirectModal";
 import clock from "bootstrap-icons/icons/clock-history.svg";
 
 const DataTable = ({ compID, filter, exclude }) => {
+   const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
    const [redirectModal, setRedirectModal] = useState(false);
    const [redirectMessages, setRedirectMessages] = useState([]);
    const [loading, setLoading] = useState(false);
@@ -18,15 +26,15 @@ const DataTable = ({ compID, filter, exclude }) => {
 
    const comps = useStoreState((state) => state.comps);
    const comp = useStoreState((state) => state.comp);
-   const data = useStoreState((state) => state.data).filter((data) =>
-      filter(data)
-   );
+   const data = filter(useStoreState((state) => state.data));
 
    // Bring in commands
    const getComp = useStoreActions((actions) => actions.getComp);
    const getComps = useStoreActions((actions) => actions.getComps);
    const getData = useStoreActions((actions) => actions.getData);
+   const addData = useStoreActions((actions) => actions.addData);
    const patchData = useStoreActions((actions) => actions.patchData);
+   const deleteData = useStoreActions((actions) => actions.deleteData);
 
    // Life cycle
    useEffect(() => {
@@ -59,12 +67,49 @@ const DataTable = ({ compID, filter, exclude }) => {
       if (loading) return;
 
       switch (type) {
+         case "Update":
+            onUpdate(data);
+            break;
          case "ClearReinstate":
             onClearReinstate(data);
+            break;
+         case "Delete":
+            onDelete(data);
             break;
          default:
             onSwitch(data);
             break;
+      }
+   };
+
+   const onUpdate = async (request) => {
+      setLoading(true);
+      const res = await addData({
+         id: compID,
+         needsAdmin: true,
+         updated: 1,
+         ...request,
+      });
+      setMessages([{ text: res.message, type: res.type }]);
+      setLoading(false);
+   };
+
+   const onClearReinstate = async (request) => {
+      setLoading(true);
+      const res = await patchData({ id: compID, ...request });
+      setMessages([{ text: res.message, type: res.type }]);
+      setLoading(false);
+   };
+
+   const onDelete = async (request) => {
+      setLoading(true);
+      const res = await deleteData({ id: compID, ...request });
+      setMessages([{ text: res.message, type: res.type }]);
+      setLoading(false);
+
+      // The actions modal will unmount so open this modal to present a success message
+      if (res.type === "good") {
+         toggleDeleteSuccessModal();
       }
    };
 
@@ -92,14 +137,12 @@ const DataTable = ({ compID, filter, exclude }) => {
       }
    };
 
-   const onClearReinstate = async (request) => {
-      setLoading(true);
-      const res = await patchData({ id: compID, ...request });
-      setMessages([{ text: res.message, type: res.type }]);
-      setLoading(false);
-   };
-
    const clearMessages = () => setMessages([]);
+
+   /// Toggle showing delete success modal
+   const toggleDeleteSuccessModal = () => {
+      setDeleteSuccessModal(!deleteSuccessModal);
+   };
 
    return (
       <Fragment>
@@ -188,12 +231,59 @@ const DataTable = ({ compID, filter, exclude }) => {
                      comps={comps}
                      loading={loading}
                      messages={messages}
+                     overwriteModals={deleteSuccessModal}
                      clearMessages={clearMessages}
                      onSubmit={onSubmit}
                   />
                ))}
             </tbody>
          </Table>
+
+         {/* Delete Success Modal */}
+         <Modal
+            isOpen={deleteSuccessModal}
+            toggle={toggleDeleteSuccessModal}
+            size='md'>
+            <ModalHeader
+               className={classes.modalHeaderDelete}
+               style={styles.modalHeader}>
+               Delete Success
+               {/* Custom close button */}
+               <Button
+                  color='transparent'
+                  className={classes.modalClose}
+                  style={styles.modalClose}
+                  onClick={toggleDeleteSuccessModal}>
+                  &times;
+               </Button>
+            </ModalHeader>
+            <ModalBody>
+               {messages.map((message) => (
+                  <Alert
+                     key={message.text}
+                     color={
+                        message.type === "good"
+                           ? "message-good"
+                           : "message-error"
+                     }
+                     className={classes.alert}>
+                     {message.text}
+                  </Alert>
+               ))}
+
+               {/* Submit button */}
+               <Button
+                  color='comp-table-head'
+                  className={classes.modalSubmit}
+                  style={styles.button}
+                  block
+                  outline
+                  size='md'
+                  onClick={toggleDeleteSuccessModal}>
+                  OK
+               </Button>
+            </ModalBody>
+         </Modal>
 
          {/* Modal for redirects */}
          <RedirectModal modal={redirectModal} messages={redirectMessages} />
@@ -207,6 +297,31 @@ const classes = {
    tableHead: "bg-data-table-head",
    long: "long",
    clock: "clock",
+   modalHeaderDelete: "bg-message-error text-back",
+   modalClose: "text-back",
+   modalBody: "bg-back",
+   alert: "mb-4 py-2 text-center",
+   modalSubmit: "modalSubmit",
+};
+
+/// Inline style manager
+const styles = {
+   modalHeader: {
+      paddingLeft: "22px",
+   },
+   modalClose: {
+      padding: "0px",
+      float: "right",
+      fontSize: "26px",
+      border: "0",
+      right: "20px",
+      top: "10px",
+      position: "absolute",
+      height: "40px",
+   },
+   button: {
+      fontWeight: "400",
+   },
 };
 
 export default DataTable;

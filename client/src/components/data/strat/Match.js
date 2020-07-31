@@ -9,27 +9,27 @@ import DataTable from "./DataTable";
 const Team = ({ query }) => {
    // State
    const compID = QueryString.parse(query).compID;
-   const teamNumber = QueryString.parse(query).teamNumber;
+   const matchNumber = QueryString.parse(query).matchNumber;
    const comp = useStoreState((state) => state.comp); // The getComp action is called from dataTable to keep calls in one place
 
    useEffect(() => {
-      if (!teamNumber) window.location.href = "/home";
-   }, [teamNumber]);
+      if (!matchNumber) window.location.href = "/home";
+   }, [matchNumber]);
 
    return (
       <div className={classes.container}>
          {/* Title text */}
-         <h1 className={classes.title}>Team {teamNumber}</h1>
+         <h1 className={classes.title}>Match {matchNumber}</h1>
          <h5 className={classes.compname}>@ {comp.CompetitionName}</h5>
 
          <DataTable
             compID={compID}
             filter={(data) =>
                data
-                  .filter((row) => row.TeamNumber === parseInt(teamNumber))
-                  .sort((a, b) => a.ID - b.ID)
+                  .filter((row) => row.MatchNumber === matchNumber)
+                  .sort((a, b) => a.RobotStation.localeCompare(b.RobotStation))
             }
-            exclude={{ teamNumber: 1, robotStation: 1 }}
+            exclude={{ matchNumber: 1 }}
          />
       </div>
    );

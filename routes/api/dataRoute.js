@@ -64,9 +64,10 @@ module.exports = (pool) => {
     */
    router.post("/:id", verifyToken, async (req, res) => {
       // Analyze request
-      const { username } = req.auth.user;
+      const { username, isAdmin } = req.auth.user;
       const { id } = req.params;
       const {
+         needsAdmin,
          updated,
          teamNumber,
          matchNumber,
@@ -91,7 +92,9 @@ module.exports = (pool) => {
          comments,
          scoutName,
       } = req.body;
-      // if (!hasPrivileges(isAdmin, res)) return;
+      if (needsAdmin) {
+         if (!hasPrivileges(isAdmin, res)) return;
+      }
 
       // Handle response and track error source locations
       let errMessage;
@@ -106,9 +109,12 @@ module.exports = (pool) => {
          /* */
 
          // First, send an UPDATE in case the match had been generated previously (Robot Station excluded)
-         sql = `UPDATE matchData SET DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, BottomAll = ?, OuterAll = ?, InnerAll = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, Endgame = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+         sql = `UPDATE matchData SET ${
+            needsAdmin ? "RobotStation = ?, " : "" // Only when editing after the fact
+         } DateTime = ?, Updated = ?, Events = ?, OuterHeatmap = ?, InnerHeatmap = ?, PickupHeatmap = ?, CrossLine = ?, BottomAuto = ?, OuterAuto = ?, InnerAuto = ?, BottomAll = ?, OuterAll = ?, InnerAll = ?, Pickups = ?, TimeDefended = ?, TimeDefending = ?, DefenseQuality = ?, TimeMal = ?, Endgame = ?, Comments = ?, ScoutName = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
          errMessage = "Failed to attempt updating existing match data";
-         const [updateResult] = await pool.execute(sql, [
+         const updateParams = [
+            ...(needsAdmin ? [robotStation] : []),
             format(new Date(), "YYYY-MM-DD HH:mm:ss"), // A datetime marker
             updated,
             events,
@@ -133,7 +139,8 @@ module.exports = (pool) => {
             id, // Identify where to update
             teamNumber, // Identify where to update
             matchNumber, // Identify where to update
-         ]);
+         ];
+         const [updateResult] = await pool.execute(sql, updateParams);
 
          // Next, if no data was updated (match data was not preloaded), INSERT new data
          errMessage = "Found no competition to update";
@@ -274,16 +281,15 @@ module.exports = (pool) => {
    });
 
    /**
-    * Remove the updated status of a piece of match data
+    * Delete a piece of match data
     * @params id (competition ID int)
     * @auth Bearer <token> (token received from login)
     * @auth isAdmin (token must contain affirmative isAdmin property)
     */
-   router.delete("/:id", verifyToken, async (req, res) => {
+   router.delete("/:id/:team/:match", verifyToken, async (req, res) => {
       // Analyze request
       const { username, isAdmin } = req.auth.user;
-      const { id } = req.params;
-      const { teamNumber, matchNumber } = req.body;
+      const { id, team, match } = req.params;
       if (!hasPrivileges(isAdmin, res)) return;
 
       // Handle response and track error source locations
@@ -298,23 +304,18 @@ module.exports = (pool) => {
          if (!userComp.length) throw "";
          /* */
 
-         // Update Updated variable
-         sql = `UPDATE matchData SET Updated = ? WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
+         // Delete
+         sql = `DELETE FROM matchData WHERE CompetitionID = ? AND TeamNumber = ? AND MatchNumber = ?`;
          errMessage = "Failed to attempt clearing match data";
-         const [result] = await pool.execute(sql, [
-            0,
-            id,
-            teamNumber,
-            matchNumber,
-         ]);
+         const [result] = await pool.execute(sql, [id, team, match]);
 
          // May have found no data
-         errMessage = "Found no match data to clear";
+         errMessage = "Found no match data to delete";
          if (!result.affectedRows) throw "";
 
          // Success!
          res.send({
-            message: "Successfully cleared match data",
+            message: `Successfully deleted match data for Team ${team} at ${match} for ${userComp[0].CompetitionName}`,
             type: "good",
          });
       } catch (err) {

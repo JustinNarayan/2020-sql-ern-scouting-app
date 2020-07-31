@@ -82,7 +82,6 @@ const Comp = ({
          <tr>
             <td className={classes.compName}>{comp.CompetitionName}</td>
             <td className={classes.link}>Teams</td>
-            <td className={classes.link}>Matches</td>
             <td className={classes.link} onClick={() => navigate("scout")}>
                Scout
             </td>

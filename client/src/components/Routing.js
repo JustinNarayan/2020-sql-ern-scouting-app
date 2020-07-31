@@ -8,6 +8,7 @@ import User from "./user/User";
 import Home from "./data/home/Home";
 import Pending from "./data/pending/Pending";
 import Team from "./data/strat/Team";
+import Match from "./data/strat/Match";
 
 import Scouting from "./app/scouting/Scouting";
 
@@ -49,6 +50,11 @@ const Routing = () => {
                exact
                path='/team'
                render={({ location: { search } }) => <Team query={search} />}
+            />
+            <Route
+               exact
+               path='/match'
+               render={({ location: { search } }) => <Match query={search} />}
             />
 
             {/* App Routes */}

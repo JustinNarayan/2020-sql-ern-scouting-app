@@ -33,6 +33,9 @@ export default {
       // Log error
       if (out.err) console.log({ message: out.message, error: out.err });
 
+      // Call to getData
+      authCommand(out, () => actions.getData(data.id));
+
       // Return api response to display to user
       return out;
    }),
@@ -40,6 +43,24 @@ export default {
    patchData: thunk(async (actions, data) => {
       // Handle WS Call
       const res = await axios.patch(`${url}${data.id}`, data, authHeader);
+      const out = res.data; // Message || Forbidden
+
+      // Log error
+      if (out.err) console.log({ message: out.message, error: out.err });
+
+      // Call to getData
+      authCommand(out, () => actions.getData(data.id));
+
+      // Return api response to display to user
+      return out;
+   }),
+
+   deleteData: thunk(async (actions, data) => {
+      // Handle WS Call
+      const res = await axios.delete(
+         `${url}${data.id}/${data.teamNumber}/${data.matchNumber}`,
+         authHeader
+      );
       const out = res.data; // Message || Forbidden
 
       // Log error

@@ -1,7 +1,6 @@
 /// Model for all state actions
 import userModel from "./userModel";
 import compModel from "./compModel";
-import pendingModel from "./pendingModel";
 import dataModel from "./dataModel";
 const { login, register, verify, appearAdmin } = userModel;
 const {
@@ -15,21 +14,12 @@ const {
    setComps,
    setComp,
 } = compModel;
-const {
-   pending,
-   getPending,
-   addPending,
-   switchPendingCompetition,
-   deletePending,
-   setPending,
-} = pendingModel;
 const { data, getData, addData, patchData, deleteData, setData } = dataModel;
 
 export default {
    // State
    comps,
    comp,
-   pending,
    data,
 
    // Thunks
@@ -44,11 +34,6 @@ export default {
    editComp,
    deleteComp,
 
-   getPending,
-   addPending,
-   switchPendingCompetition,
-   deletePending,
-
    getData,
    addData,
    patchData,
@@ -57,6 +42,5 @@ export default {
    // Actions
    setComps,
    setComp,
-   setPending,
    setData,
 };

@@ -2,8 +2,9 @@
 import React, { Fragment, useState } from "react";
 
 /// Components
-import HeatmapModal from "./HeatmapModal";
-import ActionsModal from "./ActionsModal";
+import ActionsModal from "./modals/ActionsModal";
+import PlaybackModal from "./modals/PlaybackModal";
+import HeatmapModal from "./modals/HeatmapModal";
 
 /// Assets
 import playback from "bootstrap-icons/icons/play-fill.svg";
@@ -22,12 +23,15 @@ const DataRow = ({
    onSubmit,
 }) => {
    const [actionsModal, setActionsModal] = useState(false);
+   const [playbackModal, setPlaybackModal] = useState(false);
    const [heatmapModal, setHeatmapModal] = useState(false);
 
    const toggleActionsModal = () => {
       setActionsModal(!actionsModal);
       clearMessages();
    };
+
+   const togglePlaybackModal = () => setPlaybackModal(!playbackModal);
 
    const toggleHeatmapModal = () => setHeatmapModal(!heatmapModal);
 
@@ -59,7 +63,7 @@ const DataRow = ({
                </td>
             )}
             {!exclude.playback && (
-               <td>
+               <td onClick={() => togglePlaybackModal()}>
                   <img
                      className={classes.icons}
                      src={playback}
@@ -134,6 +138,12 @@ const DataRow = ({
             comps={comps}
             onSubmit={onSubmit}
             loading={loading}
+         />
+
+         <PlaybackModal
+            modal={playbackModal}
+            toggleModal={togglePlaybackModal}
+            events={JSON.parse(row.Events || "[]")}
          />
 
          <HeatmapModal

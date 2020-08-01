@@ -177,6 +177,7 @@ const HeatmapModal = ({
 
             <div className={classes.heatmapButtons}>
                <Button
+                  active={mode === "Outer"}
                   outline
                   size='lg'
                   color='heatmap-outer'
@@ -185,6 +186,7 @@ const HeatmapModal = ({
                   Outer
                </Button>
                <Button
+                  active={mode === "Inner"}
                   outline
                   size='lg'
                   color='heatmap-inner'
@@ -193,6 +195,7 @@ const HeatmapModal = ({
                   Inner
                </Button>
                <Button
+                  active={mode === "Pickup"}
                   outline
                   size='lg'
                   color='heatmap-pickup'

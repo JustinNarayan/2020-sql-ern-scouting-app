@@ -12,7 +12,7 @@ import {
 
 /// Components
 import DataRow from "./DataRow";
-import RedirectModal from "../../utils/RedirectModal";
+import RedirectModal from "../../../utils/RedirectModal";
 
 /// Assets
 import clock from "bootstrap-icons/icons/clock-history.svg";

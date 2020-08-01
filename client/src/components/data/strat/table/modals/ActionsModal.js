@@ -41,7 +41,7 @@ const ActionsModal = ({
          <ModalHeader
             className={classes.modalHeader}
             style={styles.modalHeader}>
-            {`Team ${row.TeamNumber} @ Match ${row.MatchNumber}`}
+            Team {row.TeamNumber} @ Match {row.MatchNumber}
             {/* Custom close button */}
             <Button
                color='transparent'

@@ -143,12 +143,14 @@ const DataRow = ({
          <PlaybackModal
             modal={playbackModal}
             toggleModal={togglePlaybackModal}
+            row={row}
             events={JSON.parse(row.Events || "[]")}
          />
 
          <HeatmapModal
             modal={heatmapModal}
             toggleModal={toggleHeatmapModal}
+            row={row}
             outerHeatmap={JSON.parse(row.OuterHeatmap).map(
                (val) => +val.toFixed(2)
             )}

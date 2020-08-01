@@ -8,6 +8,7 @@ import arrow from "bootstrap-icons/icons/arrow-left-circle-fill.svg";
 const HeatmapModal = ({
    modal,
    toggleModal,
+   row,
    outerHeatmap,
    innerHeatmap,
    pickupHeatmap,
@@ -60,7 +61,8 @@ const HeatmapModal = ({
          <ModalHeader
             className={classes.modalHeader}
             style={styles.modalHeader}>
-            {mode} Heatmap
+            {mode} Heatmap for Team {row.TeamNumber}{" "}
+            {row.MatchNumber ? `@ Match ${row.MatchNumber}` : ""}
             {/* Custom close button */}
             <Button
                color='transparent'
@@ -210,7 +212,7 @@ const HeatmapModal = ({
 };
 
 const classes = {
-   modalHeader: "bg-data-table-head text-back",
+   modalHeader: "bg-playback text-back",
    modalBody: "bg-back",
    modalClose: "text-back",
    field: "heatmapField mb-4",

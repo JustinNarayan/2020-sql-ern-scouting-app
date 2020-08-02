@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { useStoreState } from "easy-peasy";
 import QueryString from "query-string";
+import PropTypes from "prop-types";
 
 /// Components
 import DataTable from "./table/DataTable";
@@ -54,6 +55,11 @@ const classes = {
    container: "p-0 mx-3",
    title: "mb-2 mt-2 text-table-text",
    compname: "mb-4 font-weight-normal font-italic text-table-text",
+};
+
+/// Prop Types
+Match.propTypes = {
+   query: PropTypes.string, // URL search details
 };
 
 /// Export

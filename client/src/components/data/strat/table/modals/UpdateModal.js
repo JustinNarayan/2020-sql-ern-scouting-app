@@ -11,6 +11,7 @@ import {
    Button,
    Spinner,
 } from "reactstrap";
+import PropTypes from "prop-types";
 
 /// Assets
 import clock from "bootstrap-icons/icons/clock-history.svg";
@@ -431,6 +432,16 @@ const styles = {
       width: "1.25rem",
       height: "1.25rem",
    },
+};
+
+/// Prop Types
+UpdateModal.propTypes = {
+   modal: PropTypes.bool, // If the UpdateModal is up
+   toggleModal: PropTypes.func, // Function to toggle UpdateModal
+   messages: PropTypes.func, // List of database responses
+   row: PropTypes.object, // Match data object
+   loading: PropTypes.bool, // If an async call is in progress
+   onSubmit: PropTypes.func, // Function to handle submissions
 };
 
 /// Export

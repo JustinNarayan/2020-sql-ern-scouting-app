@@ -1,6 +1,7 @@
 /// Modules
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, ModalHeader, ModalBody, Input, Button } from "reactstrap";
+import PropTypes from "prop-types";
 
 /**
  * PlaybackModal Component
@@ -330,6 +331,14 @@ const styles = {
    event: {
       margin: "12px",
    },
+};
+
+/// Prop Types
+PlaybackModal.propTypes = {
+   modal: PropTypes.bool, // If the PlaybackModal is up
+   toggleModal: PropTypes.func, // Toggle the PlaybackModal
+   row: PropTypes.object, // Match data object
+   events: PropTypes.array, // Event array
 };
 
 /// Export

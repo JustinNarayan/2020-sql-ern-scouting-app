@@ -11,6 +11,7 @@ import {
    Button,
    Spinner,
 } from "reactstrap";
+import PropTypes from "prop-types";
 
 /// Components
 import UpdateModal from "./UpdateModal";
@@ -251,6 +252,19 @@ const styles = {
       width: "1.25rem",
       height: "1.25rem",
    },
+};
+
+/// Prop Types
+ActionsModal.propTypes = {
+   modal: PropTypes.bool, // If ActionsModal is up
+   toggleModal: PropTypes.func, // Function to toggle ActionsModal
+   messages: PropTypes.func, // List of responses for database actions
+   overwriteModals: PropTypes.bool, // If the deleteSuccessModal is up
+   clearMessages: PropTypes.func, // Function to erase messages
+   row: PropTypes.object, // Match data object
+   comps: PropTypes.array, // List of user's comps for competition switch functionality
+   onSubmit: PropTypes.func, // Function to handle submissions
+   loading: PropTypes.bool, // If an async call is in progress
 };
 
 /// Export

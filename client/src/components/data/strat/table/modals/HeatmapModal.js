@@ -1,6 +1,7 @@
 /// Modules
 import React, { useState } from "react";
 import { Modal, ModalHeader, ModalBody, Button } from "reactstrap";
+import PropTypes from "prop-types";
 
 /// Assets
 import arrow from "bootstrap-icons/icons/arrow-left-circle-fill.svg";
@@ -283,6 +284,16 @@ const styles = {
    button: {
       fontWeight: "400",
    },
+};
+
+/// Prop Types
+HeatmapModal.propTypes = {
+   modal: PropTypes.bool, // If HeatmapModal is up
+   toggleModal: PropTypes.func, // Function to toggle HeatmapModal
+   row: PropTypes.object, // Match data object
+   outerHeatmap: PropTypes.array, // Outer shot heatmap values
+   innerHeatmap: PropTypes.array, // Inner shot heatmap values
+   pickupHeatmap: PropTypes.array, // Pickup heatmap values
 };
 
 /// Export

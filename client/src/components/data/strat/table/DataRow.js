@@ -1,5 +1,6 @@
 /// Modules
 import React, { Fragment, useState } from "react";
+import PropTypes from "prop-types";
 
 /// Components
 import ActionsModal from "./modals/ActionsModal";
@@ -190,6 +191,19 @@ const classes = {
    red: "red",
    blue: "blue",
    link: "link",
+};
+
+/// Prop Types
+DataRow.propTypes = {
+   navigate: PropTypes.func, // Function to navigate to particular URLs
+   row: PropTypes.object, // Match data object
+   exclude: PropTypes.object, // Object with parameters of 1 for data columns to exclude (i.e. TeamNumber, Actions)
+   comps: PropTypes.array, // List of user's comps for competition switch functionality
+   loading: PropTypes.bool, // If an async call is in progress
+   messages: PropTypes.array, // List of responses for the ActionsModal
+   overwriteModals: PropTypes.bool, // If the deleteSuccessModal is up
+   clearMessages: PropTypes.func, // Function to erase messages
+   onSubmit: PropTypes.func, // Function to handle submissions
 };
 
 /// Export

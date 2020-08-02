@@ -9,6 +9,7 @@ import {
    Alert,
    Button,
 } from "reactstrap";
+import PropTypes from "prop-types";
 
 /// Components
 import DataRow from "./DataRow";
@@ -371,6 +372,13 @@ const styles = {
    button: {
       fontWeight: "400",
    },
+};
+
+/// Prop Types
+DataTable.propTypes = {
+   compID: propTypes.string, // URL query parameter
+   filter: propTypes.func, // Function to filter relevant match data
+   exclude: propTypes.object, // Object with parameters of 1 for data columns to exclude (i.e. TeamNumber, Actions)
 };
 
 /// Export

@@ -15,6 +15,11 @@ import {
 /// Components
 import UpdateModal from "./UpdateModal";
 
+/**
+ * ActionsModal Component
+ * ----------------------
+ * Per each DataRow component, allow competition switching, data updating, clearing, reinstating, and deleting
+ */
 const ActionsModal = ({
    modal,
    toggleModal,
@@ -26,11 +31,19 @@ const ActionsModal = ({
    onSubmit,
    loading,
 }) => {
+   /**
+    * Set dynamic state variables
+    */
    const [switchCompName, setSwitchCompName] = useState(
+      /// Default value for switch select component
       comps.filter((comp) => comp.ID === row.CompetitionID)[0].CompetitionName
    );
    const [updateModal, setUpdateModal] = useState(false);
 
+   /**
+    * Define all component methods
+    */
+   /// Toggle showing the Update Modal
    const toggleUpdateModal = () => {
       setUpdateModal(!updateModal);
       clearMessages();
@@ -52,6 +65,7 @@ const ActionsModal = ({
             </Button>
          </ModalHeader>
          <ModalBody>
+            {/* Competition Switching */}
             {messages.map((message) => (
                <Alert
                   key={message.text}
@@ -62,7 +76,6 @@ const ActionsModal = ({
                   {message.text}
                </Alert>
             ))}
-            {/* Switch form */}
             <Form
                onSubmit={(e) =>
                   onSubmit("Switch", e, {
@@ -105,6 +118,7 @@ const ActionsModal = ({
          </ModalBody>
          <hr />
          <ModalBody>
+            {/* Data Updating */}
             <Button
                color='comp-table-head'
                className={classes.modalSubmit}
@@ -128,6 +142,7 @@ const ActionsModal = ({
          </ModalBody>
          <hr />
          <ModalBody>
+            {/* Clearing and Reinstating */}
             <Form
                onSubmit={(e) =>
                   onSubmit("ClearReinstate", e, {
@@ -161,6 +176,7 @@ const ActionsModal = ({
                </Button>
             </Form>
          </ModalBody>
+         {/* Deleting */}
          {!row.Updated && (
             <Fragment>
                <hr />
@@ -237,4 +253,5 @@ const styles = {
    },
 };
 
+/// Export
 export default ActionsModal;

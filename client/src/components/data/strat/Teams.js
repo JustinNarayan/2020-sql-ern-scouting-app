@@ -6,26 +6,38 @@ import QueryString from "query-string";
 /// Components
 import DataTable from "./table/DataTable";
 
-const Team = ({ query }) => {
-   // State
+/**
+ * Teams Component
+ * ---------------
+ * Present DataTable for all team averages at a competition
+ */
+const Teams = ({ query }) => {
+   /**
+    * Set query and store state variables
+    */
    const compID = QueryString.parse(query).compID;
    const comp = useStoreState((state) => state.comp); // The getComp action is called from dataTable to keep calls in one place
 
+   /**
+    * Render component
+    */
    return (
       <div className={classes.container}>
          {/* Title text */}
          <h1 className={classes.title}>Teams</h1>
          <h5 className={classes.compname}>@ {comp.CompetitionName}</h5>
 
+         {/* Generate table by parsing matches into averages */}
          <DataTable
             compID={compID}
             filter={(data) => {
-               // Grab teams
+               // Generate unique list of all teams
                const teams = [...new Set(data.map((row) => row.TeamNumber))];
 
                const averages = [];
 
                teams.forEach((team) => {
+                  // Generate object for DataTable with all total values => average values
                   const average = {
                      Updated: 1,
                      CompetitionID: parseInt(compID),
@@ -50,11 +62,13 @@ const Team = ({ query }) => {
                      defenseCount: 0,
                   };
 
+                  // Retrieve this team's matches
                   const matches = data.filter(
                      (row) => row.TeamNumber === team && row.Updated
                   );
+
+                  // Increment totals in average based on current match
                   matches.forEach((match) => {
-                     // Increment totals in average based on current match
                      JSON.parse(match.OuterHeatmap).map(
                         (value, zone) => (average.OuterHeatmap[zone] += value)
                      );
@@ -82,7 +96,7 @@ const Team = ({ query }) => {
                      if (match.TimeDefending) average.defenseCount++;
                   });
 
-                  // Divide variables in average object by match count
+                  // Divide variables in average object by match/defense count
                   average.OuterHeatmap = average.OuterHeatmap.map(
                      (value) => (value /= average.matchCount)
                   );
@@ -113,7 +127,7 @@ const Team = ({ query }) => {
                   average.InnerHeatmap = JSON.stringify(average.InnerHeatmap);
                   average.PickupHeatmap = JSON.stringify(average.PickupHeatmap);
 
-                  // Add average to averages
+                  // Add this team's average to array of averages
                   averages.push(average);
                });
 
@@ -139,4 +153,5 @@ const classes = {
    compname: "mb-4 font-weight-normal font-italic text-table-text",
 };
 
-export default Team;
+/// Export
+export default Teams;

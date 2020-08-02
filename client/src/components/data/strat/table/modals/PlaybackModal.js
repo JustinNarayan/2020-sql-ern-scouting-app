@@ -2,18 +2,32 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, ModalHeader, ModalBody, Input, Button } from "reactstrap";
 
+/**
+ * PlaybackModal Component
+ * -----------------------
+ * Turn events array into visual playback representation
+ */
 const PlaybackModal = ({ modal, toggleModal, row, events }) => {
+   /**
+    * Set static and dynamic state variables
+    */
+   const playStep = 0.1;
+   const second = 1000;
+   const maxTime = 150;
+
    const [speed, setSpeed] = useState(1);
    const [time, setTime] = useState(0);
    const [playing, setPlaying] = useState(false);
    const [playInterval, setPlayInterval] = useState(null);
    const [currentZone, setCurrentZone] = useState(0);
    const [highlightEvent, setHighlightEvent] = useState(0);
-   const eventsDiv = useRef(null);
-   const playStep = 0.1;
-   const second = 1000;
-   const maxTime = 150;
 
+   // Get reference for DOM object of events box
+   const eventsDiv = useRef(null);
+
+   /**
+    * Handle life-cycle for checking time, event selection, and events box scrolling
+    */
    useEffect(() => {
       if (time >= maxTime) {
          if (playing) togglePlaying(speed, true);
@@ -37,25 +51,32 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
          eventsDiv.current.scrollTop = (eventsWithText - 2) * 24;
    }, [time]);
 
+   /**
+    * Define all component methods
+    */
+   /// Return active class if current event is located on this field zone button
    const getClass = (zone) => {
       return currentZone === zone ? classes.zone.active : "";
    };
 
+   /// Turn a seconds count into a formatted string (m:ss.s)
    const formatTime = (seconds) => {
       return `T-${Math.floor(seconds / 60)}:${(seconds % 60)
          .toFixed(1)
          .padStart(4, "0")}s`;
    };
 
+   /// Toggle speed setting
    const switchSpeed = () => {
       let newSpeed;
       newSpeed = (speed + 2) % 6; // Toggles between 1, 3, and 5
       setSpeed(newSpeed);
 
-      togglePlaying(newSpeed, true); // Stop playing
+      togglePlaying(newSpeed, true); // Stop playing playback
       if (playing) togglePlaying(newSpeed, false); // If was playing before, play again
    };
 
+   /// Handle timeInterval for when toggling playback
    const togglePlaying = (howFast, inAction) => {
       setPlaying(!inAction);
       if (!inAction) {
@@ -73,11 +94,15 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
       }
    };
 
+   /// Handle modal toggling and turn off playback before closing
    const closeModal = () => {
       if (playing) togglePlaying(1, true);
       toggleModal();
    };
 
+   /**
+    * Render component
+    */
    return (
       <Modal isOpen={modal} toggle={closeModal} size='lg'>
          <ModalHeader
@@ -94,7 +119,9 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
             </Button>
          </ModalHeader>
          <ModalBody className={classes.modalBody}>
+            {/* Display playback progress and actions */}
             <div className={classes.scrub} style={styles.scrub}>
+               {/* Speed button */}
                <Button
                   className={classes.playbackButtons}
                   color='playback'
@@ -103,6 +130,8 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
                   onClick={switchSpeed}>
                   {speed}.0x
                </Button>
+
+               {/* Time scrubbar */}
                <Input
                   type='range'
                   className={classes.scrubbar}
@@ -112,7 +141,10 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
                   value={time}
                   onChange={(e) => setTime(+e.target.value)}
                />
+               {/* Time text overlay */}
                <p style={styles.time}>{formatTime(maxTime - time)}</p>
+
+               {/* Playing/Stopping playback */}
                <Button
                   className={classes.playbackButtons}
                   color='playback'
@@ -122,6 +154,8 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
                   {playing ? "Stop" : "Play"}
                </Button>
             </div>
+
+            {/* Display field zone buttons */}
             <div className={classes.field}>
                {/* Left-side sector zones */}
                <div className={classes.zone.group}>
@@ -182,12 +216,15 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
                      disabled></button>
                </div>
             </div>
+
+            {/* Turn events array into scrollable list */}
             <div
                className={classes.events}
                style={styles.events}
                ref={eventsDiv}>
                {events.map((event, index) =>
                   event.text ? (
+                     // For each non-zone-switch event, generate an entry
                      <p
                         key={event.time}
                         style={styles.event}
@@ -211,12 +248,18 @@ const PlaybackModal = ({ modal, toggleModal, row, events }) => {
    );
 };
 
+/// Inline class manager
 const classes = {
    modalHeader: "bg-playback text-back",
    modalBody: "bg-back pt-1",
+   modalClose: "text-back",
+
+   // Time and actions
    scrub: "mb-1 mx-auto",
    scrubbar: "bg-heatmap-grey",
    playbackButtons: "playbackButtons",
+
+   // Field zone buttons
    field: "heatmapField mb-2",
    zone: {
       group: "group",
@@ -236,13 +279,14 @@ const classes = {
       active: "bg-playback",
       arrow: "arrow",
    },
+
+   // Events box
    events: "bg-heatmap-grey px-2 py-0 mx-auto",
    highlightEvent: "text-playback",
    eventtime: "font-weight-bold",
-   modalClose: "text-back",
-   modalSubmit: "modalSubmit",
 };
 
+/// Inline style manager
 const styles = {
    modalHeader: {
       paddingLeft: "22px",
@@ -288,4 +332,5 @@ const styles = {
    },
 };
 
+/// Export
 export default PlaybackModal;

@@ -5,6 +5,11 @@ import { Modal, ModalHeader, ModalBody, Button } from "reactstrap";
 /// Assets
 import arrow from "bootstrap-icons/icons/arrow-left-circle-fill.svg";
 
+/**
+ * HeatmapModal Component
+ * ----------------------
+ * Per each DataRow component, present heatmap arrays visually
+ */
 const HeatmapModal = ({
    modal,
    toggleModal,
@@ -13,12 +18,19 @@ const HeatmapModal = ({
    innerHeatmap,
    pickupHeatmap,
 }) => {
+   /**
+    * Set dynamic state variables
+    */
    const [mode, setMode] = useState("Outer");
    const [current, setCurrent] = useState(outerHeatmap);
    const [outOf, setOutOf] = useState(
       outerHeatmap.reduce((total, thisZone) => (total += thisZone), 0)
    );
 
+   /**
+    * Define all component methods
+    */
+   /// Assign classes for background color based on each zone button
    const getClass = (zone) => {
       if (current[zone] === 0) return classes.heatmapGrey;
       else {
@@ -28,10 +40,12 @@ const HeatmapModal = ({
       }
    };
 
+   /// Assign style opacity based on proportional heatmap density (i.e. shots taken here out of shots taken total)
    const getStyle = (zone) => {
       return current[zone] === 0 ? {} : { opacity: current[zone] / outOf };
    };
 
+   /// Switch between heatmap modes
    const changeMode = (newMode) => {
       setMode(newMode);
       switch (newMode) {
@@ -56,6 +70,9 @@ const HeatmapModal = ({
       }
    };
 
+   /**
+    * Render component
+    */
    return (
       <Modal isOpen={modal} toggle={toggleModal} size='lg'>
          <ModalHeader
@@ -73,6 +90,7 @@ const HeatmapModal = ({
             </Button>
          </ModalHeader>
          <ModalBody>
+            {/* Show field for visual representation of heatmaps */}
             <div className={classes.field}>
                {/* Left-side sector zones */}
                <div className={classes.zone.group}>
@@ -177,6 +195,7 @@ const HeatmapModal = ({
                </div>
             </div>
 
+            {/* Mode-switching buttons */}
             <div className={classes.heatmapButtons}>
                <Button
                   active={mode === "Outer"}
@@ -211,10 +230,13 @@ const HeatmapModal = ({
    );
 };
 
+/// Inline class manager
 const classes = {
    modalHeader: "bg-playback text-back",
    modalBody: "bg-back",
    modalClose: "text-back",
+
+   // Field buttons
    field: "heatmapField mb-4",
    zone: {
       group: "group",
@@ -233,14 +255,17 @@ const classes = {
       _12: "_12 ",
       arrow: "arrow",
    },
+
+   // Field button background colors
    heatmapGrey: "bg-heatmap-grey",
    heatmapOuter: "bg-heatmap-outer",
    heatmapInner: "bg-heatmap-inner",
    heatmapPickup: "bg-heatmap-pickup",
+
    heatmapButtons: "heatmapButtons",
-   modalSubmit: "modalSubmit",
 };
 
+/// Inline style manager
 const styles = {
    modalHeader: {
       paddingLeft: "22px",
@@ -260,4 +285,5 @@ const styles = {
    },
 };
 
+/// Export
 export default HeatmapModal;

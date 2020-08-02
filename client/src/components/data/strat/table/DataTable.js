@@ -17,7 +17,15 @@ import RedirectModal from "../../../utils/RedirectModal";
 /// Assets
 import clock from "bootstrap-icons/icons/clock-history.svg";
 
+/**
+ * DataTable Component
+ * -------------------
+ * Turn array of matchData objects into a readable table
+ */
 const DataTable = ({ compID, filter, exclude }) => {
+   /**
+    * Set dynamic and store variables
+    */
    const [deleteSuccessModal, setDeleteSuccessModal] = useState(false);
    const [redirectModal, setRedirectModal] = useState(false);
    const [redirectMessages, setRedirectMessages] = useState([]);
@@ -28,7 +36,9 @@ const DataTable = ({ compID, filter, exclude }) => {
    const comp = useStoreState((state) => state.comp);
    const data = filter(useStoreState((state) => state.data));
 
-   // Bring in commands
+   /**
+    * Bring in easy-peasy actions/thunks
+    */
    const getComp = useStoreActions((actions) => actions.getComp);
    const getComps = useStoreActions((actions) => actions.getComps);
    const getData = useStoreActions((actions) => actions.getData);
@@ -36,12 +46,18 @@ const DataTable = ({ compID, filter, exclude }) => {
    const patchData = useStoreActions((actions) => actions.patchData);
    const deleteData = useStoreActions((actions) => actions.deleteData);
 
-   // Life cycle
+   /**
+    * Handle life-cycle to retrieve data from database
+    */
    useEffect(() => {
       requestData();
       // eslint-disable-next-line
    }, []);
 
+   /**
+    * Define all component methods
+    */
+   /// Navigate to particular urls based on table-cell clicks
    const navigate = (to, payload) => {
       switch (to) {
          case "team":
@@ -56,19 +72,23 @@ const DataTable = ({ compID, filter, exclude }) => {
       }
    };
 
+   /// Retrieve data from database
    const requestData = async () => {
+      // Check compID in url against database
       let res = await getComp(compID);
       if (!res.valid) {
          setRedirectMessages([{ text: res.message, type: res.type }]);
          setRedirectModal(true);
       }
 
+      // Get list of comps for switch select-list
       res = await getComps();
       if (res.status) {
          setRedirectMessages([{ text: res.message, type: res.type }]);
          setRedirectModal(true);
       }
 
+      // Get list of matchData for this competition
       res = await getData(compID);
       if (res.status) {
          setRedirectMessages([{ text: res.message, type: res.type }]);
@@ -76,10 +96,12 @@ const DataTable = ({ compID, filter, exclude }) => {
       }
    };
 
+   /// Handle all form submissions from ActionsModal
    const onSubmit = (type, e, data) => {
       e.preventDefault();
       if (loading) return;
 
+      // Direct to appropriate method based on type of update
       switch (type) {
          case "Update":
             onUpdate(data);
@@ -96,6 +118,7 @@ const DataTable = ({ compID, filter, exclude }) => {
       }
    };
 
+   /// Handle submissions to update the contents of a match data object
    const onUpdate = async (request) => {
       setLoading(true);
       const res = await addData({
@@ -108,6 +131,7 @@ const DataTable = ({ compID, filter, exclude }) => {
       setLoading(false);
    };
 
+   /// Handle submissions to change the Updated status of a match data object
    const onClearReinstate = async (request) => {
       setLoading(true);
       const res = await patchData({ id: compID, ...request });
@@ -115,6 +139,7 @@ const DataTable = ({ compID, filter, exclude }) => {
       setLoading(false);
    };
 
+   /// Handle submissions to delete a match data object
    const onDelete = async (request) => {
       setLoading(true);
       const res = await deleteData({ id: compID, ...request });
@@ -127,6 +152,7 @@ const DataTable = ({ compID, filter, exclude }) => {
       }
    };
 
+   /// Handle submissions to switch the competitionID of a match data object
    const onSwitch = async (request) => {
       const { matchNumber, teamNumber, newName } = request;
 
@@ -135,6 +161,7 @@ const DataTable = ({ compID, filter, exclude }) => {
             { text: "That is the current competition", type: "bad" },
          ]);
       } else {
+         /// Based on the CompetitionName the user clicked, find the matching ID
          const [newCompetitionID] = comps
             .filter((comp) => comp.CompetitionName === newName)
             .map((comp) => comp.ID);
@@ -151,6 +178,7 @@ const DataTable = ({ compID, filter, exclude }) => {
       }
    };
 
+   /// Clear messages
    const clearMessages = () => setMessages([]);
 
    /// Toggle showing delete success modal
@@ -158,10 +186,14 @@ const DataTable = ({ compID, filter, exclude }) => {
       setDeleteSuccessModal(!deleteSuccessModal);
    };
 
+   /**
+    * Render component
+    */
    return (
       <Fragment>
          <Table borderless className={classes.table}>
             <thead>
+               {/* Show column headers based on what the component is meant to exclude */}
                <tr className={classes.tableHead}>
                   {!exclude.teamNumber && <th>Team</th>}
                   {!exclude.matchNumber && <th>Match</th>}
@@ -237,6 +269,7 @@ const DataTable = ({ compID, filter, exclude }) => {
                </tr>
             </thead>
             <tbody>
+               {/* Generate a row for each match data object */}
                {data.map((row) => (
                   <DataRow
                      key={row.ID || row.TeamNumber} // For averages, there will not be an ID, but Team Number will be unique
@@ -340,4 +373,5 @@ const styles = {
    },
 };
 
+/// Export
 export default DataTable;

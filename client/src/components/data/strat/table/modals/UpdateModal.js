@@ -15,6 +15,11 @@ import {
 /// Assets
 import clock from "bootstrap-icons/icons/clock-history.svg";
 
+/**
+ * UpdateModal Component
+ * ---------------------
+ * Per each ActionsModal, allow updates for the matchData
+ */
 const UpdateModal = ({
    modal,
    toggleModal,
@@ -23,6 +28,9 @@ const UpdateModal = ({
    loading,
    onSubmit,
 }) => {
+   /**
+    * Define dynamic state variables based on matchData in props
+    */
    const [teamNumber, setTeamNumber] = useState(row.TeamNumber);
    const [matchNumber, setMatchNumber] = useState(row.MatchNumber);
    const [robotStation, setRobotStation] = useState(row.RobotStation);
@@ -46,12 +54,15 @@ const UpdateModal = ({
    const [comments, setComments] = useState(row.Comments);
    const [scoutName, setScoutName] = useState(row.ScoutName);
 
+   /**
+    * Render component
+    */
    return (
       <Modal isOpen={modal} toggle={toggleModal} size='xl'>
          <ModalHeader
             className={classes.modalHeader}
             style={styles.modalHeader}>
-            {`Update Team ${row.TeamNumber} @ Match ${row.MatchNumber}`}
+            Update Team {row.TeamNumber} @ Match {row.MatchNumber}
             {/* Custom close button */}
             <Button
                color='transparent'
@@ -75,30 +86,35 @@ const UpdateModal = ({
             ))}
             <Form
                onSubmit={(e) =>
-                  onSubmit("Update", e, {
-                     teamNumber,
-                     matchNumber,
-                     robotStation,
-                     crossLine,
-                     events: row.Events,
-                     outerHeatmap: row.OuterHeatmap,
-                     innerHeatmap: row.InnerHeatmap,
-                     pickupHeatmap: row.PickupHeatmap,
-                     bottomAuto,
-                     outerAuto,
-                     innerAuto,
-                     bottom: bottomAll,
-                     outer: outerAll,
-                     inner: innerAll,
-                     pickups,
-                     timeDefended,
-                     timeDefending,
-                     defenseQuality,
-                     timeMal,
-                     endgame,
-                     comments,
-                     scoutName,
-                  })
+                  onSubmit(
+                     "Update",
+                     e,
+                     // Pass payload object with all matchData state
+                     {
+                        teamNumber,
+                        matchNumber,
+                        robotStation,
+                        crossLine,
+                        events: row.Events,
+                        outerHeatmap: row.OuterHeatmap,
+                        innerHeatmap: row.InnerHeatmap,
+                        pickupHeatmap: row.PickupHeatmap,
+                        bottomAuto,
+                        outerAuto,
+                        innerAuto,
+                        bottom: bottomAll,
+                        outer: outerAll,
+                        inner: innerAll,
+                        pickups,
+                        timeDefended,
+                        timeDefending,
+                        defenseQuality,
+                        timeMal,
+                        endgame,
+                        comments,
+                        scoutName,
+                     }
+                  )
                }>
                {/* Table of competitions with overflow-control div */}
                <div style={styles.overflow}>
@@ -417,4 +433,5 @@ const styles = {
    },
 };
 
+/// Export
 export default UpdateModal;

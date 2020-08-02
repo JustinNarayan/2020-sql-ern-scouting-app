@@ -11,6 +11,11 @@ import playback from "bootstrap-icons/icons/play-fill.svg";
 import heatmap from "bootstrap-icons/icons/bullseye.svg";
 import actions from "bootstrap-icons/icons/clipboard-data.svg";
 
+/**
+ * DataRow Component
+ * -----------------
+ * Generate a table-row based on match data
+ */
 const DataRow = ({
    navigate,
    row,
@@ -22,22 +27,33 @@ const DataRow = ({
    clearMessages,
    onSubmit,
 }) => {
+   /**
+    * Set dynamic state variables
+    */
    const [actionsModal, setActionsModal] = useState(false);
    const [playbackModal, setPlaybackModal] = useState(false);
    const [heatmapModal, setHeatmapModal] = useState(false);
 
+   /**
+    * Define all component methods
+    */
+   /// Toggle if the ActionsModal is shown
    const toggleActionsModal = () => {
       setActionsModal(!actionsModal);
       clearMessages();
    };
 
+   /// Toggle if the PlaybackModal is shown
    const togglePlaybackModal = () => setPlaybackModal(!playbackModal);
 
+   /// Toggle if the HeatmapModal is shown
    const toggleHeatmapModal = () => setHeatmapModal(!heatmapModal);
 
    return (
       <Fragment>
+         {/* Change class for background-color if row is updated */}
          <tr className={row.Updated ? "updated" : ""}>
+            {/* Generate table-cells with data and relevant links */}
             {!exclude.teamNumber && (
                <td
                   className={classes.link}
@@ -128,6 +144,7 @@ const DataRow = ({
             )}
          </tr>
 
+         {/* ActionsModal allows competition switching, data updating, clearing, reinstating, and deleting */}
          <ActionsModal
             modal={actionsModal}
             toggleModal={toggleActionsModal}
@@ -140,6 +157,7 @@ const DataRow = ({
             loading={loading}
          />
 
+         {/* PlaybackModal turns events array into viewable playback */}
          <PlaybackModal
             modal={playbackModal}
             toggleModal={togglePlaybackModal}
@@ -147,6 +165,7 @@ const DataRow = ({
             events={JSON.parse(row.Events || "[]")}
          />
 
+         {/* HeatmapModal turns heatmaps into viewable representations */}
          <HeatmapModal
             modal={heatmapModal}
             toggleModal={toggleHeatmapModal}
@@ -165,6 +184,7 @@ const DataRow = ({
    );
 };
 
+/// Inline class manager
 const classes = {
    icons: "icons",
    red: "red",
@@ -172,4 +192,5 @@ const classes = {
    link: "link",
 };
 
+/// Export
 export default DataRow;

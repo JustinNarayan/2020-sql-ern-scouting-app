@@ -6,22 +6,36 @@ import QueryString from "query-string";
 /// Components
 import DataTable from "./table/DataTable";
 
-const Team = ({ query }) => {
-   // State
+/**
+ * Match Component
+ * ---------------
+ * Present DataTable for all bots in a match at a competition
+ */
+const Match = ({ query }) => {
+   /**
+    * Set query and store state variables
+    */
    const compID = QueryString.parse(query).compID;
    const matchNumber = QueryString.parse(query).matchNumber;
    const comp = useStoreState((state) => state.comp); // The getComp action is called from dataTable to keep calls in one place
 
+   /**
+    * Handle life cycle to check query
+    */
    useEffect(() => {
       if (!matchNumber) window.location.href = "/home";
    }, [matchNumber]);
 
+   /**
+    * Render component
+    */
    return (
       <div className={classes.container}>
          {/* Title text */}
          <h1 className={classes.title}>Match {matchNumber}</h1>
          <h5 className={classes.compname}>@ {comp.CompetitionName}</h5>
 
+         {/* Generate table by MatchNumber */}
          <DataTable
             compID={compID}
             filter={(data) =>
@@ -42,4 +56,5 @@ const classes = {
    compname: "mb-4 font-weight-normal font-italic text-table-text",
 };
 
-export default Team;
+/// Export
+export default Match;

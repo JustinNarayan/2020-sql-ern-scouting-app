@@ -376,9 +376,9 @@ const styles = {
 
 /// Prop Types
 DataTable.propTypes = {
-   compID: propTypes.string, // URL query parameter
-   filter: propTypes.func, // Function to filter relevant match data
-   exclude: propTypes.object, // Object with parameters of 1 for data columns to exclude (i.e. TeamNumber, Actions)
+   compID: PropTypes.string, // URL query parameter
+   filter: PropTypes.func, // Function to filter relevant match data
+   exclude: PropTypes.object, // Object with parameters of 1 for data columns to exclude (i.e. TeamNumber, Actions)
 };
 
 /// Export

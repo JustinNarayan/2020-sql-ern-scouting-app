@@ -438,7 +438,7 @@ const styles = {
 UpdateModal.propTypes = {
    modal: PropTypes.bool, // If the UpdateModal is up
    toggleModal: PropTypes.func, // Function to toggle UpdateModal
-   messages: PropTypes.func, // List of database responses
+   messages: PropTypes.array, // List of database responses
    row: PropTypes.object, // Match data object
    loading: PropTypes.bool, // If an async call is in progress
    onSubmit: PropTypes.func, // Function to handle submissions

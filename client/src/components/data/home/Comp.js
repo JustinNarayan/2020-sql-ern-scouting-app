@@ -90,7 +90,6 @@ const Comp = ({
             <td className={classes.link} onClick={() => navigate("scout")}>
                Scout
             </td>
-            <td className={classes.link}>Pit Scout</td>
             <td className={classes.link} onClick={toggleModal}>
                Actions
             </td>

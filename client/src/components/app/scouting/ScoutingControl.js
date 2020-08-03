@@ -63,9 +63,9 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
    const autoThreshold = 135; // Seconds elapsed during teleop
 
    /// State intervals
-   const [defendedTimeInterval, setDefendedTimeInterval] = useState(0);
-   const [defendingTimeInterval, setDefendingTimeInterval] = useState(0);
-   const [malTimeInterval, setMalTimeInterval] = useState(0);
+   const [defendedTimeInterval, setDefendedTimeInterval] = useState(null);
+   const [defendingTimeInterval, setDefendingTimeInterval] = useState(null);
+   const [malTimeInterval, setMalTimeInterval] = useState(null);
 
    ///  User interface
    const [teamColor, setTeamColor] = useState("red");
@@ -215,7 +215,8 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
    const changeZone = (newZone) => {
       setActiveZone(newZone);
       if (!crossLine) toggleCrossLine(); /// Called method toggles crossLine upon movement during auto
-      if (malTimeInterval) toggleState("mal"); /// Turn off mal state upon movement
+
+      /// For malfunctioning turning off upon movement, that is handled in the useEffects below due to an odd bug
    };
 
    /**
@@ -373,6 +374,8 @@ const ScoutingControl = ({ prepareConfirmModal, setMatchData }) => {
    const eventZoneChange = () => {
       if (!timeInterval) return; // Check if timer off
       setRawEvents([...rawEvents, newRawEvent("zone")]);
+
+      if (malTimeInterval) toggleState("mal");
    };
 
    /// Generate event upon score change containing current values
